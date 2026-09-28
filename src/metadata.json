@@ -1,0 +1,14 @@
+{
+  "/": {
+    "title": "Wellcare Medicose | Online Pharmacy & Healthcare",
+    "description": "Shop medicines and healthcare essentials with Wellcare Medicose. Choose convenient home delivery or store pickup."
+  },
+  "/admin": {
+    "title": "Wellcare Medicose | Admin Dashboard",
+    "description": "Manage Wellcare Medicose products, orders and store operations."
+  },
+  "default": {
+    "title": "Wellcare Medicose",
+    "description": "Your neighborhood pharmacy, online."
+  }
+}
