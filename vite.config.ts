@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import { cloudflare } from '@cloudflare/vite-plugin'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { nitro } from 'nitro/vite'
@@ -13,6 +14,7 @@ const config = defineConfig({
   server: {
     allowedHosts: ['.e2b.app', '.e2b-juliett.dev'],
   },
+
   ...(process.env.DEV_BUILD && {
     build: {
       target: 'esnext',
@@ -25,14 +27,21 @@ const config = defineConfig({
       },
     },
   }),
+
   plugins: [
+    cloudflare({ viteEnvironment: { name: 'ssr' } }),
+
     devtools({ injectSource: { enabled: false } }),
+
     errorOverlay({
       forwardConsole: true,
-      forwardedConsoleMethods: ["error", "warn"],
+      forwardedConsoleMethods: ['error', 'warn'],
     }),
+
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
+
     tailwindcss(),
+
     tanstackStart({
       prerender: {
         enabled: !!process.env.DEV_BUILD,
@@ -42,7 +51,9 @@ const config = defineConfig({
         failOnError: true,
       },
     }),
+
     nitro(),
+
     viteReact(),
   ],
 })
