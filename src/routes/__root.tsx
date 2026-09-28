@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { HeadContent, Scripts, createRootRoute, useRouterState } from '@tanstack/react-router'
-import { MacalyBridge } from '@macaly/bridge'
 import { MessageCircle } from 'lucide-react'
 import { MotionConfig } from 'framer-motion'
 import AppConvexProvider from '@/components/convex-client-provider'
@@ -84,7 +83,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <MacalyBridge>
         <body>
           <AppConvexProvider>
             <ThemeScope />
@@ -115,7 +113,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           </AppConvexProvider>
           <Scripts />
         </body>
-      </MacalyBridge>
     </html>
   )
 }
