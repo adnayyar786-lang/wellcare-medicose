@@ -31,17 +31,9 @@ const config = defineConfig({
   }),
 
   plugins: [
-    cloudflare({
-      viteEnvironment: {
-        name: 'ssr',
-      },
-    }),
+    cloudflare({ viteEnvironment: { name: 'ssr' } }),
 
-    devtools({
-      injectSource: {
-        enabled: false,
-      },
-    }),
+    devtools({ injectSource: { enabled: false } }),
 
     errorOverlay({
       forwardConsole: true,
