@@ -18,7 +18,7 @@ export function ProfileDrawer() {
       <SheetTrigger asChild>
         <button aria-label="Profile menu" className="flex size-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition hover:border-primary/40 hover:bg-primary/5"><User className="size-4" /></button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[min(88vw,360px)] min-h-0 gap-0 overflow-hidden border-r-0 bg-background p-0 sm:max-w-sm">
+      <SheetContent side="left" className="z-[300] w-[min(88vw,360px)] min-h-0 gap-0 overflow-hidden border-r-0 bg-background p-0 sm:max-w-sm">
         <SheetHeader className="shrink-0 border-b bg-gradient-to-br from-primary/10 via-background to-emerald-500/10 px-5 pb-5 pt-7 text-left">
           <div className="flex items-center gap-3">
             <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md"><ShieldCheck className="size-6" /></span>
