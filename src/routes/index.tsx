@@ -298,6 +298,8 @@ function Home() {
   const visibleShopCategories = SHOP_CATEGORIES
   const companyRailRef = useRef<HTMLDivElement>(null)
   const [companyAutoPaused, setCompanyAutoPaused] = useState(false)
+  const AMAZON_NAV_ITEMS = ['Pharmacy', 'Latest', 'Petcare', 'Consult', 'Adult', 'Health', 'Health Plan'] as const
+  const [activeAmazonNav, setActiveAmazonNav] = useState<(typeof AMAZON_NAV_ITEMS)[number]>('Pharmacy')
 
   useEffect(() => { setVisible(24) }, [search, activeCategory, activeShopCategory])
 
@@ -322,6 +324,28 @@ function Home() {
     requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
   function clearFilters() { setSearch(''); setShowSearchSuggestions(false); setActiveCategory('All'); setActiveShopCategory(null) }
+  function handleAmazonNav(item: (typeof AMAZON_NAV_ITEMS)[number]) {
+    setActiveAmazonNav(item)
+    if (item === 'Pharmacy') {
+      clearFilters()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    if (item === 'Latest') {
+      clearFilters()
+      requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      return
+    }
+    if (item === 'Petcare') {
+      setSearch('')
+      setShowSearchSuggestions(false)
+      setActiveCategory('All')
+      setActiveShopCategory('Pet Care')
+      requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      return
+    }
+    toast.info(item === 'Consult' ? 'Consultation section is coming soon.' : item === 'Adult' ? 'Adult Health section is coming soon.' : item === 'Health' ? 'Health section is coming soon.' : 'Health Plan section is coming soon.')
+  }
   function scrollToProducts() { gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
   function handleAddToCart(med: ProductCardMed) {
     let failed = false
@@ -396,7 +420,17 @@ function Home() {
             <Button variant="default" className="relative gap-2" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT))} data-testid="cart-button" aria-label="Open cart"><ShoppingCart className="size-4" />{count > 0 && <Badge className="ml-0.5 bg-highlight text-highlight-foreground">{count}</Badge>}</Button>
           </div>
         </div>
-        <div className="mx-auto max-w-[1600px] px-4 pb-2 md:hidden">{renderSearch('site-search')}<div className="mt-2"><DeliveryLocationBar /></div></div>
+        <div className="mx-auto max-w-[1600px] px-4 pt-2 md:hidden">
+          <nav aria-label="Quick sections" className="-mx-1 flex snap-x gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {AMAZON_NAV_ITEMS.map((item) => (
+              <button key={item} type="button" onClick={() => handleAmazonNav(item)} aria-pressed={activeAmazonNav === item} className={cn('shrink-0 snap-start rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors', activeAmazonNav === item ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-border bg-card text-foreground hover:border-primary/40')}>
+                {item}
+              </button>
+            ))}
+          </nav>
+          {renderSearch('site-search')}
+          <div className="mt-2"><DeliveryLocationBar /></div>
+        </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border md:block">
           <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Link to="/categories" className="mr-2 inline-flex items-center gap-1.5 py-2.5 pr-2 font-semibold text-primary hover:underline"><Menu className="size-4" /> Shop by Category</Link>
