@@ -3,7 +3,9 @@
 // as the production-safe fallback so a missing Workers build variable cannot
 // turn customer authentication into auth/invalid-api-key.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvJk',
+  // Keep the verified Firebase Web App key in the production bundle. A stale Cloudflare
+  // VITE_FIREBASE_API_KEY must not override the working Firebase key.
+  apiKey: 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvJk',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'wellcare-medicose.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wellcare-medicose',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'wellcare-medicose.firebasestorage.app',
@@ -33,6 +35,15 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   // sign-in as the alternative for this hosting setup.
   try {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    // Mobile browsers handle Firebase's redirect flow more reliably than a popup.
+    // Desktop keeps the popup flow so the customer does not lose their page.
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+    if (isMobile) {
+      await auth.signInWithRedirect(provider)
+      // The browser leaves this page. Firebase restores the user when it returns.
+      return await new Promise<FirebaseUserLike>(() => {})
+    }
+
     const result = await auth.signInWithPopup(provider)
     if (!result?.user) throw new Error('Google sign-in completed but no Firebase user was returned.')
     return result.user as FirebaseUserLike
