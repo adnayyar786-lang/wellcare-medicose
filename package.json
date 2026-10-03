@@ -70,5 +70,6 @@
     "vite": "^8.1.5",
     "vitest": "^4.1.2",
     "wrangler": "^4.143.0"
-  }
+  },
+  "description": "Wellcare Medicos production build"
 }
