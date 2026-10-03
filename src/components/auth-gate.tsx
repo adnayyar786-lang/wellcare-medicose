@@ -17,9 +17,10 @@ const fallbackCountries:Country[]=[
 ]
 function flag(code:string){return code.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt(0)))}
 
-function CountryPicker({country,setCountry}:{country:Country;setCountry:(c:Country)=>void}){
+function CountryPicker({country,setCountry,phone,setPhone,detectedCode}:{country:Country;setCountry:(c:Country)=>void;phone:string;setPhone:(v:string)=>void;detectedCode?:string|null}){
   const [countries,setCountries]=useState<Country[]>(fallbackCountries)
   const [q,setQ]=useState('')
+  useEffect(()=>{if(detectedCode){const found=countries.find(c=>c.code===detectedCode);if(found)setCountry(found)}},[detectedCode,countries])
   useEffect(()=>{fetch('https://restcountries.com/v3.1/all?fields=name,cca2,idd').then(r=>r.json()).then((rows:any[])=>{
     const list=rows.map(x=>({code:x.cca2,name:x.name?.common||x.cca2,dial:x.idd?.root?(x.idd.root+(x.idd.suffixes?.length===1?x.idd.suffixes[0]:'')):''})).filter(x=>x.dial)
     list.sort((a,b)=>a.name.localeCompare(b.name)); setCountries(list)
@@ -49,7 +50,7 @@ export function LoginScreen(){
   const [phone,setPhone]=useState(''); const [code,setCode]=useState(''); const [confirmation,setConfirmation]=useState<any>(null)
   const [step,setStep]=useState<'identifier'|'code'>('identifier'); const [loading,setLoading]=useState(false); const [error,setError]=useState<string|null>(null)
   const [country,setCountry]=useState<Country>(fallbackCountries[0])
-  const [locationTried,setLocationTried]=useState(false)
+  const [locationTried,setLocationTried]=useState(false); const [detectedCountryCode,setDetectedCountryCode]=useState<string|null>(null)
   const [recaptchaId]=useState(()=>`firebase-recaptcha-${Math.random().toString(36).slice(2)}`)
 
   useEffect(()=>{
@@ -60,10 +61,7 @@ export function LoginScreen(){
       try{
         const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&localityLanguage=en`)
         const x=await r.json(); const cc=x.countryCode
-        if(cc){
-          const found=fallbackCountries.find(c=>c.code===cc)
-          if(found)setCountry(found)
-        }
+        if(cc)setDetectedCountryCode(cc)
       }catch{}
     },()=>{}, {enableHighAccuracy:false,timeout:5000,maximumAge:86400000})
   },[locationTried])
@@ -106,7 +104,7 @@ export function LoginScreen(){
         {mode==='signin'&&<button type="button" onClick={async()=>{if(!email)return setError('Enter your email first.');try{await sendPasswordResetFirebase(email);setError('Password reset email sent. Check your inbox.')}catch(err){setError(err instanceof Error?err.message:'Could not send reset email.')}}} className="w-full text-xs text-white/70 underline">Forgot password?</button>}
       </form>}
       {method==='phone' && step==='identifier' && <form onSubmit={requestCode} className="space-y-3">
-        <CountryPicker country={country} setCountry={setCountry}/>
+        <CountryPicker country={country} setCountry={setCountry} phone={phone} setPhone={setPhone} detectedCode={detectedCountryCode}/>
         <p className="flex items-center gap-1 text-xs text-white/55"><MapPin className="size-3"/>Country code can be detected from your location after you allow location access.</p>
         <Button disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?<Loader2 className="mr-2 size-4 animate-spin"/>:<Phone className="mr-2 size-4"/>}{loading?'Sending code…':'Send mobile code'}</Button>
       </form>}
