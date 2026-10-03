@@ -41,20 +41,14 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const provider=new firebase.auth.GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
 
-  // Keep the Google session on this exact Cloudflare origin. The previous
-  // mobile redirect flow could return to the login screen when browser
-  // storage/redirect handling was interrupted. Firebase recommends popup
-  // sign-in as the alternative for this hosting setup.
+  // Keep the Google session on this exact Cloudflare origin. Use popup on
+  // both desktop and mobile so the browser does not leave the login page.
+  // This avoids the mobile redirect flow that was showing Chrome's
+  // "changes you will make will not be saved" Leave/Cancel prompt and then
+  // returning to the login page.
   try {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    // Mobile browsers handle Firebase's redirect flow more reliably than a popup.
-    // Desktop keeps the popup flow so the customer does not lose their page.
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
-    if (isMobile) {
-      await auth.signInWithRedirect(provider)
-      // The browser leaves this page. Firebase restores the user when it returns.
-      return await new Promise<FirebaseUserLike>(() => {})
-    }
+
 
     const result = await auth.signInWithPopup(provider)
     if (!result?.user) throw new Error('Google sign-in completed but no Firebase user was returned.')
