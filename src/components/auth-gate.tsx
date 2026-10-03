@@ -76,10 +76,10 @@ export function LoginScreen(){
   async function requestCode(e:React.FormEvent){
     e.preventDefault();setLoading(true);setError(null)
     try{
-      const digits=phone.replace(/\\D/g,'')
-      const dialDigits=country.dial.replace(/\\D/g,'')
+      const digits=phone.replace(/\D/g,'')
+      const dialDigits=country.dial.replace(/\D/g,'')
       if(!digits || digits.length<6 || digits.length>15) throw new Error('Enter a valid mobile number.')
-      const local=digits.startsWith(dialDigits) && digits.length>country.dial.replace(/\\D/g,'').length
+      const local=digits.startsWith(dialDigits) && digits.length>country.dial.replace(/\D/g,'').length
         ? digits.slice(dialDigits.length)
         : digits
       if(!local || local.length<6 || local.length>12) throw new Error('Enter a valid mobile number.')
@@ -115,7 +115,7 @@ export function LoginScreen(){
         <p className="flex items-center gap-1 text-xs text-white/55"><MapPin className="size-3"/>Country code can be detected from your location after you allow location access.</p>
         <Button id={recaptchaId} disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?<Loader2 className="mr-2 size-4 animate-spin"/>:<Phone className="mr-2 size-4"/>}{loading?'Sending code…':'Send mobile code'}</Button>
       </form>}
-      {method==='phone' && step==='code' && <form onSubmit={verifyCode} className="space-y-3"><p className="text-sm text-white/80">Enter the 6-digit code sent to <strong>{phone}</strong>.</p><Input aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e=>setCode(e.target.value.replace(/\\D/g,'').slice(0,6))} placeholder="6-digit code" disabled={loading} className="h-12 rounded-xl bg-white text-center text-lg tracking-[0.4em] text-slate-900"/><Button disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?'Verifying…':'Verify and continue'}</Button><button type="button" onClick={()=>{setStep('identifier');setCode('');setConfirmation(null)}} className="w-full text-sm text-white/75 underline">Change number</button></form>}
+      {method==='phone' && step==='code' && <form onSubmit={verifyCode} className="space-y-3"><p className="text-sm text-white/80">Enter the 6-digit code sent to <strong>{phone}</strong>.</p><Input aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="6-digit code" disabled={loading} className="h-12 rounded-xl bg-white text-center text-lg tracking-[0.4em] text-slate-900"/><Button disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?'Verifying…':'Verify and continue'}</Button><button type="button" onClick={()=>{setStep('identifier');setCode('');setConfirmation(null)}} className="w-full text-sm text-white/75 underline">Change number</button></form>}
       
       {error&&<p role="alert" className="mt-3 rounded-lg bg-red-500/15 p-3 text-sm text-red-100">{error}</p>}
       <p className="mt-6 text-center text-xs text-white/55">By continuing, you agree to our <a href="/privacy" className="text-teal-200 underline">Privacy Policy</a>.</p>
