@@ -1,5 +1,5 @@
 import { ConvexProviderWithAuth, ConvexReactClient } from 'convex/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, createContext, useContext } from 'react'
 import { getFirebaseAuth, type FirebaseUserLike } from '@/lib/firebase-auth'
 
 const CONVEX_URL =
@@ -8,11 +8,21 @@ const CONVEX_URL =
 
 const convex = new ConvexReactClient(CONVEX_URL)
 
-export default function FirebaseConvexProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+type FirebaseAuthState = {
+  user: FirebaseUserLike | null
+  isLoading: boolean
+}
+
+const FirebaseAuthStateContext = createContext<FirebaseAuthState>({
+  user: null,
+  isLoading: true,
+})
+
+export function useFirebaseAuthState() {
+  return useContext(FirebaseAuthStateContext)
+}
+
+export default function FirebaseConvexProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseUserLike | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -35,49 +45,24 @@ export default function FirebaseConvexProvider({
     return () => unsubscribe?.()
   }, [])
 
-  const fetchAccessToken = useCallback(
-    async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
-      if (!user) return null
-      return await user.getIdToken(forceRefreshToken)
-    },
-    [user],
-  )
+  const fetchAccessToken = useCallback(async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
+    if (!user) return null
+    return user.getIdToken(forceRefreshToken)
+  }, [user])
 
-  const useFirebaseAuth = useCallback(
-    () => ({
-      isLoading,
-      isAuthenticated: !!user,
-      fetchAccessToken,
-    }),
-    [isLoading, user, fetchAccessToken],
-  )
+  const useAuth = useCallback(() => ({
+    isLoading,
+    isAuthenticated: !!user,
+    fetchAccessToken,
+  }), [isLoading, user, fetchAccessToken])
 
-  const authState = useMemo(
-    () => ({ user, isLoading }),
-    [user, isLoading],
-  )
+  const authState = useMemo(() => ({ user, isLoading }), [user, isLoading])
 
   return (
     <FirebaseAuthStateContext.Provider value={authState}>
-      <ConvexProviderWithAuth client={convex} useAuth={useFirebaseAuth}>
+      <ConvexProviderWithAuth client={convex} useAuth={useAuth}>
         {children}
       </ConvexProviderWithAuth>
     </FirebaseAuthStateContext.Provider>
   )
-}
-
-import { createContext, useContext } from 'react'
-
-type FirebaseAuthState = {
-  user: FirebaseUserLike | null
-  isLoading: boolean
-}
-
-const FirebaseAuthStateContext = createContext<FirebaseAuthState>({
-  user: null,
-  isLoading: true,
-})
-
-export function useFirebaseAuthState() {
-  return useContext(FirebaseAuthStateContext)
 }
