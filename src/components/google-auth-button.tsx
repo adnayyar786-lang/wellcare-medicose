@@ -1,19 +1,12 @@
-import { useAction } from 'convex/react'
+import { useAuthActions } from '@convex-dev/auth/react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 
-import { api } from '@/convex/_generated/api'
-import { useAuthActions } from '@convex-dev/auth/react'
 import { Button } from '@/components/ui/button'
-import {
-  createGoogleAuthChallenge,
-  createGoogleAuthHandoff,
-} from '@/lib/google-auth-handoff'
 
 export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
   const { signIn } = useAuthActions()
-  const createAuthorizationUrl = useAction(api.googleAuth.createAuthorizationUrl)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -21,13 +14,7 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
     setError(null)
     setLoading(true)
     try {
-      const handoffChallenge = await createGoogleAuthHandoff('sign-in')
-      const { authorizationUrl } = await createAuthorizationUrl({
-        appOrigin: window.location.origin,
-        handoffChallenge,
-        flowMode: 'redirect',
-      })
-      window.location.assign(authorizationUrl)
+      await signIn('google', { redirectTo: '/' })
     } catch (caught) {
       setError(
         caught instanceof Error
