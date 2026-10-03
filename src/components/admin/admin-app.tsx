@@ -116,7 +116,7 @@ const NAV: NavItem[] = [
     icon: Megaphone,
     children: [
       { label: 'Coupons', target: { section: 'marketing' } },
-      { label: 'Banners', soon: true },
+      { label: 'Banners', target: { section: 'marketing', scrollTo: 'banners' } },
       { label: 'Featured Products', soon: true },
     ],
   },
