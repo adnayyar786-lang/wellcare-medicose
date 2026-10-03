@@ -76,9 +76,16 @@ export function LoginScreen(){
   async function requestCode(e:React.FormEvent){
     e.preventDefault();setLoading(true);setError(null)
     try{
-      const full=`${country.dial}${phone.replace(/\\D/g,'')}`
-      if(!/^\\+[1-9]\\d{7,14}$/.test(full))throw new Error('Enter a valid mobile number.')
-      const result=await sendFirebasePhoneCode(full,recaptchaId);setPhone(full);setConfirmation(result);setStep('code')
+      const digits=phone.replace(/\\D/g,'')
+      const dialDigits=country.dial.replace(/\\D/g,'')
+      if(!digits || digits.length<6 || digits.length>15) throw new Error('Enter a valid mobile number.')
+      const local=digits.startsWith(dialDigits) && digits.length>country.dial.replace(/\\D/g,'').length
+        ? digits.slice(dialDigits.length)
+        : digits
+      if(!local || local.length<6 || local.length>12) throw new Error('Enter a valid mobile number.')
+      const full=`+${dialDigits}${local}`
+      const result=await sendFirebasePhoneCode(full,recaptchaId)
+      setPhone(local);setConfirmation(result);setStep('code')
     }catch(err){setError(err instanceof Error?err.message:'Could not send the SMS code. Please try again.')}finally{setLoading(false)}
   }
   async function verifyCode(e:React.FormEvent){
