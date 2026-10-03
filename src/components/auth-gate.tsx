@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useFirebaseAuthState } from '@/components/convex-client-provider'
 import { sendFirebasePhoneCode } from '@/lib/firebase-auth'
 import { motion } from 'framer-motion'
-import { Pill, Cross, Mail, Phone, Loader2 } from 'lucide-react'
+import { Pill, Cross, Phone, Loader2 } from 'lucide-react'
 import { BrandMark } from '@/components/brand'
 import { api } from '../../convex/_generated/api'
 import { GoogleAuthButton } from '@/components/google-auth-button'
@@ -16,40 +16,36 @@ function FloatingShape({ className, delay, duration, children }: { className: st
 }
 
 export function LoginScreen() {
-  const { user: firebaseUser } = useFirebaseAuthState()
-  const [method, setMethod] = useState<'email' | 'phone'>('email')
-  const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
   const [step, setStep] = useState<'identifier' | 'code'>('identifier')
-  const [loading, setLoading] = useState(false)\n  const [confirmation, setConfirmation] = useState<any>(null)\n  const [recaptchaId] = useState(() => `firebase-recaptcha-${Math.random().toString(36).slice(2)}`)
+  const [loading, setLoading] = useState(false)
+  const [confirmation, setConfirmation] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-
-  function changeMethod(next: 'email' | 'phone') {
-    setMethod(next); setStep('identifier'); setCode(''); setError(null)
-  }
+  const [recaptchaId] = useState(() => `firebase-recaptcha-${Math.random().toString(36).slice(2)}`)
 
   async function requestCode(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setLoading(true); setError(null)
+    event.preventDefault()
+    setLoading(true); setError(null)
     try {
-      if (method === 'email') {
-        throw new Error('Email OTP is currently handled by the existing email provider. Use Google or Mobile number.')
-      }
       const normalizedPhone = phone.replace(/[\\s()-]/g, '')
-      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) throw new Error('Enter your phone number with country code, e.g. +919876543210.')
+      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) {
+        throw new Error('Enter your phone number with country code, e.g. +919876543210.')
+      }
       setPhone(normalizedPhone)
       const result = await sendFirebasePhoneCode(normalizedPhone, recaptchaId)
       setConfirmation(result)
       setStep('code')
     } catch (e) {
-      setError(e instanceof Error ? e.message : `Could not send the ${method === 'email' ? 'email' : 'SMS'} code. Please try again.`)
+      setError(e instanceof Error ? e.message : 'Could not send the SMS code. Please try again.')
     } finally { setLoading(false) }
   }
 
   async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setLoading(true); setError(null)
+    event.preventDefault()
+    setLoading(true); setError(null)
     try {
-      if (method !== 'phone' || !confirmation) throw new Error('Please request a mobile verification code first.')
+      if (!confirmation) throw new Error('Please request a mobile verification code first.')
       await confirmation.confirm(code.trim())
     } catch (e) {
       setError(e instanceof Error ? e.message : 'That code could not be verified. Please try again.')
@@ -63,17 +59,25 @@ export function LoginScreen() {
     <FloatingShape className="bottom-[12%] right-[12%]" delay={1.8} duration={8}><Pill className="size-10" strokeWidth={1} /></FloatingShape>
     <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
     <div className="relative w-full max-w-md rounded-3xl border border-white/15 bg-white/[0.08] p-6 shadow-2xl backdrop-blur-xl sm:p-8">
-      <div className="flex flex-col items-center text-center"><motion.div initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="flex size-16 items-center justify-center"><BrandMark className="size-16" /></motion.div><h1 className="mt-4 text-2xl font-bold tracking-tight text-white">Sign in or create your account</h1><p className="mt-2 text-sm text-white/70">Verify your email or mobile number to continue and place your order.</p></div>
-      <div className="mt-7"><GoogleAuthButton premium /></div>
-      <div id={recaptchaId} className="hidden" />\n      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use a one-time code<span className="h-px flex-1 bg-white/20" /></div>
-      <div className="mb-4 grid grid-cols-2 gap-2 rounded-xl bg-black/15 p-1">
-        <button type="button" onClick={() => changeMethod('email')} aria-pressed={method === 'email'} className={`flex h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition ${method === 'email' ? 'bg-white text-slate-900 shadow' : 'text-white/75 hover:bg-white/10'}`}><Mail className="size-4" /> Email</button>
-        <button type="button" onClick={() => changeMethod('phone')} aria-pressed={method === 'phone'} className={`flex h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition ${method === 'phone' ? 'bg-white text-slate-900 shadow' : 'text-white/75 hover:bg-white/10'}`}><Phone className="size-4" /> Mobile number</button>
+      <div className="flex flex-col items-center text-center">
+        <motion.div initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="flex size-16 items-center justify-center"><BrandMark className="size-16" /></motion.div>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">Sign in or create your account</h1>
+        <p className="mt-2 text-sm text-white/70">Use Google or your mobile number to continue and place your order.</p>
       </div>
+      <div className="mt-7"><GoogleAuthButton premium /></div>
+      <div id={recaptchaId} className="hidden" />
+      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use mobile OTP<span className="h-px flex-1 bg-white/20" /></div>
       {step === 'identifier' ? <form onSubmit={requestCode} className="space-y-3">
-        {method === 'email' ? <><label htmlFor="auth-email" className="text-sm font-medium text-white/90">Email address</label><Input id="auth-email" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-slate-900 placeholder:text-slate-400" /></> : <><label htmlFor="auth-phone" className="text-sm font-medium text-white/90">Mobile number with country code</label><Input id="auth-phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-slate-900 placeholder:text-slate-400" /><p className="text-xs leading-relaxed text-white/55">Include the + country code. An SMS service must be configured for code delivery.</p></>}
-        <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white hover:bg-emerald-600">{loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : method === 'email' ? <Mail className="mr-2 size-4" /> : <Phone className="mr-2 size-4" />}{loading ? 'Sending code…' : `Continue with ${method === 'email' ? 'email' : 'mobile number'}`}</Button>
-      </form> : <form onSubmit={verifyCode} className="space-y-3"><p className="text-sm text-white/80">Enter the 6-digit code sent to <strong>{method === 'email' ? email : phone}</strong>.</p><Input aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="6-digit code" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-center text-lg tracking-[0.4em] text-slate-900" /><Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white hover:bg-emerald-600">{loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}{loading ? 'Verifying…' : 'Verify and continue'}</Button><button type="button" onClick={() => { setStep('identifier'); setCode(''); setError(null) }} className="w-full text-sm text-white/75 underline">Use a different {method === 'email' ? 'email' : 'number'}</button></form>}
+        <label htmlFor="auth-phone" className="text-sm font-medium text-white/90">Mobile number with country code</label>
+        <Input id="auth-phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-slate-900 placeholder:text-slate-400" />
+        <p className="text-xs leading-relaxed text-white/55">A verification SMS will be sent by Firebase.</p>
+        <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white hover:bg-emerald-600">{loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Phone className="mr-2 size-4" />}{loading ? 'Sending code…' : 'Send mobile code'}</Button>
+      </form> : <form onSubmit={verifyCode} className="space-y-3">
+        <p className="text-sm text-white/80">Enter the 6-digit code sent to <strong>{phone}</strong>.</p>
+        <Input aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\\D/g, '').slice(0, 6))} placeholder="6-digit code" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-center text-lg tracking-[0.4em] text-slate-900" />
+        <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white hover:bg-emerald-600">{loading ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}{loading ? 'Verifying…' : 'Verify and continue'}</Button>
+        <button type="button" onClick={() => { setStep('identifier'); setCode(''); setConfirmation(null); setError(null) }} className="w-full text-sm text-white/75 underline">Use a different number</button>
+      </form>}
       {error && <p role="alert" className="mt-3 rounded-lg bg-red-500/15 p-3 text-sm text-red-100">{error}</p>}
       <p className="mt-6 text-center text-xs leading-relaxed text-white/55">Your account helps us associate your orders with you. By continuing, you agree to our <a href="/privacy" className="text-teal-200 underline">Privacy Policy</a>.</p>
     </div>
@@ -86,7 +90,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const recordLogin = useMutation(api.activity.recordLogin)
   const loggedRef = useRef(false)
   useEffect(() => {
-    if (isAuthenticated && !loggedRef.current) { loggedRef.current = true; recordLogin({}).catch(() => { loggedRef.current = false }) }
+    if (isAuthenticated && !loggedRef.current) {
+      loggedRef.current = true
+      recordLogin({}).catch(() => { loggedRef.current = false })
+    }
     if (!isAuthenticated) loggedRef.current = false
   }, [isAuthenticated, recordLogin])
   if (pathname !== '/checkout') return <>{children}</>
