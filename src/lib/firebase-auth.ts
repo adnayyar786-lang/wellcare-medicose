@@ -50,7 +50,22 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
 
-    const result = await auth.signInWithPopup(provider)
+    // A stale Google/Firebase popup can occasionally return an invalid or
+    // expired credential. Retry once with a completely fresh popup session.
+    // This is especially useful on mobile browsers after a previous failed
+    // Google attempt.
+    let result: any
+    try {
+      result = await auth.signInWithPopup(provider)
+    } catch (firstError:any) {
+      const firstCode = firstError?.code || ''
+      if (firstCode === 'auth/invalid-credential' || firstCode === 'auth/invalid-idp-response') {
+        try { await auth.signOut() } catch {}
+        result = await auth.signInWithPopup(provider)
+      } else {
+        throw firstError
+      }
+    }
     if (!result?.user) throw new Error('Google sign-in completed but no Firebase user was returned.')
     return result.user as FirebaseUserLike
   } catch (error:any) {
@@ -58,6 +73,9 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
     const message=error?.message || ''
     if(code==='auth/popup-blocked') {
       throw new Error('Google sign-in popup was blocked. Please allow popups for this website and try again.')
+    }
+    if(code==='auth/invalid-credential' || code==='auth/invalid-idp-response') {
+      throw new Error('Google returned an invalid or expired credential. Please tap Continue with Google once more and select your Gmail again.')
     }
     if(code==='auth/account-exists-with-different-credential') {
       throw new Error('This Gmail already has a Wellcare account with another sign-in method. Sign in with that method first, then use Google.')
