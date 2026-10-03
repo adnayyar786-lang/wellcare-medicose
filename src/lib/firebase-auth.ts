@@ -1,9 +1,9 @@
 // Firebase web-app configuration. Firebase Web API keys are public-by-design;
-// use the Cloudflare VITE_* value when present, with the Firebase Web App key
-// as a production-safe fallback so a missing Workers build variable cannot
+// use the Cloudflare VITE_* value when present, with the current Firebase Web App key
+// as the production-safe fallback so a missing Workers build variable cannot
 // turn customer authentication into auth/invalid-api-key.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvjK',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvJk',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'wellcare-medicose.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wellcare-medicose',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'wellcare-medicose.firebasestorage.app',
