@@ -21,8 +21,7 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
     setError(null)
     setLoading(true)
     try {
-      const handoffVerifier = await createGoogleAuthHandoff('sign-in')
-      const handoffChallenge = await createGoogleAuthChallenge(handoffVerifier)
+      const handoffChallenge = await createGoogleAuthHandoff('sign-in')
       const { authorizationUrl } = await createAuthorizationUrl({
         appOrigin: window.location.origin,
         handoffChallenge,
