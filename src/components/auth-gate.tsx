@@ -1,4 +1,4 @@
-import { useConvexAuth, useMutation } from 'convex/react'
+import { useMutation } from 'convex/react'
 import { useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { useFirebaseAuthState } from '@/components/convex-client-provider'
@@ -66,7 +66,7 @@ export function LoginScreen() {
       </div>
       <div className="mt-7"><GoogleAuthButton premium /></div>
       <div id={recaptchaId} className="hidden" />
-      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use mobile OTP<span className="h-px flex-1 bg-white/20" /></div>
+      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use mobile OTP<span className="h-px flex-1 bg-white/20" /><span className="h-px flex-1 bg-white/20" /></div>
       {step === 'identifier' ? <form onSubmit={requestCode} className="space-y-3">
         <label htmlFor="auth-phone" className="text-sm font-medium text-white/90">Mobile number with country code</label>
         <Input id="auth-phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 98765 43210" disabled={loading} className="h-12 rounded-xl border-white/20 bg-white text-slate-900 placeholder:text-slate-400" />
@@ -86,18 +86,18 @@ export function LoginScreen() {
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: s => s.location.pathname })
-  const { isAuthenticated, isLoading } = useConvexAuth()
+  const { user, isLoading } = useFirebaseAuthState()
   const recordLogin = useMutation(api.activity.recordLogin)
   const loggedRef = useRef(false)
   useEffect(() => {
-    if (isAuthenticated && !loggedRef.current) {
+    if (user && !loggedRef.current) {
       loggedRef.current = true
       recordLogin({}).catch(() => { loggedRef.current = false })
     }
-    if (!isAuthenticated) loggedRef.current = false
-  }, [isAuthenticated, recordLogin])
+    if (!user) loggedRef.current = false
+  }, [user, recordLogin])
   if (pathname !== '/checkout') return <>{children}</>
   if (isLoading) return <div className="flex min-h-screen items-center justify-center bg-background"><Loader2 className="size-7 animate-spin text-primary" /></div>
-  if (!isAuthenticated) return <LoginScreen />
+  if (!user) return <LoginScreen />
   return <>{children}</>
 }
