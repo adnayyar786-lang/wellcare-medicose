@@ -9,8 +9,16 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
   const [error, setError] = useState<string | null>(null)
   const start = async () => {
     setError(null); setLoading(true)
-    try { await signInWithGoogleFirebase() }
-    catch (e) { setError(e instanceof Error ? e.message : 'Google sign-in failed. Please try again.'); setLoading(false) }
+    try {
+      await signInWithGoogleFirebase()
+      // Firebase LOCAL persistence is already set before the popup. Reload the
+      // current Cloudflare page so the auth provider reads the persisted user
+      // immediately instead of leaving the checkout/login screen mounted.
+      window.location.reload()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Google sign-in failed. Please try again.')
+      setLoading(false)
+    }
   }
   return <div className="w-full">
     <motion.div whileHover={premium ? { scale: 1.02 } : undefined} whileTap={premium ? { scale: 0.98 } : undefined} className="rounded-md">
