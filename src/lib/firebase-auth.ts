@@ -48,9 +48,14 @@ export async function createAccountWithEmailFirebase(email:string,password:strin
 export async function sendPasswordResetFirebase(email:string){ await getFirebaseAuth().sendPasswordResetEmail(email.trim().toLowerCase()) }
 export async function sendFirebasePhoneCode(phoneNumber:string,buttonId:string):Promise<any>{
   const auth=getFirebaseAuth(), firebase=(window as any).firebase
+  if(!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) {
+    throw new Error('Enter a valid mobile number with country code, for example +919876543210.')
+  }
   const oldVerifier=(window as any).__wellcareRecaptcha
   if(oldVerifier){try{oldVerifier.clear()}catch{}}
-  const verifier=new firebase.auth.RecaptchaVerifier(buttonId,{size:'invisible'},auth)
+  // Firebase compat RecaptchaVerifier takes the button/container ID as its first
+  // argument; the Auth instance is obtained from the same Firebase app.
+  const verifier=new firebase.auth.RecaptchaVerifier(buttonId,{size:'invisible'})
   ;(window as any).__wellcareRecaptcha=verifier
   try { return await auth.signInWithPhoneNumber(phoneNumber,verifier) }
   catch (error) { try { verifier.clear() } catch {}; (window as any).__wellcareRecaptcha=null; throw error }
