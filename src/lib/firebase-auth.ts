@@ -16,7 +16,24 @@ export function getFirebaseAuth(): any {
   if (typeof window === 'undefined') return null
   const firebase = (window as any).firebase
   if (!firebase) throw new Error('Firebase SDK has not loaded yet.')
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig)
+
+  // Always make sure the default Firebase app is using this project's current
+  // web configuration. This prevents a stale/previously initialized app from
+  // silently keeping an invalid API key.
+  if (firebase.apps.length) {
+    const app = firebase.app()
+    const options = app.options || {}
+    const expectedProject = firebaseConfig.projectId
+    if (options.projectId !== expectedProject || options.apiKey !== firebaseConfig.apiKey) {
+      return app.delete().then(() => {
+        firebase.initializeApp(firebaseConfig)
+        return firebase.auth()
+      })
+    }
+    return app.auth()
+  }
+
+  firebase.initializeApp(firebaseConfig)
   return firebase.auth()
 }
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
