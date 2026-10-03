@@ -25,6 +25,18 @@ export function getFirebaseAuth(): any {
   return app.auth()
 }
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
+  // Firebase Authentication must authorize the exact hostname that starts
+  // the OAuth flow. Cloudflare preview/version URLs contain a changing hash
+  // (for example fe3abb52-wellcare-medicose...), so always start customer
+  // Google sign-in from the stable production Worker hostname.
+  const productionHost = 'wellcare-medicose.adnayyar786.workers.dev'
+  if (window.location.hostname !== productionHost) {
+    const target = new URL(window.location.href)
+    target.hostname = productionHost
+    window.location.replace(target.toString())
+    return await new Promise<FirebaseUserLike>(() => {})
+  }
+
   const auth=getFirebaseAuth(), firebase=(window as any).firebase
   const provider=new firebase.auth.GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
