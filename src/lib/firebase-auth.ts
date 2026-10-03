@@ -1,17 +1,4 @@
-export type FirebaseUserLike = {
-  uid: string
-  email?: string | null
-  phoneNumber?: string | null
-  displayName?: string | null
-  photoURL?: string | null
-  getIdToken: (forceRefresh?: boolean) => Promise<string>
-}
-
-declare global {
-  interface Window {
-    firebase?: any
-  }
-}
+import { getFirebaseAuth } from '@/lib/firebase-auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,48 +9,40 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+export type FirebaseUserLike = {
+  uid: string
+  email?: string | null
+  phoneNumber?: string | null
+  displayName?: string | null
+  photoURL?: string | null
+  getIdToken: (forceRefresh?: boolean) => Promise<string>
+}
+
 export function getFirebaseAuth(): any {
   if (typeof window === 'undefined') return null
-  const firebase = window.firebase
+  const firebase = (window as any).firebase
   if (!firebase) throw new Error('Firebase SDK has not loaded yet.')
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig)
   return firebase.auth()
 }
 
-export function getFirebaseUser(): FirebaseUserLike | null {
-  try {
-    return getFirebaseAuth()?.currentUser ?? null
-  } catch {
-    return null
-  }
-}
-
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const auth = getFirebaseAuth()
-  const provider = new window.firebase.auth.GoogleAuthProvider()
+  const provider = new (window as any).firebase.auth.GoogleAuthProvider()
   const result = await auth.signInWithPopup(provider)
   return result.user as FirebaseUserLike
 }
 
-export async function sendFirebasePhoneCode(
-  phoneNumber: string,
-  containerId: string,
-): Promise<any> {
+export async function sendFirebasePhoneCode(phoneNumber: string, containerId: string): Promise<any> {
   const auth = getFirebaseAuth()
-  const existing = (window as any).__wellcareRecaptcha
-  if (existing) {
-    try { existing.clear() } catch {}
-  }
-  const verifier = new window.firebase.auth.RecaptchaVerifier(
-    containerId,
-    { size: 'invisible' },
-    auth,
-  )
+  const oldVerifier = (window as any).__wellcareRecaptcha
+  if (oldVerifier) { try { oldVerifier.clear() } catch {} }
+  const verifier = new (window as any).firebase.auth.RecaptchaVerifier(containerId, { size: 'invisible' }, auth)
   ;(window as any).__wellcareRecaptcha = verifier
-  return await auth.signInWithPhoneNumber(phoneNumber, verifier)
+  return auth.signInWithPhoneNumber(phoneNumber, verifier)
 }
 
-export async function signOutFirebase(): Promise<void> {
+export async function signOutFirebase() {
   const auth = getFirebaseAuth()
   if (auth) await auth.signOut()
 }
