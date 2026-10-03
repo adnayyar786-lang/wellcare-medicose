@@ -16,7 +16,7 @@ export type FirebaseUserLike = { uid:string; email?:string|null; phoneNumber?:st
 export function getFirebaseAuth(): any {
   if (typeof window === 'undefined') return null
   const firebase = (window as any).firebase
-  if (!firebase) throw new Error('Firebase SDK has not loaded yet.')
+  if (!firebase) throw new Error('Firebase is still loading. Please wait a moment and try again.')
   const appName = 'wellcare-customer'
   let app = firebase.apps.find((item: any) => item.name === appName)
   if (!app) app = firebase.initializeApp(firebaseConfig, appName)
