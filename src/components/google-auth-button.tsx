@@ -3,14 +3,10 @@ import { motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { signInWithGoogleFirebase } from '@/lib/firebase-auth'
-import { useMutation } from 'convex/react'
-import { api } from '../../convex/_generated/api'
 
 export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const ensureUser = useMutation(api.firebaseAuth.ensureUser)
-
   const start = async () => {
     setError(null)
     setLoading(true)
@@ -19,11 +15,6 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
       // Keeping one auth session prevents the Google login from succeeding in
       // one auth system while AuthGate is still watching a different one.
       const user = await signInWithGoogleFirebase()
-
-      // Wait for the Firebase identity to be mirrored into the Convex users
-      // table before releasing the login gate. This guarantees that the
-      // customer's account/profile record exists when the UI continues.
-      await ensureUser({})
 
       // Sync the popup result immediately. Firebase's auth observer also
       // confirms the session and persists it on the Cloudflare origin.
