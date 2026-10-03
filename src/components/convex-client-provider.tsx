@@ -27,25 +27,59 @@ function FirebaseSynchronizer({ children }: { children: React.ReactNode }) {
 function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseUserLike | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
+    let mounted = true
+
     try {
       const auth = getFirebaseAuth()
-      unsubscribe = auth?.onAuthStateChanged((next: FirebaseUserLike | null) => {
-        setUser(next); setIsLoading(false)
-      })
-      if (!auth) setIsLoading(false)
+      if (!auth) {
+        setIsLoading(false)
+        return
+      }
+
+      // Keep the app state in sync with Firebase's authoritative auth observer.
+      // Also seed from currentUser when the SDK has already restored a session.
+      const sync = (next: FirebaseUserLike | null) => {
+        if (!mounted) return
+        setUser(next)
+        setIsLoading(false)
+      }
+
+      sync(auth.currentUser ?? null)
+      unsubscribe = auth.onAuthStateChanged(sync)
+
+      // signInWithPopup resolves with the authenticated user before React has
+      // necessarily processed the auth observer callback. This event closes
+      // that small race without forcing a page reload.
+      const onSignedIn = (event: Event) => {
+        const next = (event as CustomEvent<FirebaseUserLike | null>).detail
+        if (next) sync(next)
+      }
+      window.addEventListener('wellcare-firebase-signed-in', onSignedIn)
+
+      return () => {
+        mounted = false
+        unsubscribe?.()
+        window.removeEventListener('wellcare-firebase-signed-in', onSignedIn)
+      }
     } catch {
-      setUser(null); setIsLoading(false)
+      if (mounted) {
+        setUser(null)
+        setIsLoading(false)
+      }
     }
-    return () => unsubscribe?.()
   }, [])
+
   const fetchAccessToken = useCallback(async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
     if (!user) return null
     return user.getIdToken(forceRefreshToken)
   }, [user])
+
   const useAuth = useCallback(() => ({ isLoading, isAuthenticated: !!user, fetchAccessToken }), [isLoading, user, fetchAccessToken])
   const authState = useMemo(() => ({ user, isLoading }), [user, isLoading])
+
   return (
     <FirebaseAuthStateContext.Provider value={authState}>
       <ConvexProviderWithAuth client={convex} useAuth={useAuth}>
