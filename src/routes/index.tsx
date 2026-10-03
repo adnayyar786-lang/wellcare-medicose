@@ -421,10 +421,39 @@ function Home() {
           </div>
         </div>
         <div className="mx-auto max-w-[1600px] px-4 pt-2 md:hidden">
-          <nav aria-label="Quick sections" className="-mx-1 flex snap-x gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {AMAZON_NAV_ITEMS.map((item) => (
-              <button key={item} type="button" onClick={() => handleAmazonNav(item)} aria-pressed={activeAmazonNav === item} className={cn('shrink-0 snap-start rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors', activeAmazonNav === item ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-border bg-card text-foreground hover:border-primary/40')}>
-                {item}
+          <nav aria-label="Quick sections" className="-mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {([
+              { name: 'Pharmacy', mark: 'Rx', icon: Pill, hint: 'Medicines' },
+              { name: 'Latest', mark: 'NEW', icon: Sparkles, hint: 'New arrivals' },
+              { name: 'Petcare', mark: 'PET', icon: PawPrint, hint: 'Pet health' },
+              { name: 'Consult', mark: 'DOC', icon: Stethoscope, hint: 'Doctor help' },
+              { name: 'Adult', mark: '18+', icon: HeartPulse, hint: 'Adult health' },
+              { name: 'Health', mark: 'H+', icon: ShieldCheck, hint: 'Wellness' },
+              { name: 'Health Plan', mark: 'HP', icon: HeartPulse, hint: 'Health plans' },
+            ] as const).map(({ name, mark, icon: Icon, hint }) => (
+              <button
+                key={name}
+                type="button"
+                onClick={() => handleAmazonNav(name)}
+                aria-pressed={activeAmazonNav === name}
+                className={cn(
+                  'group flex h-[74px] w-[92px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-2xl border px-2 py-2 text-center transition-all duration-200',
+                  activeAmazonNav === name
+                    ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                    : 'border-border bg-card text-foreground shadow-sm hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',
+                )}
+              >
+                <span className={cn(
+                  'flex size-9 items-center justify-center rounded-xl border text-[10px] font-black tracking-tight shadow-sm transition-transform group-hover:scale-105',
+                  activeAmazonNav === name
+                    ? 'border-white/20 bg-white/15 text-white'
+                    : 'border-primary/10 bg-primary/5 text-primary',
+                )}>
+                  <Icon className="size-4.5" strokeWidth={2} aria-hidden="true" />
+                  <span className="sr-only">{mark}</span>
+                </span>
+                <span className="block w-full truncate text-[11px] font-bold leading-tight">{name}</span>
+                <span className={cn('block w-full truncate text-[8px] leading-tight', activeAmazonNav === name ? 'text-white/75' : 'text-muted-foreground')}>{hint}</span>
               </button>
             ))}
           </nav>
