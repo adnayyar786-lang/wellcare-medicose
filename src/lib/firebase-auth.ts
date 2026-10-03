@@ -72,7 +72,7 @@ export async function sendFirebasePhoneCode(phoneNumber:string,buttonId:string):
   if(oldVerifier){try{oldVerifier.clear()}catch{}}
   // Firebase compat RecaptchaVerifier takes the button/container ID as its first
   // argument; the Auth instance is obtained from the same Firebase app.
-  const verifier=new firebase.auth.RecaptchaVerifier(buttonId,{size:'invisible'})
+  const verifier=new firebase.auth.RecaptchaVerifier(buttonId,{size:'invisible'},auth.app)
   ;(window as any).__wellcareRecaptcha=verifier
   try { return await auth.signInWithPhoneNumber(phoneNumber,verifier) }
   catch (error) { try { verifier.clear() } catch {}; (window as any).__wellcareRecaptcha=null; throw error }
