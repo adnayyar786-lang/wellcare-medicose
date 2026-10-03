@@ -17,8 +17,19 @@ export function getFirebaseAuth(): any {
   return firebase.auth()
 }
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
-  const auth=getFirebaseAuth(), provider=new (window as any).firebase.auth.GoogleAuthProvider()
-  return (await auth.signInWithPopup(provider)).user as FirebaseUserLike
+  const auth=getFirebaseAuth(), firebase=(window as any).firebase
+  const provider=new firebase.auth.GoogleAuthProvider()
+  provider.setCustomParameters({ prompt: 'select_account' })
+  try {
+    return (await auth.signInWithPopup(provider)).user as FirebaseUserLike
+  } catch (error:any) {
+    const code=error?.code || ''
+    if (code==='auth/popup-blocked' || code==='auth/popup-closed-by-user' || code==='auth/cancelled-popup-request') {
+      await auth.signInWithRedirect(provider)
+      throw new Error('Redirecting to Google sign-in…')
+    }
+    throw error
+  }
 }
 export async function signInWithEmailFirebase(email:string,password:string):Promise<FirebaseUserLike>{
   return (await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)).user as FirebaseUserLike
