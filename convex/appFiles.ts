@@ -1,4 +1,4 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
+import { getAppUserId } from './appAuth'
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
@@ -20,7 +20,7 @@ export const getCurrentAppUserId = internalQuery({
   args: {},
   returns: v.id('users'),
   handler: async (ctx): Promise<Id<'users'>> => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getAppUserId(ctx)
     if (!userId) throw new Error('Authentication required')
     return userId
   },

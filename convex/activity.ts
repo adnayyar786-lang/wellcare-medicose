@@ -1,5 +1,5 @@
 import { v } from 'convex/values'
-import { getAuthUserId } from '@convex-dev/auth/server'
+import { getAppUserId } from './appAuth'
 
 import { mutation, query } from './_generated/server'
 import type { Id } from './_generated/dataModel'
@@ -8,7 +8,7 @@ export const recordLogin = mutation({
   args: {},
   returns: v.null(),
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getAppUserId(ctx)
     if (!userId) return null
     const user = await ctx.db.get(userId)
     const email = user?.email
@@ -37,7 +37,7 @@ export const recordProductView = mutation({
   args: { medicineId: v.id('medicines') },
   returns: v.null(),
   handler: async (ctx, { medicineId }) => {
-    const userId = await getAuthUserId(ctx)
+    const userId = await getAppUserId(ctx)
     if (!userId) return null
     const user = await ctx.db.get(userId)
     const email = user?.email

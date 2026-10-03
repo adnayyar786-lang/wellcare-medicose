@@ -1,4 +1,4 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
+import { getAppUserId } from './appAuth'
 import { v } from 'convex/values'
 import { query, mutation } from './_generated/server'
 
@@ -11,7 +11,7 @@ export const getMine = query({
     pincode: v.optional(v.string()), avatarKey: v.optional(v.string()), emergencyContact: v.optional(v.string()),
   })),
   handler: async (ctx) => {
-    const id = await getAuthUserId(ctx)
+    const id = await getAppUserId(ctx)
     if (!id) return null
     const u = await ctx.db.get(id)
     if (!u) return null
@@ -28,7 +28,7 @@ export const updateMine = mutation({
   },
   returns: v.union(v.literal('saved'), v.literal('unauthenticated')),
   handler: async (ctx, args) => {
-    const id = await getAuthUserId(ctx)
+    const id = await getAppUserId(ctx)
     if (!id) return 'unauthenticated'
     const user = await ctx.db.get(id)
     if (!user) return 'unauthenticated'

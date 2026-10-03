@@ -3,7 +3,7 @@ import {
   paginationResultValidator,
 } from 'convex/server'
 import { v } from 'convex/values'
-import { getAuthUserId } from '@convex-dev/auth/server'
+import { getAppUserId } from './appAuth'
 
 import { mutation, query } from './_generated/server'
 import { internal } from './_generated/api'
@@ -161,7 +161,7 @@ export const place = mutation({
   },
   returns: v.id('orders'),
   handler: async (ctx, args) => {
-    const authUserId = await getAuthUserId(ctx)
+    const authUserId = await getAppUserId(ctx)
     if (!authUserId) throw new Error('Please sign in before placing an order')
     const name = args.customerName.trim()
     const phone = args.customerPhone.trim()
@@ -245,7 +245,7 @@ export const placeV2 = mutation({
     total: v.number(),
   }),
   handler: async (ctx, args) => {
-    const authUserId = await getAuthUserId(ctx)
+    const authUserId = await getAppUserId(ctx)
     if (!authUserId) throw new Error('Please sign in before placing an order')
     const name = args.customerName.trim()
     const phone = args.customerPhone.trim()
