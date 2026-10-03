@@ -1,10 +1,13 @@
+// Public Firebase web-app configuration. The VITE_* values are still accepted,
+// but these exact project values keep the customer auth flow working even when
+// Cloudflare's build environment does not inject the variables.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvjK',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'wellcare-medicose.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wellcare-medicose',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'wellcare-medicose.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '927291380187',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:927291380187:web:88f2fdbd47a009979197fe',
 }
 
 export type FirebaseUserLike = { uid:string; email?:string|null; phoneNumber?:string|null; displayName?:string|null; photoURL?:string|null; getIdToken:(forceRefresh?:boolean)=>Promise<string> }
