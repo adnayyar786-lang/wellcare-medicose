@@ -31,6 +31,8 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
     let mounted = true
+    let lastKnownUser: FirebaseUserLike | null = null
+    let ignoreNullUntil = 0
 
     try {
       const auth = getFirebaseAuth()
@@ -44,12 +46,22 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
       // a confirmed sign-out before this callback fires.
       const sync = (next: FirebaseUserLike | null) => {
         if (!mounted) return
+        // A Google popup can finish before the compat auth observer's
+        // initialization callback. Firebase documents that currentUser can
+        // temporarily be null while auth is initializing. Never let that
+        // transient null immediately kick a freshly signed-in customer back
+        // to the login screen.
+        if (!next && lastKnownUser && Date.now() < ignoreNullUntil) return
+        lastKnownUser = next
         setUser(next)
         setIsLoading(false)
       }
 
       const restored = auth.currentUser
-      if (restored) setUser(restored as FirebaseUserLike)
+      if (restored) {
+        lastKnownUser = restored as FirebaseUserLike
+        setUser(restored as FirebaseUserLike)
+      }
       unsubscribe = auth.onAuthStateChanged(sync)
 
       // signInWithPopup resolves with the authenticated user before React has
@@ -57,7 +69,11 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
       // that small race without forcing a page reload.
       const onSignedIn = (event: Event) => {
         const next = (event as CustomEvent<FirebaseUserLike | null>).detail
-        if (next) sync(next)
+        if (next) {
+          lastKnownUser = next
+          ignoreNullUntil = Date.now() + 10000
+          sync(next)
+        }
       }
       window.addEventListener('wellcare-firebase-signed-in', onSignedIn)
 
