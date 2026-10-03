@@ -33,7 +33,7 @@ function CountryPicker({country,setCountry,phone,setPhone,detectedCode}:{country
           {filtered.map(c=><option key={c.code} value={c.code}>{flag(c.code)} {c.dial} {c.name}</option>)}
         </select>
       </div>
-      <Input type="tel" inputMode="tel" autoComplete="tel-national" id="auth-phone" placeholder="Mobile number" className="h-12 rounded-xl border-white/20 bg-white text-slate-900" />
+      <Input type="tel" inputMode="tel" autoComplete="tel-national" id="auth-phone" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Mobile number" className="h-12 rounded-xl border-white/20 bg-white text-slate-900" />
     </div>
     <Input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search country or code…" className="h-10 rounded-xl border-white/20 bg-white text-slate-900" />
   </div>
@@ -116,7 +116,7 @@ export function LoginScreen(){
         <Button disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?<Loader2 className="mr-2 size-4 animate-spin"/>:<Phone className="mr-2 size-4"/>}{loading?'Sending code…':'Send mobile code'}</Button>
       </form>}
       {method==='phone' && step==='code' && <form onSubmit={verifyCode} className="space-y-3"><p className="text-sm text-white/80">Enter the 6-digit code sent to <strong>{phone}</strong>.</p><Input aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e=>setCode(e.target.value.replace(/\\D/g,'').slice(0,6))} placeholder="6-digit code" disabled={loading} className="h-12 rounded-xl bg-white text-center text-lg tracking-[0.4em] text-slate-900"/><Button disabled={loading} className="h-12 w-full rounded-xl bg-emerald-500 font-semibold text-white">{loading?'Verifying…':'Verify and continue'}</Button><button type="button" onClick={()=>{setStep('identifier');setCode('');setConfirmation(null)}} className="w-full text-sm text-white/75 underline">Change number</button></form>}
-      <div id={recaptchaId} className="hidden"/>
+      <div id={recaptchaId} className="fixed bottom-0 left-0 z-[-1] h-1 w-1 overflow-hidden opacity-0"/>
       {error&&<p role="alert" className="mt-3 rounded-lg bg-red-500/15 p-3 text-sm text-red-100">{error}</p>}
       <p className="mt-6 text-center text-xs text-white/55">By continuing, you agree to our <a href="/privacy" className="text-teal-200 underline">Privacy Policy</a>.</p>
     </div>
