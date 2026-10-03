@@ -17,24 +17,12 @@ export function getFirebaseAuth(): any {
   const firebase = (window as any).firebase
   if (!firebase) throw new Error('Firebase SDK has not loaded yet.')
 
-  // Always make sure the default Firebase app is using this project's current
-  // web configuration. This prevents a stale/previously initialized app from
-  // silently keeping an invalid API key.
-  if (firebase.apps.length) {
-    const app = firebase.app()
-    const options = app.options || {}
-    const expectedProject = firebaseConfig.projectId
-    if (options.projectId !== expectedProject || options.apiKey !== firebaseConfig.apiKey) {
-      return app.delete().then(() => {
-        firebase.initializeApp(firebaseConfig)
-        return firebase.auth()
-      })
-    }
-    return app.auth()
-  }
-
-  firebase.initializeApp(firebaseConfig)
-  return firebase.auth()
+  // Use a dedicated app instance so an older/default Firebase initialization
+  // can never leave customer auth pointing at stale configuration.
+  const appName = 'wellcare-customer'
+  let app = firebase.apps.find((item: any) => item.name === appName)
+  if (!app) app = firebase.initializeApp(firebaseConfig, appName)
+  return app.auth()
 }
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const auth=getFirebaseAuth(), firebase=(window as any).firebase
