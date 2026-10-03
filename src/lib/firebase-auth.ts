@@ -26,15 +26,32 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const auth=getFirebaseAuth(), firebase=(window as any).firebase
   const provider=new firebase.auth.GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
-  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-  if(isMobile){ await auth.signInWithRedirect(provider); throw new Error('Redirecting to Google sign-in…') }
-  try { return (await auth.signInWithPopup(provider)).user as FirebaseUserLike }
-  catch (error:any) {
+
+  // Keep the Google session on this exact Cloudflare origin. The previous
+  // mobile redirect flow could return to the login screen when browser
+  // storage/redirect handling was interrupted. Firebase recommends popup
+  // sign-in as the alternative for this hosting setup.
+  try {
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    const result = await auth.signInWithPopup(provider)
+    if (!result?.user) throw new Error('Google sign-in completed but no Firebase user was returned.')
+    return result.user as FirebaseUserLike
+  } catch (error:any) {
     const code=error?.code || ''
-    if(code==='auth/popup-blocked' || code==='auth/popup-closed-by-user' || code==='auth/cancelled-popup-request'){
-      await auth.signInWithRedirect(provider); throw new Error('Redirecting to Google sign-in…')
+    const message=error?.message || ''
+    if(code==='auth/popup-blocked') {
+      throw new Error('Google sign-in popup was blocked. Please allow popups for this website and try again.')
     }
-    throw error
+    if(code==='auth/account-exists-with-different-credential') {
+      throw new Error('This Gmail already has a Wellcare account with another sign-in method. Sign in with that method first, then use Google.')
+    }
+    if(code==='auth/unauthorized-domain') {
+      throw new Error('This website domain is not authorized in Firebase Authentication.')
+    }
+    if(code==='auth/operation-not-allowed') {
+      throw new Error('Google sign-in is not enabled in Firebase Authentication.')
+    }
+    throw new Error(message || 'Google sign-in failed. Please try again.')
   }
 }
 export async function signInWithEmailFirebase(email:string,password:string):Promise<FirebaseUserLike>{
