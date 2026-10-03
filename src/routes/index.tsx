@@ -55,7 +55,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import siteMetadata from '../metadata.json'
-import { allManufacturers, companyLogo, manufacturerOf } from '@/config/brand-folders'
+import { allManufacturers, companyMonogram, manufacturerOf } from '@/config/brand-folders'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -89,9 +89,9 @@ const SHOP_CATEGORIES: Array<{ name: string; icon: typeof Pill; mark: string }> 
 ]
 
 export const BANNERS = [
-  { title: 'Flat ₹100 off on first order', sub: 'Use code FIRST100 · min order ₹499', code: 'FIRST100' },
-  { title: 'Free delivery above ₹499', sub: 'On every home delivery order', code: null },
-  { title: '25% off with FIRST25', sub: 'Up to ₹150 off on orders above ₹199', code: 'FIRST25' },
+  { title: '15% OFF on medicines', sub: 'Save more on selected medicines · Limited-time offer', code: 'MED15' },
+  { title: '20% OFF on wellness', sub: 'Extra savings on health & wellness products', code: 'HEALTH20' },
+  { title: '10% OFF on first order', sub: 'New to Wellcare? Use your welcome offer', code: 'WELCOME10' },
 ]
 
 const OFFER_TONES = ['from-primary to-brand-teal', 'from-brand-teal to-primary', 'from-navy to-primary']
@@ -495,9 +495,12 @@ function Home() {
             onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 1200)}
             aria-label="Company brand slider"
           >
-            {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory("All"); setSearch(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex w-40 shrink-0 snap-start flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-background p-3 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:w-44" aria-label={"Open " + company + " company folder"}>
-              <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-white p-2 shadow-sm transition group-hover:scale-105" aria-hidden="true">{companyLogo(company) ? <img src={companyLogo(company)} alt="" className="max-h-full max-w-full object-contain" loading="lazy" /> : <span className={cn('text-center text-sm font-black tracking-tight', companyLogoStyle(company))}>{company}</span>}</span>
-              <span className="block truncate max-w-full text-xs font-bold">{company}</span>
+            {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory("All"); setSearch(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex w-44 shrink-0 snap-start flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-background p-4 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:w-48" aria-label={"Open " + company + " company folder"}>
+              <span className={cn('relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition group-hover:scale-105 sm:size-24', companyLogoStyle(company))} aria-hidden="true">
+                <span className="absolute -right-3 -top-3 size-10 rounded-full bg-white/60 blur-md" />
+                <span className="relative flex size-14 items-center justify-center rounded-xl border border-white/70 bg-white/85 text-xl font-black tracking-tight shadow-sm sm:size-16 sm:text-2xl">{companyMonogram(company)}</span>
+              </span>
+              <span className="block max-w-full truncate text-sm font-bold">{company}</span>
               <span className="text-[10px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
             </button>)}
           </div>
