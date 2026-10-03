@@ -10,11 +10,10 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
   const start = async () => {
     setError(null); setLoading(true)
     try {
-      await signInWithGoogleFirebase()
-      // Firebase LOCAL persistence is already set before the popup. Reload the
-      // current Cloudflare page so the auth provider reads the persisted user
-      // immediately instead of leaving the checkout/login screen mounted.
-      window.location.reload()
+      const user = await signInWithGoogleFirebase()
+      // signInWithPopup has completed successfully. Notify the provider in the
+      // same page immediately; the Firebase observer will also reconcile it.
+      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: user }))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Google sign-in failed. Please try again.')
       setLoading(false)
