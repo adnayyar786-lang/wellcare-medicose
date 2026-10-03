@@ -1,4 +1,5 @@
 import { FileText, Users } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { STORE_LOCATION } from '@/config/store-location'
 import { Button } from '@/components/ui/button'
@@ -155,13 +156,92 @@ function CustomersOverview() {
   )
 }
 
+const DEFAULT_BANNERS = [
+  { title: '15% OFF on medicines', sub: 'Save more on selected medicines · Limited-time offer', code: 'MED15' },
+  { title: '20% OFF on wellness', sub: 'Extra savings on health & wellness products', code: 'HEALTH20' },
+  { title: '10% OFF on first order', sub: 'New to Wellcare? Use your welcome offer', code: 'WELCOME10' },
+]
+
+function BannerEditor() {
+  const [banners, setBanners] = useState(DEFAULT_BANNERS)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem('wellcare-promo-banners')
+      if (!raw) return
+      const parsed = JSON.parse(raw)
+      if (
+        Array.isArray(parsed) &&
+        parsed.length === DEFAULT_BANNERS.length &&
+        parsed.every((b) => typeof b?.title === 'string' && typeof b?.sub === 'string' && typeof b?.code === 'string')
+      ) setBanners(parsed)
+    } catch {
+      // Keep defaults when saved data is invalid.
+    }
+  }, [])
+
+  function update(index: number, key: 'title' | 'sub' | 'code', value: string) {
+    setBanners((current) => current.map((banner, i) => (i === index ? { ...banner, [key]: value } : banner)))
+    setSaved(false)
+  }
+
+  function save() {
+    try {
+      window.localStorage.setItem('wellcare-promo-banners', JSON.stringify(banners))
+      setSaved(true)
+    } catch {
+      setSaved(false)
+    }
+  }
+
+  function reset() {
+    setBanners(DEFAULT_BANNERS)
+    try { window.localStorage.removeItem('wellcare-promo-banners') } catch { /* ignore */ }
+    setSaved(true)
+  }
+
+  return (
+    <Panel title="Home page offer banners">
+      <p className="mb-4 text-xs text-muted-foreground">
+        Edit the three promotional cards shown on the customer Home page. Changes are saved on this browser after you press Save.
+      </p>
+      <div id="banners" className="grid gap-4 lg:grid-cols-3">
+        {banners.map((banner, index) => (
+          <div key={index} className="rounded-xl border border-border bg-background p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Offer {index + 1}</p>
+            <div className="space-y-3">
+              <label className="block text-xs font-medium">
+                Offer title
+                <input value={banner.title} onChange={(e) => update(index, 'title', e.target.value)} className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+              </label>
+              <label className="block text-xs font-medium">
+                Subtitle
+                <input value={banner.sub} onChange={(e) => update(index, 'sub', e.target.value)} className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring" />
+              </label>
+              <label className="block text-xs font-medium">
+                Coupon code
+                <input value={banner.code} onChange={(e) => update(index, 'code', e.target.value.toUpperCase())} className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm uppercase outline-none focus:ring-2 focus:ring-ring" />
+              </label>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Button onClick={save}>Save banners</Button>
+        <Button variant="outline" onClick={reset}>Reset defaults</Button>
+        {saved && <span className="text-xs text-emerald-600">Saved on this browser.</span>}
+      </div>
+    </Panel>
+  )
+}
+
 export function MarketingSection() {
   return (
-    <div>
-      <SectionHeader title="Coupons" description="Create and manage discount codes." />
-      <SectionBoundary label="coupons">
-        <CouponsPanel />
-      </SectionBoundary>
+    <div className="space-y-6">
+      <SectionHeader title="Marketing" description="Manage coupons and the promotional cards shown on the customer home page." />
+      <SectionBoundary label="banners"><BannerEditor /></SectionBoundary>
+      <SectionBoundary label="coupons"><CouponsPanel /></SectionBoundary>
     </div>
   )
 }
