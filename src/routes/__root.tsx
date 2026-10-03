@@ -81,7 +81,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <HeadContent />
+        <HeadContent />\n          <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js" />\n          <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js" />
       </head>
         <body>
           <AppConvexProvider>
