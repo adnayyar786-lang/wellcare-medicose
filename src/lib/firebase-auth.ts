@@ -20,11 +20,16 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const auth=getFirebaseAuth(), firebase=(window as any).firebase
   const provider=new firebase.auth.GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  if(isMobile){
+    await auth.signInWithRedirect(provider)
+    throw new Error('Redirecting to Google sign-in…')
+  }
   try {
     return (await auth.signInWithPopup(provider)).user as FirebaseUserLike
   } catch (error:any) {
     const code=error?.code || ''
-    if (code==='auth/popup-blocked' || code==='auth/popup-closed-by-user' || code==='auth/cancelled-popup-request') {
+    if(code==='auth/popup-blocked' || code==='auth/popup-closed-by-user' || code==='auth/cancelled-popup-request'){
       await auth.signInWithRedirect(provider)
       throw new Error('Redirecting to Google sign-in…')
     }
