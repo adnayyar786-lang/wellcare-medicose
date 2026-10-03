@@ -1,7 +1,8 @@
+import { getAuthUserId } from '@convex-dev/auth/server'
 import type { Id } from './_generated/dataModel'
 
 export async function getAppUserId(ctx: any): Promise<Id<'users'> | null> {
-  const legacyId = await import('@convex-dev/auth/server').then(({ getAuthUserId }) => getAuthUserId(ctx))
+  const legacyId = await getAuthUserId(ctx)
   if (legacyId) return legacyId
 
   const identity = await ctx.auth.getUserIdentity()
