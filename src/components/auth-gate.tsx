@@ -1,7 +1,8 @@
 import { useConvexAuth, useMutation } from 'convex/react'
 import { useRouterState } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { useAuthActions } from '@convex-dev/auth/react'
+import { useFirebaseAuthState } from '@/components/convex-client-provider'
+import { sendFirebasePhoneCode } from '@/lib/firebase-auth'
 import { motion } from 'framer-motion'
 import { Pill, Cross, Mail, Phone, Loader2 } from 'lucide-react'
 import { BrandMark } from '@/components/brand'
@@ -15,13 +16,13 @@ function FloatingShape({ className, delay, duration, children }: { className: st
 }
 
 export function LoginScreen() {
-  const { signIn } = useAuthActions()
+  const { user: firebaseUser } = useFirebaseAuthState()
   const [method, setMethod] = useState<'email' | 'phone'>('email')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
   const [step, setStep] = useState<'identifier' | 'code'>('identifier')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)\n  const [confirmation, setConfirmation] = useState<any>(null)\n  const [recaptchaId] = useState(() => `firebase-recaptcha-${Math.random().toString(36).slice(2)}`)
   const [error, setError] = useState<string | null>(null)
 
   function changeMethod(next: 'email' | 'phone') {
@@ -31,19 +32,14 @@ export function LoginScreen() {
   async function requestCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setLoading(true); setError(null)
     try {
-      const data = new FormData()
       if (method === 'email') {
-        data.set('email', email.trim())
-        await signIn('resend-otp', data)
-      } else {
-        const normalizedPhone = phone.replace(/[\s()-]/g, '')
-        if (!/^\+[1-9]\d{7,14}$/.test(normalizedPhone)) {
-          throw new Error('Enter your phone number with country code, e.g. +919876543210.')
-        }
-        setPhone(normalizedPhone)
-        data.set('phone', normalizedPhone)
-        await signIn('phone', data)
+        throw new Error('Email OTP is currently handled by the existing email provider. Use Google or Mobile number.')
       }
+      const normalizedPhone = phone.replace(/[\\s()-]/g, '')
+      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) throw new Error('Enter your phone number with country code, e.g. +919876543210.')
+      setPhone(normalizedPhone)
+      const result = await sendFirebasePhoneCode(normalizedPhone, recaptchaId)
+      setConfirmation(result)
       setStep('code')
     } catch (e) {
       setError(e instanceof Error ? e.message : `Could not send the ${method === 'email' ? 'email' : 'SMS'} code. Please try again.`)
@@ -53,14 +49,8 @@ export function LoginScreen() {
   async function verifyCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setLoading(true); setError(null)
     try {
-      const data = new FormData(); data.set('code', code.trim())
-      if (method === 'email') {
-        data.set('email', email.trim())
-        await signIn('resend-otp', data)
-      } else {
-        data.set('phone', phone)
-        await signIn('phone', data)
-      }
+      if (method !== 'phone' || !confirmation) throw new Error('Please request a mobile verification code first.')
+      await confirmation.confirm(code.trim())
     } catch (e) {
       setError(e instanceof Error ? e.message : 'That code could not be verified. Please try again.')
     } finally { setLoading(false) }
@@ -75,7 +65,7 @@ export function LoginScreen() {
     <div className="relative w-full max-w-md rounded-3xl border border-white/15 bg-white/[0.08] p-6 shadow-2xl backdrop-blur-xl sm:p-8">
       <div className="flex flex-col items-center text-center"><motion.div initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="flex size-16 items-center justify-center"><BrandMark className="size-16" /></motion.div><h1 className="mt-4 text-2xl font-bold tracking-tight text-white">Sign in or create your account</h1><p className="mt-2 text-sm text-white/70">Verify your email or mobile number to continue and place your order.</p></div>
       <div className="mt-7"><GoogleAuthButton premium /></div>
-      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use a one-time code<span className="h-px flex-1 bg-white/20" /></div>
+      <div id={recaptchaId} className="hidden" />\n      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-white/45"><span className="h-px flex-1 bg-white/20" />or use a one-time code<span className="h-px flex-1 bg-white/20" /></div>
       <div className="mb-4 grid grid-cols-2 gap-2 rounded-xl bg-black/15 p-1">
         <button type="button" onClick={() => changeMethod('email')} aria-pressed={method === 'email'} className={`flex h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition ${method === 'email' ? 'bg-white text-slate-900 shadow' : 'text-white/75 hover:bg-white/10'}`}><Mail className="size-4" /> Email</button>
         <button type="button" onClick={() => changeMethod('phone')} aria-pressed={method === 'phone'} className={`flex h-10 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition ${method === 'phone' ? 'bg-white text-slate-900 shadow' : 'text-white/75 hover:bg-white/10'}`}><Phone className="size-4" /> Mobile number</button>
