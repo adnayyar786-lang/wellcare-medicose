@@ -1,8 +1,9 @@
-// Public Firebase web-app configuration. The VITE_* values are still accepted,
-// but these exact project values keep the customer auth flow working even when
-// Cloudflare's build environment does not inject the variables.
+// Firebase web-app configuration. Firebase Web API keys are public-by-design;
+// use the Cloudflare VITE_* value when present, with the Firebase Web App key
+// as a production-safe fallback so a missing Workers build variable cannot
+// turn customer authentication into auth/invalid-api-key.
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDVASii63wOfZLw4L0z-TMwJU84SjKmvjK',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'wellcare-medicose.firebaseapp.com',
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'wellcare-medicose',
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'wellcare-medicose.firebasestorage.app',
@@ -16,9 +17,6 @@ export function getFirebaseAuth(): any {
   if (typeof window === 'undefined') return null
   const firebase = (window as any).firebase
   if (!firebase) throw new Error('Firebase SDK has not loaded yet.')
-
-  // Use a dedicated app instance so an older/default Firebase initialization
-  // can never leave customer auth pointing at stale configuration.
   const appName = 'wellcare-customer'
   let app = firebase.apps.find((item: any) => item.name === appName)
   if (!app) app = firebase.initializeApp(firebaseConfig, appName)
@@ -29,17 +27,12 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const provider=new firebase.auth.GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
   const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-  if(isMobile){
-    await auth.signInWithRedirect(provider)
-    throw new Error('Redirecting to Google sign-in…')
-  }
-  try {
-    return (await auth.signInWithPopup(provider)).user as FirebaseUserLike
-  } catch (error:any) {
+  if(isMobile){ await auth.signInWithRedirect(provider); throw new Error('Redirecting to Google sign-in…') }
+  try { return (await auth.signInWithPopup(provider)).user as FirebaseUserLike }
+  catch (error:any) {
     const code=error?.code || ''
     if(code==='auth/popup-blocked' || code==='auth/popup-closed-by-user' || code==='auth/cancelled-popup-request'){
-      await auth.signInWithRedirect(provider)
-      throw new Error('Redirecting to Google sign-in…')
+      await auth.signInWithRedirect(provider); throw new Error('Redirecting to Google sign-in…')
     }
     throw error
   }
@@ -59,12 +52,7 @@ export async function sendFirebasePhoneCode(phoneNumber:string,buttonId:string):
   if(oldVerifier){try{oldVerifier.clear()}catch{}}
   const verifier=new firebase.auth.RecaptchaVerifier(buttonId,{size:'invisible'},auth)
   ;(window as any).__wellcareRecaptcha=verifier
-  try {
-    return await auth.signInWithPhoneNumber(phoneNumber,verifier)
-  } catch (error) {
-    try { verifier.clear() } catch {}
-    ;(window as any).__wellcareRecaptcha=null
-    throw error
-  }
+  try { return await auth.signInWithPhoneNumber(phoneNumber,verifier) }
+  catch (error) { try { verifier.clear() } catch {}; (window as any).__wellcareRecaptcha=null; throw error }
 }
 export async function signOutFirebase(){ const auth=getFirebaseAuth(); if(auth) await auth.signOut() }
