@@ -39,15 +39,17 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // Keep the app state in sync with Firebase's authoritative auth observer.
-      // Also seed from currentUser when the SDK has already restored a session.
+      // Firebase's observer is authoritative and waits for the SDK to finish
+      // restoring any persisted session. Do not treat currentUser === null as
+      // a confirmed sign-out before this callback fires.
       const sync = (next: FirebaseUserLike | null) => {
         if (!mounted) return
         setUser(next)
         setIsLoading(false)
       }
 
-      sync(auth.currentUser ?? null)
+      const restored = auth.currentUser
+      if (restored) setUser(restored as FirebaseUserLike)
       unsubscribe = auth.onAuthStateChanged(sync)
 
       // signInWithPopup resolves with the authenticated user before React has
