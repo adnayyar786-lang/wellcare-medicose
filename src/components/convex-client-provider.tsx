@@ -18,8 +18,24 @@ function FirebaseSynchronizer({ children }: { children: React.ReactNode }) {
   const { user } = useFirebaseAuthState()
   const ensureUser = useMutation(api.firebaseAuth.ensureUser)
   useEffect(() => {
+    let cancelled = false
     if (!user) return
-    ensureUser({}).catch(() => {})
+    ;(async () => {
+      try {
+        await user.getIdToken(true)
+        if (cancelled) return
+        await ensureUser({})
+        if (!cancelled) window.dispatchEvent(new CustomEvent('wellcare-convex-user-ready', { detail: user }))
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Wellcare Firebase → Convex user sync failed', error)
+          window.dispatchEvent(new CustomEvent('wellcare-convex-user-sync-failed', {
+            detail: error instanceof Error ? error.message : 'Could not create the Wellcare account session.',
+          }))
+        }
+      }
+    })()
+    return () => { cancelled = true }
   }, [user, ensureUser])
   return <>{children}</>
 }
