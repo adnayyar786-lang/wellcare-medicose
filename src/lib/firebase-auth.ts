@@ -46,15 +46,10 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   try {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
-    // On mobile browsers, use redirect rather than a popup. This avoids the
-    // popup completing on a temporary browsing context and then losing the
-    // Firebase session when the page returns to Cloudflare.
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-    if (isMobile) {
-      await auth.signInWithRedirect(provider)
-      return await new Promise<FirebaseUserLike>(() => {})
-    }
-
+    // The customer site is hosted on Cloudflare while Firebase owns the
+    // authentication project. Prefer popup so Google completes the OAuth
+    // exchange in the same browser context instead of returning through a
+    // cross-origin Firebase redirect helper.
     let result: any
     try {
       result = await auth.signInWithPopup(provider)
@@ -66,6 +61,14 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
       ) {
         try { await auth.signOut() } catch {}
         result = await auth.signInWithPopup(provider)
+      } else if (
+        firstCode === 'auth/popup-blocked' ||
+        firstCode === 'auth/popup-closed-by-user'
+      ) {
+        // Only fall back to redirect when the browser explicitly prevents
+        // the popup. Normal Android/Chrome sign-in stays on the app origin.
+        await auth.signInWithRedirect(provider)
+        return await new Promise<FirebaseUserLike>(() => {})
       } else {
         throw firstError
       }
