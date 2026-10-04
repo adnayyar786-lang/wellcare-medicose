@@ -1,7 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useConvexAuth } from 'convex/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { LoginScreen } from '@/components/auth-gate'
+import { useFirebaseAuthState } from '@/components/convex-client-provider'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/sign-in')({
   head: () => ({ meta: [{ title: 'Sign in — Wellcare Medicose' }] }),
@@ -9,13 +10,24 @@ export const Route = createFileRoute('/sign-in')({
 })
 
 function SignInPage() {
-  const { isLoading } = useConvexAuth()
+  const navigate = useNavigate()
+  const { user, isLoading } = useFirebaseAuthState()
 
-  // Do not redirect from this route based only on Convex's auth state. A stale
-  // or prematurely restored session previously sent guests straight home,
-  // preventing them from seeing the actual sign-in form.
-  if (isLoading) {
-    return <div className="flex min-h-screen items-center justify-center bg-background"><Loader2 className="size-7 animate-spin text-primary" /></div>
+  // Previously /sign-in always rendered LoginScreen, even after Firebase
+  // successfully authenticated the customer. That made successful Google or
+  // email sign-ins appear to fail because the user remained on the login UI.
+  useEffect(() => {
+    if (!isLoading && user) {
+      void navigate({ to: '/' })
+    }
+  }, [isLoading, user, navigate])
+
+  if (isLoading || user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-7 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return <LoginScreen />
