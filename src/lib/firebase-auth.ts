@@ -29,6 +29,12 @@ export function getFirebaseAuth(): any {
   return app.auth()
 }
 
+async function confirmFirebaseSession(user: any): Promise<FirebaseUserLike> {
+  if (!user) throw new Error('Firebase did not return a signed-in user.')
+  await user.getIdToken(true)
+  return user as FirebaseUserLike
+}
+
 export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   const productionHost = 'wellcare-medicose.adnayyar786.workers.dev'
   if (window.location.hostname !== productionHost) {
@@ -77,7 +83,7 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
     if (!result?.user) {
       throw new Error('Google sign-in completed but no Firebase user was returned.')
     }
-    return result.user as FirebaseUserLike
+    return await confirmFirebaseSession(result.user)
   } catch (error:any) {
     const code = error?.code || ''
     const message = error?.message || ''
@@ -103,7 +109,8 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
 
 export async function signInWithEmailFirebase(email:string,password:string):Promise<FirebaseUserLike>{
   try {
-    return (await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)).user as FirebaseUserLike
+    const result = await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)
+    return await confirmFirebaseSession(result.user)
   } catch (error:any) {
     const code = error?.code || ''
     if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
@@ -125,7 +132,7 @@ export async function signInWithEmailFirebase(email:string,password:string):Prom
 export async function createAccountWithEmailFirebase(email:string,password:string,displayName?:string):Promise<FirebaseUserLike>{
   const result = await getFirebaseAuth().createUserWithEmailAndPassword(email.trim().toLowerCase(),password)
   if(displayName?.trim()) await result.user.updateProfile({displayName:displayName.trim()})
-  return result.user as FirebaseUserLike
+  return await confirmFirebaseSession(result.user)
 }
 
 export async function sendPasswordResetFirebase(email:string){
