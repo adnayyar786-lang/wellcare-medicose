@@ -41,20 +41,33 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // Firebase's observer is authoritative and waits for the SDK to finish
-      // restoring any persisted session. Do not treat currentUser === null as
-      // a confirmed sign-out before this callback fires.
       const sync = (next: FirebaseUserLike | null) => {
         if (!mounted) return
-        // A Google popup can finish before the compat auth observer's
-        // initialization callback. Firebase documents that currentUser can
-        // temporarily be null while auth is initializing. Never let that
-        // transient null immediately kick a freshly signed-in customer back
-        // to the login screen.
+        // Do not replace a just-restored/signed-in user with a transient null.
         if (!next && lastKnownUser && Date.now() < ignoreNullUntil) return
         lastKnownUser = next
         setUser(next)
         setIsLoading(false)
+      }
+
+      // Keep the gate in loading state until Firebase has restored LOCAL
+      // persistence and processed any pending Google redirect result.
+      const processRedirect = async () => {
+        try {
+          const result = await auth.getRedirectResult()
+          if (result?.user) {
+            lastKnownUser = result.user as FirebaseUserLike
+            ignoreNullUntil = Date.now() + 10000
+            sync(result.user as FirebaseUserLike)
+            window.dispatchEvent(
+              new CustomEvent('wellcare-firebase-signed-in', { detail: result.user }),
+            )
+          }
+        } catch (error) {
+          // A redirect result error should not be turned into a fake signed-out
+          // state. The UI can continue with the normal auth observer.
+          console.error('Firebase Google redirect result failed', error)
+        }
       }
 
       const restored = auth.currentUser
@@ -62,11 +75,10 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         lastKnownUser = restored as FirebaseUserLike
         setUser(restored as FirebaseUserLike)
       }
-      unsubscribe = auth.onAuthStateChanged(sync)
 
-      // signInWithPopup resolves with the authenticated user before React has
-      // necessarily processed the auth observer callback. This event closes
-      // that small race without forcing a page reload.
+      unsubscribe = auth.onAuthStateChanged(sync)
+      void processRedirect()
+
       const onSignedIn = (event: Event) => {
         const next = (event as CustomEvent<FirebaseUserLike | null>).detail
         if (next) {
