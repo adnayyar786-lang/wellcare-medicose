@@ -1,13 +1,9 @@
 import type { AuthConfig } from "convex/server"
 
-const firebaseProjectId = process.env.FIREBASE_PROJECT_ID || "wellcare-medicose"
+const firebaseProjectId = "wellcare-medicose"
 
 export default {
   providers: [
-    {
-      domain: process.env.CONVEX_SITE_URL,
-      applicationID: "convex",
-    },
     {
       type: "customJwt",
       applicationID: firebaseProjectId,
