@@ -11,10 +11,11 @@ function SignInPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Do NOT redirect just because a Firebase session already exists.
-    // The sign-in page must remain visible when a user intentionally opens
-    // /sign-in. We only go home after an actual sign-in action succeeds.
-    const onSignedIn = () => {
+    // Redirect only after the auth action has been explicitly confirmed by
+    // Firebase. A pre-existing/stale session must never auto-redirect this page.
+    const onSignedIn = (event: Event) => {
+      const user = (event as CustomEvent).detail
+      if (!user) return
       void navigate({ to: '/' })
     }
 
