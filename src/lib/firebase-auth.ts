@@ -46,6 +46,15 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
   try {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 
+    // On mobile browsers, use redirect rather than a popup. This avoids the
+    // popup completing on a temporary browsing context and then losing the
+    // Firebase session when the page returns to Cloudflare.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    if (isMobile) {
+      await auth.signInWithRedirect(provider)
+      return await new Promise<FirebaseUserLike>(() => {})
+    }
+
     let result: any
     try {
       result = await auth.signInWithPopup(provider)
@@ -90,7 +99,24 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
 }
 
 export async function signInWithEmailFirebase(email:string,password:string):Promise<FirebaseUserLike>{
-  return (await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)).user as FirebaseUserLike
+  try {
+    return (await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)).user as FirebaseUserLike
+  } catch (error:any) {
+    const code = error?.code || ''
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
+      throw new Error('Email or password is incorrect. If you are sure both are correct, verify that Email/Password is enabled in the wellcare-medicose Firebase project.')
+    }
+    if (code === 'auth/user-not-found') {
+      throw new Error('No Wellcare account was found for this email. Use Create Account first.')
+    }
+    if (code === 'auth/too-many-requests') {
+      throw new Error('Too many sign-in attempts. Please wait a little and try again.')
+    }
+    if (code === 'auth/user-disabled') {
+      throw new Error('This Wellcare account is disabled. Please contact support.')
+    }
+    throw error
+  }
 }
 
 export async function createAccountWithEmailFirebase(email:string,password:string,displayName?:string):Promise<FirebaseUserLike>{
@@ -107,7 +133,7 @@ export async function sendFirebasePhoneCode(phoneNumber:string,buttonId:string):
   const auth = getFirebaseAuth()
   const firebase = (window as any).firebase
 
-  if(!/^\\+[1-9]\\d{7,14}$/.test(phoneNumber)) {
+  if(!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) {
     throw new Error('Enter a valid mobile number with country code, for example +919876543210.')
   }
 
