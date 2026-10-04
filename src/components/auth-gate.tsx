@@ -95,7 +95,10 @@ export function LoginScreen(){
     try{
       if(!confirmation)throw new Error('Please request a mobile verification code first.')
       const result = await confirmation.confirm(code.trim())
-      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: result?.user }))
+      const user = result?.user
+      if (!user) throw new Error('Phone verification completed but Firebase did not return a signed-in user.')
+      await user.getIdToken(true)
+      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: user }))
     }
     catch(err){setError(err instanceof Error?err.message:'That code could not be verified. Please try again.')}finally{setLoading(false)}
   }
