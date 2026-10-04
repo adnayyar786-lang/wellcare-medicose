@@ -69,8 +69,10 @@ export function LoginScreen(){
   async function submitEmail(e:React.FormEvent){
     e.preventDefault();setLoading(true);setError(null)
     try{
-      if(mode==='signin') await signInWithEmailFirebase(email,password)
-      else await createAccountWithEmailFirebase(email,password,name)
+      const user = mode==='signin'
+        ? await signInWithEmailFirebase(email,password)
+        : await createAccountWithEmailFirebase(email,password,name)
+      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: user }))
     }catch(err){setError(err instanceof Error?err.message:'Email authentication failed. Please try again.')}finally{setLoading(false)}
   }
   async function requestCode(e:React.FormEvent){
@@ -90,7 +92,11 @@ export function LoginScreen(){
   }
   async function verifyCode(e:React.FormEvent){
     e.preventDefault();setLoading(true);setError(null)
-    try{if(!confirmation)throw new Error('Please request a mobile verification code first.');await confirmation.confirm(code.trim())}
+    try{
+      if(!confirmation)throw new Error('Please request a mobile verification code first.')
+      const result = await confirmation.confirm(code.trim())
+      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: result?.user }))
+    }
     catch(err){setError(err instanceof Error?err.message:'That code could not be verified. Please try again.')}finally{setLoading(false)}
   }
 
