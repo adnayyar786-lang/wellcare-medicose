@@ -154,6 +154,8 @@ export const seedMany = mutation({
         price: v.number(),
         stock: v.number(),
         requiresPrescription: v.boolean(),
+        manufacturer: v.optional(v.string()),
+        imageUrl: v.optional(v.string()),
       }),
     ),
   },
@@ -219,6 +221,8 @@ export const seedManyV2 = mutation({
         mrpPrice: item.mrpPrice,
         stock: item.stock,
         requiresPrescription: item.requiresPrescription,
+        manufacturer: item.manufacturer,
+        imageUrl: item.imageUrl,
         active: true,
         updatedAt: Date.now(),
       })
