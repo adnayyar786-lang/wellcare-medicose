@@ -156,7 +156,7 @@ function SidebarContent({ nav, onGo }: { nav: NavState; onGo: (t: NavTarget) => 
         <p className="text-base font-semibold tracking-tight text-primary">Wellcare Medicose</p>
         <p className="text-xs text-muted-foreground">Pharmacy Command Center</p>
       </div>
-      <nav aria-label="Admin" className="flex-1 space-y-0.5 overflow-y-auto p-3">
+      <nav aria-label="Admin" className="flex-1 min-h-0 space-y-0.5 overflow-y-auto overscroll-contain touch-pan-y p-3">
         {NAV.map((item) => {
           const active = nav.section === item.id
           const Icon = item.icon
