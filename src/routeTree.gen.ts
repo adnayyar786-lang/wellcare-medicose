@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CatalogImportRouteImport } from './routes/catalog-import'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as StaffLoginRouteImport } from './routes/staff-login'
 import { Route as StaffRouteImport } from './routes/staff'
@@ -26,6 +27,11 @@ import { Route as MedicineIdRouteImport } from './routes/medicine.$id'
 import { Route as AuthGooglePopupRouteImport } from './routes/auth/google/popup'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google/callback'
 
+const CatalogImportRoute = CatalogImportRouteImport.update({
+  id: '/catalog-import',
+  path: '/catalog-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
   path: '/wishlist',
@@ -108,6 +114,7 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/catalog-import': typeof CatalogImportRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/auth/google/popup': typeof AuthGooglePopupRoute
 }
 export interface FileRoutesByTo {
+  '/catalog-import': typeof CatalogImportRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
@@ -144,6 +152,7 @@ export interface FileRoutesByTo {
   '/auth/google/popup': typeof AuthGooglePopupRoute
 }
 export interface FileRoutesById {
+  '/catalog-import': typeof CatalogImportRoute
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
@@ -165,6 +174,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/catalog-import'
     | '/'
     | '/admin'
     | '/categories'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/auth/google/popup'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/catalog-import'
     | '/'
     | '/admin'
     | '/categories'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  CatalogImportRoute: typeof CatalogImportRoute
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   CategoriesRoute: typeof CategoriesRoute
@@ -240,6 +252,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/catalog-import': {
+      id: '/catalog-import'
+      path: '/catalog-import'
+      fullPath: '/catalog-import'
+      preLoaderRoute: typeof CatalogImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wishlist': {
       id: '/wishlist'
       path: '/wishlist'
@@ -356,6 +375,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  CatalogImportRoute: CatalogImportRoute,
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   CategoriesRoute: CategoriesRoute,
