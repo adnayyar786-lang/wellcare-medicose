@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CatalogImportRouteImport } from './routes/catalog-import'
+import { Route as CatalogTestRouteImport } from './routes/catalog-test'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as StaffLoginRouteImport } from './routes/staff-login'
 import { Route as StaffRouteImport } from './routes/staff'
@@ -30,6 +31,11 @@ import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google/cal
 const CatalogImportRoute = CatalogImportRouteImport.update({
   id: '/catalog-import',
   path: '/catalog-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogTestRoute = CatalogTestRouteImport.update({
+  id: '/catalog-test',
+  path: '/catalog-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WishlistRoute = WishlistRouteImport.update({
@@ -115,6 +121,7 @@ const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/catalog-import': typeof CatalogImportRoute
+  '/catalog-test': typeof CatalogTestRoute
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/categories': typeof CategoriesRoute
@@ -175,6 +182,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/catalog-import'
+    | '/catalog-test'
     | '/'
     | '/admin'
     | '/categories'
@@ -232,6 +240,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   CatalogImportRoute: typeof CatalogImportRoute
+  CatalogTestRoute: typeof CatalogTestRoute
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   CategoriesRoute: typeof CategoriesRoute
@@ -252,6 +261,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/catalog-test': {
+      id: '/catalog-test'
+      path: '/catalog-test'
+      fullPath: '/catalog-test'
+      preLoaderRoute: typeof CatalogTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/catalog-import': {
       id: '/catalog-import'
       path: '/catalog-import'
@@ -376,6 +392,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   CatalogImportRoute: CatalogImportRoute,
+  CatalogTestRoute: CatalogTestRoute,
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   CategoriesRoute: CategoriesRoute,
