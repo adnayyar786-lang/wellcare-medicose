@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { ClipboardList, Search, Store, Truck, X } from 'lucide-react'
+import { ClipboardList, Search, Store, Truck, X, MessageCircle } from 'lucide-react'
 
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
@@ -197,7 +197,12 @@ function OrderCard({
         </ul>
         <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
           <span className="font-semibold">{formatINR(order.total)}</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button size="sm" variant="outline" onClick={() => {
+              const items = order.items.map((it) => `${it.quantity} × ${it.name}`).join(', ')
+              const message = `Hello Wellcare Medicose Admin, I want help with Order #${order._id.slice(-8).toUpperCase()}. Items: ${items}. Total: ₹${order.total.toFixed(2)}.`
+              window.open(`https://wa.me/917088252556?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
+            }}><MessageCircle className="size-4" /> Share with Admin</Button>
             <Button size="sm" variant="outline" onClick={onReorder}>Reorder</Button>
             {canCancel && (
               <Button size="sm" variant="outline" className="text-destructive" onClick={() => setCancelOpen(true)}>
