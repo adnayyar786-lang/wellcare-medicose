@@ -6,6 +6,8 @@ import { v } from 'convex/values'
 
 import { mutation, query, internalMutation } from './_generated/server'
 
+// Catalogue seed batches are executed by the production CI workflow.
+
 const medicineValidator = v.object({
   _id: v.id('medicines'),
   _creationTime: v.number(),
