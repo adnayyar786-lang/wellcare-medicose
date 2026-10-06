@@ -19,6 +19,12 @@ export function ShopsPanel() {
  const [day,setDay] = useState(today)
  const medicines = usePaginatedQuery(api.medicines.listAll, {}, {initialNumItems:100})
  const addShop = useMutation(api.shops.create)
+ const staffRows = useQuery(api.staff.listAllStaff, {})
+ const requests = useQuery(api.staff.listRequests, {})
+ const addStaff = useMutation(api.staff.adminAddStaff)
+ const approveStaff = useMutation(api.staff.approveRequest)
+ const rejectStaff = useMutation(api.staff.rejectRequest)
+ const setStaffActive = useMutation(api.staff.setActive)
  const addSale = useMutation(api.shops.addSale)
  const setPack = useMutation(api.shops.setPackSize)
  const activeShop = shops?.find(s=>s._id===shopId) ?? shops?.[0]
@@ -32,6 +38,17 @@ export function ShopsPanel() {
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`wellcare-${activeShop?.name??'shop'}-${day}.csv`; a.click(); URL.revokeObjectURL(url)
  }
  return <div className="space-y-6">
+  <section className="rounded-xl border border-primary/20 bg-primary/[0.03] p-5 shadow-sm">
+   <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold">Staff Access Control</h2><p className="text-sm text-muted-foreground">Only the admin can add, approve, disable or re-enable staff Gmail accounts.</p></div><span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Admin only</span></div>
+   <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto]">
+    <Input placeholder="Staff Gmail" value={staffEmail} onChange={e=>setStaffEmail(e.target.value)}/>
+    <Input placeholder="Staff name" value={staffName} onChange={e=>setStaffName(e.target.value)}/>
+    <select className="rounded-md border bg-background px-3 py-2 text-sm" value={staffRole} onChange={e=>setStaffRole(e.target.value as typeof staffRole)}><option value="staff">Staff</option><option value="manager">Manager</option><option value="billing">Billing</option><option value="inventory">Inventory</option></select>
+    <Button disabled={!staffEmail.trim()||!staffName.trim()} onClick={()=>void addStaff({email:staffEmail,name:staffName,role:staffRole}).then(()=>{setStaffEmail('');setStaffName('')})}>Add & enable</Button>
+   </div>
+   {requests?.length ? <div className="mt-5"><h3 className="font-semibold">Pending verification requests</h3><div className="mt-2 space-y-2">{requests.map(r=><div key={r._id} className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3"><div className="min-w-0 flex-1"><p className="font-medium">{r.name}</p><p className="truncate text-xs text-muted-foreground">{r.email}</p></div><select className="rounded-md border bg-background px-2 py-1 text-xs" defaultValue="staff" id={`role-${r._id}`}><option value="staff">Staff</option><option value="manager">Manager</option><option value="billing">Billing</option><option value="inventory">Inventory</option></select><Button size="sm" onClick={()=>{const role=(document.getElementById(`role-${r._id}`) as HTMLSelectElement)?.value as 'staff'|'manager'|'billing'|'inventory';void approveStaff({id:r._id,role})}}>Approve</Button><Button size="sm" variant="outline" onClick={()=>void rejectStaff({id:r._id})}>Reject</Button></div>)}</div></div> : <p className="mt-5 text-sm text-muted-foreground">No pending staff verification requests.</p>}
+   <div className="mt-5"><h3 className="font-semibold">Active staff</h3><div className="mt-2 divide-y rounded-lg border">{staffRows?.map(s=><div key={s._id} className="flex flex-wrap items-center gap-3 p-3"><div className="min-w-0 flex-1"><p className="font-medium">{s.name} <span className="ml-1 text-xs text-muted-foreground">({s.role})</span></p><p className="truncate text-xs text-muted-foreground">{s.email}</p></div><Button size="sm" variant={s.active?'outline':'default'} onClick={()=>void setStaffActive({id:s._id,active:!s.active})}>{s.active?'Disable':'Enable'}</Button></div>)}</div></div>
+  </section>
   <section className="rounded-xl border bg-card p-5"><h2 className="text-lg font-semibold">Shops / Branches</h2><p className="mb-4 text-sm text-muted-foreground">Add branches here; each branch keeps its own retail sales log.</p>
    <div className="mb-4 grid gap-2 sm:grid-cols-3"><Input placeholder="Shop name" value={name} onChange={e=>setName(e.target.value)}/><Input placeholder="Full address" value={address} onChange={e=>setAddress(e.target.value)}/><Input placeholder="Staff names, comma-separated" value={staff} onChange={e=>setStaff(e.target.value)}/></div>
    <Button onClick={()=>{if(name.trim()&&address.trim()) void addShop({name,address,staffNames:staff.split(',').map(s=>s.trim()).filter(Boolean)}).then(id=>{setShopId(id);setName('');setAddress('')})}}>Add shop</Button>
