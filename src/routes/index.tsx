@@ -345,8 +345,8 @@ function Home() {
   const searchSuggestions = useMemo(() => {
     const q = search.trim()
     if (q.length < 2) return []
-    return rankSearchResults(searchSource, q).slice(0, 8)
-  }, [searchSource, search])
+    return rankSearchResults(filteredMedicines, q).slice(0, 8)
+  }, [searchSource, search, filteredMedicines])
 
   const searchBrands = useMemo(() => {
     const q = normalizeSearchText(search)
@@ -367,8 +367,8 @@ function Home() {
   const searchHealthProducts = useMemo(() => {
     const q = search.trim()
     if (!q) return []
-    return rankSearchResults(searchSource.filter((m) => m.shopCategory !== 'Pet Care' && !m.requiresPrescription), q).slice(0, 4)
-  }, [searchSource, search])
+    return rankSearchResults(filteredMedicines.filter((m) => m.shopCategory !== 'Pet Care' && !m.requiresPrescription), q).slice(0, 4)
+  }, [searchSource, search, filteredMedicines])
 
   const filteredSearchMedicines = useMemo(() => {
     if (!search.trim()) return filteredMedicines
