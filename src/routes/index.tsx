@@ -192,7 +192,7 @@ function Home() {
   const [searchRxFilter, setSearchRxFilter] = useState<'all' | 'rx' | 'nonrx'>('all')
   const [searchPriceFilter, setSearchPriceFilter] = useState<'all' | 'under500' | '500to1000' | 'over1000'>('all')
   const searchedMedicines = useQuery(
-    api.medicines.searchQuery,
+    api.medicines.search,
     debouncedSearchQuery.length >= 2 ? { query: debouncedSearchQuery } : 'skip',
   )
   useEffect(() => {
@@ -440,7 +440,9 @@ function Home() {
     requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
   function clearFilters() {
-    setSearch('')
+    setSearchQuery('')
+    setSelectedSuggestionId(null)
+    setDebouncedSearchQuery('')
     setShowSearchSuggestions(false)
     setActiveCategory('All')
     setActiveShopCategory(null)
@@ -449,9 +451,10 @@ function Home() {
     setSearchRxFilter('all')
     setSearchPriceFilter('all')
   }
-  function applySearch(term: string) {
+  function applySearch(term: string, selectedId: string | null = null) {
     const value = term.trim()
-    setSearch(value)
+    setSelectedSuggestionId(selectedId)
+    setSearchQuery(value)
     if (value) saveSearchHistory(value)
     setShowSearchSuggestions(false)
     setActiveCategory('All')
@@ -471,7 +474,7 @@ function Home() {
       return
     }
     if (item === 'Petcare') {
-      setSearch('')
+      setSearchQuery('')
       setShowSearchSuggestions(false)
       setActiveCategory('All')
       setActiveShopCategory('Pet Care')
@@ -500,7 +503,7 @@ function Home() {
     recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
     recognition.onstart = () => setListening(true)
     recognition.onend = () => setListening(false)
-    recognition.onresult = (e: any) => { const text = e.results?.[0]?.[0]?.transcript; if (text) setSearch(text) }
+    recognition.onresult = (e: any) => { const text = e.results?.[0]?.[0]?.transcript; if (text) { setSelectedSuggestionId(null); setSearchQuery(text) } }
     recognition.onerror = () => setListening(false)
     recognition.start()
   }
@@ -514,7 +517,7 @@ function Home() {
         <Input
           id={id}
           value={searchQuery}
-          onChange={(e) => { setSearch(e.target.value); setShowSearchSuggestions(true) }}
+          onChange={(e) => { setSelectedSuggestionId(null); setSearchQuery(e.target.value); setShowSearchSuggestions(true) }}
           onFocus={() => setShowSearchSuggestions(true)}
           onKeyDown={(e) => {
             if (e.key === 'Escape') setShowSearchSuggestions(false)
@@ -532,7 +535,7 @@ function Home() {
           inputMode="searchQuery"
         />
         <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center">
-          {searchQuery && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSearch(''); setShowSearchSuggestions(true) }} className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Clear searchQuery"><X className="size-4" /></button>}
+          {searchQuery && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSelectedSuggestionId(null); setSearchQuery(''); setDebouncedSearchQuery(''); setShowSearchSuggestions(true) }} className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Clear searchQuery"><X className="size-4" /></button>}
           <button type="button" onClick={handleMicClick} className={`flex size-10 items-center justify-center rounded-md transition-colors ${listening ? 'text-brand-teal' : 'text-muted-foreground'} hover:bg-secondary`} aria-label="Search by voice"><Mic className="size-4" /></button>
           <button type="button" onClick={handleCameraClick} className="hidden flex size-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary sm:flex" aria-label="Search by photo"><Camera className="size-4" /></button>
         </div>
@@ -566,16 +569,16 @@ function Home() {
                 </section>
               )}
               {hasQuery && searchBrands.length > 0 && (
-                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Brand suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><Tag className="size-4 text-primary" /> Brands</div><div className="flex flex-wrap gap-2">{searchBrands.map((brand) => <button key={brand} type="button" onClick={() => { setSearchBrandFilter(brand); setSearch(brand); saveSearchHistory(brand); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{brand}</button>)}</div></section>
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Brand suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><Tag className="size-4 text-primary" /> Brands</div><div className="flex flex-wrap gap-2">{searchBrands.map((brand) => <button key={brand} type="button" onClick={() => { setSearchBrandFilter(brand); setSearchQuery(brand); saveSearchHistory(brand); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{brand}</button>)}</div></section>
               )}
               {hasQuery && searchCategories.length > 0 && (
-                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Category suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><PackageSearch className="size-4 text-primary" /> Categories</div><div className="flex flex-wrap gap-2">{searchCategories.map((category) => <button key={category} type="button" onClick={() => { setSearch(category); setSearchHistory((prev) => prev); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{category}</button>)}</div></section>
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Category suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><PackageSearch className="size-4 text-primary" /> Categories</div><div className="flex flex-wrap gap-2">{searchCategories.map((category) => <button key={category} type="button" onClick={() => { setSearchQuery(category); setSearchHistory((prev) => prev); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{category}</button>)}</div></section>
               )}
               {hasQuery && searchHealthProducts.length > 0 && (
-                <section className="border-t border-border px-2 pb-1 pt-3" aria-label="Health products"><div className="mb-2 text-xs font-bold">Health products</div><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{searchHealthProducts.map((med) => <button key={med._id} type="button" onClick={() => applySearch(med.name)} className="min-w-0 rounded-xl border border-border bg-background p-2 text-left hover:border-primary/40"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-lg ring-0" /><p className="mt-1 line-clamp-2 text-[11px] font-semibold">{med.name}</p><p className="text-xs font-bold text-primary">{formatINR(med.price)}</p></button>)}</div></section>
+                <section className="border-t border-border px-2 pb-1 pt-3" aria-label="Health products"><div className="mb-2 text-xs font-bold">Health products</div><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{searchHealthProducts.map((med) => <button key={med._id} type="button" onClick={() => selectSearchSuggestion(med)} className="min-w-0 rounded-xl border border-border bg-background p-2 text-left hover:border-primary/40"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-lg ring-0" /><p className="mt-1 line-clamp-2 text-[11px] font-semibold">{med.name}</p><p className="text-xs font-bold text-primary">{formatINR(med.price)}</p></button>)}</div></section>
               )}
               {hasQuery && searchSuggestions.length === 0 && searchBrands.length === 0 && searchCategories.length === 0 && (
-                <div className="px-4 py-7 text-center"><p className="text-sm font-semibold">Couldn't find what you're looking for</p><p className="mt-1 text-xs text-muted-foreground">Try a shorter medicine name, brand, or browse a category below.</p><div className="mt-3 flex flex-wrap justify-center gap-2">{categories.slice(1, 6).map((cat) => <button key={cat} type="button" onClick={() => { setSearch(cat); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border px-3 py-2 text-xs font-medium hover:border-primary/40">{cat}</button>)}</div></div>
+                <div className="px-4 py-7 text-center"><p className="text-sm font-semibold">Couldn't find what you're looking for</p><p className="mt-1 text-xs text-muted-foreground">Try a shorter medicine name, brand, or browse a category below.</p><div className="mt-3 flex flex-wrap justify-center gap-2">{categories.slice(1, 6).map((cat) => <button key={cat} type="button" onClick={() => { setSearchQuery(cat); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border px-3 py-2 text-xs font-medium hover:border-primary/40">{cat}</button>)}</div></div>
               )}
               {!hasQuery && searchHistory.length === 0 && <div className="px-4 py-7 text-center"><Search className="mx-auto size-6 text-muted-foreground" /><p className="mt-2 text-sm font-semibold">Search your medicines & health products</p><p className="mt-1 text-xs text-muted-foreground">Try “parac”, “dolo 650”, or a brand name.</p></div>}
             </div>
@@ -673,7 +676,7 @@ function Home() {
             onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 1200)}
             aria-label="Company brand slider"
           >
-            {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory("All"); setSearch(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex w-44 shrink-0 snap-start flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-background p-4 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:w-48" aria-label={"Open " + company + " company folder"}>
+            {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory("All"); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex w-44 shrink-0 snap-start flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-background p-4 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:w-48" aria-label={"Open " + company + " company folder"}>
               <span className={cn('relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition group-hover:scale-105 sm:size-24', companyLogoStyle(company))} aria-hidden="true">
                 <span className="absolute -right-3 -top-3 size-10 rounded-full bg-white/60 blur-md" />
                 <span className="relative flex size-14 items-center justify-center rounded-xl border border-white/70 bg-white/85 text-xl font-black tracking-tight shadow-sm sm:size-16 sm:text-2xl">{companyMonogram(company)}</span>
@@ -699,7 +702,7 @@ function Home() {
             { name: 'Inhalers', icon: Wind, mark: 'INH', tone: 'from-sky-100 to-blue-50 text-sky-700' },
             { name: 'Injections', icon: Syringe, mark: 'INJ', tone: 'from-orange-100 to-amber-50 text-orange-700' },
           ].map(({ name, icon: Icon, mark, tone }) => (
-            <button key={name} type="button" onClick={() => { setSearch(name); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group rounded-2xl border border-border bg-card p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+            <button key={name} type="button" onClick={() => { setSearchQuery(name); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group rounded-2xl border border-border bg-card p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md">
               <span className={cn('relative flex h-20 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br', tone)}><span className="absolute left-2 top-2 rounded-md bg-white/85 px-1.5 py-0.5 text-[9px] font-black shadow-sm">{mark}</span><Icon className="size-10 transition-transform group-hover:scale-110" strokeWidth={1.5} /></span>
               <span className="mt-2 block text-xs font-bold">{name}</span>
             </button>
