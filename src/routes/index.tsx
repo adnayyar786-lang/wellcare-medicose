@@ -300,6 +300,13 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
       onTouchEnd={() => { pausedRef.current = false }}
     >
       <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
+        <div className="absolute left-3 right-3 top-3 z-20 flex items-center justify-between gap-2 sm:left-5 sm:right-5 sm:top-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/65 px-3 py-1.5 text-[11px] font-black tracking-tight text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-2 sm:text-sm">
+            <span className="text-base sm:text-lg" aria-hidden="true">⚡</span>
+            <span>DELIVERY IN 30–45 MIN</span>
+          </div>
+          <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold text-white/85 backdrop-blur-md sm:inline-flex">Fast local delivery</span>
+        </div>
         {slide.image && <img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose healthcare products" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />}
         <div className={cn('absolute inset-0 bg-gradient-to-r', slide.tone)} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_30%,rgba(255,255,255,0.22),transparent_28%),radial-gradient(circle_at_12%_100%,rgba(16,185,129,0.22),transparent_30%)]" />
