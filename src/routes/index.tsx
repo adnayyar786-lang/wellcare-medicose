@@ -127,10 +127,10 @@ function CategoryRail({ title, subtitle, items, onSelect }: { title: string; sub
       <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x' }}>
         {items.map((item) => {
           const Icon = item.icon
-          return <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)} className="group w-[calc((100vw-44px)/1.7)] min-w-[178px] max-w-[235px] shrink-0 snap-start rounded-2xl border border-border bg-card p-3.5 text-left shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:w-[205px] sm:min-w-[205px] lg:w-[220px] lg:min-w-[220px]">
-            <span className="flex size-11 items-center justify-center rounded-xl border border-primary/10 bg-primary/5 text-primary shadow-sm transition-transform group-hover:scale-105 sm:size-12"><Icon className="size-5" strokeWidth={2} aria-hidden="true" /></span>
-            <span className="mt-3 block truncate text-sm font-bold leading-tight">{item.title}</span>
-            <span className="mt-1 block truncate text-[11px] leading-tight text-muted-foreground">{item.subtitle}</span>
+          return <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)} className="group h-[136px] w-[268px] min-w-[268px] shrink-0 snap-start rounded-2xl border border-border/80 bg-card p-3.5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.06)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:h-[140px] sm:w-[250px] sm:min-w-[250px] lg:h-[144px] lg:w-[260px] lg:min-w-[260px]">
+            <span className="flex size-10 items-center justify-center rounded-full border border-primary/10 bg-primary/5 text-primary shadow-sm transition-transform group-hover:scale-105 sm:size-11"><Icon className="size-[18px]" strokeWidth={2} aria-hidden="true" /></span>
+            <span className="mt-2.5 block truncate text-[15px] font-bold leading-tight">{item.title}</span>
+            <span className="mt-1 block truncate text-xs leading-tight text-muted-foreground">{item.subtitle}</span>
           </motion.button>
         })}
       </div>
