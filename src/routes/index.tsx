@@ -6,6 +6,9 @@ import { motion } from 'framer-motion'
 import {
   Baby,
   Bell,
+  MessageCircle,
+  HelpCircle,
+  MapPinned,
   HeartPulse, Dumbbell, Stethoscope, Leaf, Heart,
   Camera,
   ChevronLeft,
@@ -936,6 +939,56 @@ function Home() {
       {!browsing && <section className="relative isolate overflow-hidden border-y border-teal-100 bg-gradient-to-br from-slate-50 via-cyan-50/70 to-emerald-50" aria-label="Browse medicines"><div className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-teal-200/30 blur-3xl" /><div className="pointer-events-none absolute -bottom-24 left-1/4 size-72 rounded-full bg-blue-200/30 blur-3xl" /><div className="relative mx-auto max-w-[1600px] px-4 py-8 sm:py-10"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p className="text-[11px] font-bold uppercase tracking-[0.22em] text-teal-700">Your health, just a few taps away</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Browse Medicines</h2><p className="mt-1 text-sm text-slate-600">Explore available products from our medicine catalogue.</p></div><Button onClick={scrollToProducts} className="rounded-full shadow-lg shadow-teal-900/10">View all medicines <span aria-hidden="true">→</span></Button></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{featured.slice(0, 5).map((med, index) => <motion.div key={med._id} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.42, delay: index * 0.07 }} whileHover={{ y: -6, rotateX: 2, rotateY: -2 }} style={{ transformStyle: 'preserve-3d' }} className="rounded-2xl"><ProductCard med={med} onAdd={handleAddToCart} /></motion.div>)}</div>{featured.length === 0 && <p className="rounded-xl border border-dashed border-teal-200 bg-white/70 p-5 text-sm text-slate-600">Medicines will appear here as products are added to the catalogue.</p>}</div></section>}
 
       {!browsing && <section className="bg-gradient-to-b from-brand-teal/10 to-transparent" aria-label="Veterinary care"><div className="mx-auto max-w-[1600px] px-4 py-6"><div className="relative mb-4 flex items-center justify-between gap-4 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-teal to-primary p-6 text-white sm:p-8"><PawPrint className="pointer-events-none absolute -right-4 -top-4 size-40 rotate-12 text-white/10" aria-hidden="true" /><PawPrint className="pointer-events-none absolute bottom-2 right-24 size-16 -rotate-12 text-white/10" aria-hidden="true" /><div className="relative max-w-lg"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-100">Healthy Pets • Happier Lives</p><h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Veterinary Care</h2><p className="mt-2 text-sm text-white/85">Pet food, veterinary medicines, grooming and everyday care for your pets.</p>{petProducts.length > 0 ? <Button className="mt-4 bg-white text-primary hover:bg-white/90" onClick={() => selectShopCategory('Pet Care')}>Shop Pet Care</Button> : <a href={`https://wa.me/917088252556?text=${encodeURIComponent('Hi Wellcare Medicose, I would like to know about your pet care / veterinary products.')}`} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary transition-opacity hover:opacity-90">Ask about pet products on WhatsApp</a>}</div><div className="relative hidden h-36 w-56 shrink-0 sm:block" aria-label="Dog and cat care" role="img"><img src="https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/RHFgl72fK37qsmkuLZWAW/pet-dog-care-banner-M_db318N.jpg" alt="" className="absolute right-16 top-1 h-32 w-32 rounded-2xl border-4 border-white/70 object-cover shadow-xl" /><img src="https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/Gxr02vcqTwxXRg_R3rSXd/pet-cat-care-banner-xweI-17p.jpg" alt="" className="absolute right-0 top-7 h-28 w-28 rounded-2xl border-4 border-white/70 object-cover shadow-xl" /></div></div><div className="mb-5 grid gap-3 sm:grid-cols-2"><button type="button" onClick={() => selectShopCategory('Pet Care')} className="group relative flex min-h-40 items-center justify-between overflow-hidden rounded-2xl border border-amber-200/70 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-100 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"><span className="relative z-10 max-w-[68%]"><span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700">Made for your best friend</span><span className="mt-1 block text-xl font-bold text-slate-900">Dog Care</span><span className="mt-1 block text-xs text-slate-600">Food, treats, grooming & walking essentials</span><span className="mt-3 inline-flex rounded-full bg-amber-700 px-3 py-1.5 text-xs font-semibold text-white">Explore dog essentials →</span></span><img src="https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/RHFgl72fK37qsmkuLZWAW/pet-dog-care-banner-M_db318N.jpg" alt="Happy dog" className="absolute right-0 top-0 h-full w-[38%] rounded-r-2xl object-cover opacity-90 transition-transform duration-300 group-hover:scale-[1.03]" /><span aria-hidden="true" className="absolute inset-y-0 right-[28%] w-16 bg-gradient-to-r from-amber-50/0 to-amber-50/90" /><span aria-hidden="true" className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-amber-800 shadow-sm">DOG ESSENTIALS</span></button><button type="button" onClick={() => selectShopCategory('Pet Care')} className="group relative flex min-h-40 items-center justify-between overflow-hidden rounded-2xl border border-violet-200/70 bg-gradient-to-r from-violet-50 via-fuchsia-50 to-pink-100 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"><span className="relative z-10 max-w-[68%]"><span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-violet-700">Comfort for every whisker</span><span className="mt-1 block text-xl font-bold text-slate-900">Cat Care</span><span className="mt-1 block text-xs text-slate-600">Cat food, litter, toys & daily care</span><span className="mt-3 inline-flex rounded-full bg-violet-700 px-3 py-1.5 text-xs font-semibold text-white">Explore cat essentials →</span></span><img src="https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/Gxr02vcqTwxXRg_R3rSXd/pet-cat-care-banner-xweI-17p.jpg" alt="Cat" className="absolute right-0 top-0 h-full w-[38%] rounded-r-2xl object-cover opacity-90 transition-transform duration-300 group-hover:scale-[1.03]" /><span aria-hidden="true" className="absolute inset-y-0 right-[28%] w-16 bg-gradient-to-r from-violet-50/0 to-violet-50/90" /><span aria-hidden="true" className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-violet-800 shadow-sm">CAT ESSENTIALS</span></button></div>{petProducts.length > 0 && <><SectionHeading title="Featured Veterinary Products" /><ProductsErrorBoundary><Carousel>{petProducts.map((med) => <ProductCard key={med._id} med={med} variant="carousel" label="Veterinary" onAdd={handleAddToCart} />)}</Carousel></ProductsErrorBoundary></>}</div></section>}
+
+      {!browsing && <section className="border-y border-border bg-gradient-to-br from-slate-50 via-background to-teal-50/40" aria-label="Healthcare services and support">
+        <div className="mx-auto max-w-[1600px] px-4 py-7 sm:py-9">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-teal">Care beyond the cart</p>
+              <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Healthcare Services & Support</h2>
+              <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">Simple ways to get help, choose delivery or pickup, and stay updated on your orders.</p>
+            </div>
+            <a href="https://wa.me/917088252556?text=Hi%20Wellcare%20Medicose%2C%20I%20need%20help%20with%20my%20medicine%20order." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-3.5 py-2 text-xs font-bold text-emerald-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <MessageCircle className="size-4" /> Chat with us
+            </a>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { title: 'Home Delivery', sub: 'Choose delivery during checkout when available.', icon: Truck, mark: 'DEL', tone: 'from-emerald-100 to-teal-50 text-emerald-700' },
+              { title: 'Store Pickup', sub: 'Prefer to collect your order from the store? Select pickup at checkout.', icon: Store, mark: 'PICK', tone: 'from-blue-100 to-cyan-50 text-blue-700' },
+              { title: 'Medicine Help', sub: 'Ask our store team about medicines, products or your order.', icon: MessageCircle, mark: 'HELP', tone: 'from-violet-100 to-fuchsia-50 text-violet-700' },
+              { title: 'Order Tracking', sub: 'Open your orders to check available order status and tracking details.', icon: PackageSearch, mark: 'TRACK', tone: 'from-amber-100 to-orange-50 text-amber-700' },
+            ].map(({ title, sub, icon: Icon, mark, tone }) => (
+              <button key={title} type="button" onClick={() => {
+                if (title === 'Medicine Help') {
+                  window.open('https://wa.me/917088252556?text=Hi%20Wellcare%20Medicose%2C%20I%20need%20medicine%20help.', '_blank', 'noopener,noreferrer')
+                } else if (title === 'Order Tracking') {
+                  window.location.href = '/orders'
+                } else {
+                  scrollToProducts()
+                }
+              }} className="group rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
+                <span className={cn('flex size-10 items-center justify-center rounded-xl bg-gradient-to-br', tone)}>
+                  <span className="text-[8px] font-black tracking-wider">{mark}</span>
+                </span>
+                <span className="mt-3 block text-sm font-extrabold">{title}</span>
+                <span className="mt-1 block text-[11px] leading-relaxed text-muted-foreground">{sub}</span>
+                <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-bold text-primary">{title === 'Medicine Help' ? 'Get help' : title === 'Order Tracking' ? 'View orders' : 'Shop now'} <ChevronRight className="size-3" /></span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>}
+
+      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-7 sm:py-9" aria-label="Why choose Wellcare Medicose">
+        <div className="mb-5">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Why Wellcare</p>
+          <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">A pharmacy experience built around trust</h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          TRUST_ITEMS
+        </div>
+      </section>
 
       {!browsing && lastOrder && lastOrder.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Based on your previous orders"><SectionHeading title={t('reorder')} /><div className="flex gap-3 overflow-x-auto pb-1">{lastOrder.slice(0, 3).map((order) => <Card key={order._id} className="w-64 shrink-0 rounded-2xl"><CardContent className="p-3"><p className="text-xs text-muted-foreground">Order #{order._id.slice(-6).toUpperCase()}</p><p className="mt-1 line-clamp-2 text-sm">{order.items.map((it) => it.name).join(', ')}</p><Button size="sm" className="mt-2 w-full" onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}>{t('reorder')}</Button></CardContent></Card>)}</div></section>}
 
