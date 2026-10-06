@@ -18,6 +18,11 @@ import {
   Pill,
   PillBottle,
   Search,
+  X,
+  SlidersHorizontal,
+  Clock3,
+  Tag,
+  PackageSearch,
   ShieldCheck,
   ShoppingBasket,
   ShoppingCart,
@@ -178,6 +183,11 @@ function Home() {
   const { t, lang, toggle: toggleLang } = useLanguage()
   const [search, setSearch] = useState('')
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false)
+  const [searchHistory, setSearchHistory] = useState<string[]>([])
+  const [searchBrandFilter, setSearchBrandFilter] = useState('All')
+  const [searchAvailabilityFilter, setSearchAvailabilityFilter] = useState<'all' | 'in' | 'out'>('all')
+  const [searchRxFilter, setSearchRxFilter] = useState<'all' | 'rx' | 'nonrx'>('all')
+  const [searchPriceFilter, setSearchPriceFilter] = useState<'all' | 'under500' | '500to1000' | 'over1000'>('all')
   const searchedMedicines = useQuery(
     api.medicines.search,
     search.trim().length >= 2 ? { query: search.trim() } : 'skip',
@@ -207,6 +217,57 @@ function Home() {
     return value ? value.replace(/\\s+/g, ' ').trim() : null
   }
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem('wellcare-search-history')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) setSearchHistory(parsed.filter((v): v is string => typeof v === 'string').slice(0, 8))
+      }
+    } catch { /* ignore invalid local search history */ }
+  }, [])
+
+  function saveSearchHistory(term: string) {
+    const value = term.trim()
+    if (!value) return
+    setSearchHistory((prev) => {
+      const next = [value, ...prev.filter((item) => item.toLowerCase() !== value.toLowerCase())].slice(0, 8)
+      try { window.localStorage.setItem('wellcare-search-history', JSON.stringify(next)) } catch { /* ignore storage errors */ }
+      return next
+    })
+  }
+
+  function removeSearchHistory(term: string) {
+    setSearchHistory((prev) => {
+      const next = prev.filter((item) => item !== term)
+      try { window.localStorage.setItem('wellcare-search-history', JSON.stringify(next)) } catch { /* ignore storage errors */ }
+      return next
+    })
+  }
+
+  function clearSearchHistory() {
+    setSearchHistory([])
+    try { window.localStorage.removeItem('wellcare-search-history') } catch { /* ignore storage errors */ }
+  }
+
+  const normalizeSearchText = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+  const levenshtein = (a: string, b: string) => {
+    if (a === b) return 0
+    if (!a) return b.length
+    if (!b) return a.length
+    const prev = Array.from({ length: b.length + 1 }, (_, i) => i)
+    for (let i = 1; i <= a.length; i++) {
+      let left = i
+      for (let j = 1; j <= b.length; j++) {
+        const next = Math.min(prev[j] + 1, left + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1))
+        prev[j - 1] = left
+        left = next
+      }
+      prev[b.length] = left
+    }
+    return prev[b.length]
+  }
+
   const categories = useMemo(() => {
     const set = new Set<string>()
     medicines.forEach((m) => set.add(m.category))
@@ -214,35 +275,54 @@ function Home() {
   }, [medicines])
 
   const rankSearchResults = (items: typeof medicines, query: string) => {
-    const q = query.trim().toLowerCase()
+    const q = normalizeSearchText(query)
     if (!q) return items
     const terms = q.split(/\s+/).filter(Boolean)
-    return [...items].sort((a, b) => {
-      const score = (m: (typeof medicines)[number]) => {
-        const name = m.name.toLowerCase()
-        const desc = m.description.toLowerCase()
-        const allTerms = terms.every((term) => name.includes(term))
-        const prefix = name.startsWith(q)
-        const exact = name === q
-        const phrase = name.includes(q)
-        const wordStarts = terms.every((term) => name.split(/\s+/).some((word) => word.startsWith(term)))
-        return (exact ? 1000 : 0) + (prefix ? 700 : 0) + (phrase ? 450 : 0) + (allTerms ? 300 : 0) + (wordStarts ? 180 : 0) + (desc.includes(q) ? 40 : 0) + (m.stock > 0 ? 5 : 0)
-      }
-      return score(b) - score(a)
-    })
+    const fuzzyTokenMatch = (term: string, token: string) => {
+      if (token.startsWith(term) || term.startsWith(token)) return 1
+      const maxDistance = term.length >= 7 ? 2 : term.length >= 4 ? 1 : 0
+      return maxDistance > 0 && levenshtein(term, token) <= maxDistance ? 0.65 : 0
+    }
+    const scoreFor = (m: (typeof medicines)[number]) => {
+      const name = normalizeSearchText(m.name)
+      const brand = normalizeSearchText(m.manufacturer ?? '')
+      const desc = normalizeSearchText(m.description)
+      const nameTokens = name.split(/\s+/).filter(Boolean)
+      const exactName = name === q
+      const prefixName = name.startsWith(q)
+      const phraseName = name.includes(q)
+      const exactBrand = brand === q
+      const prefixBrand = !!brand && brand.startsWith(q)
+      const termScore = terms.reduce((sum, term) => sum + nameTokens.reduce((v, token) => Math.max(v, fuzzyTokenMatch(term, token)), 0), 0)
+      const allTerms = termScore >= terms.length
+      const descriptionHit = desc.includes(q)
+      return (exactName ? 10000 : 0) + (prefixName ? 7000 : 0) + (phraseName ? 5000 : 0) + (exactBrand ? 4600 : 0) + (prefixBrand ? 3800 : 0) + (allTerms ? 2600 : 0) + Math.round(termScore * 600) + (descriptionHit ? 250 : 0) + (m.stock > 0 ? 25 : 0) - (m.shopCategory === 'Pet Care' && !/pet|dog|cat|veterinary|vet/.test(q) ? 1500 : 0)
+    }
+    return [...items].sort((a, b) => scoreFor(b) - scoreFor(a))
   }
+
+  const searchSource = useMemo(() => {
+    const map = new Map<string, (typeof medicines)[number]>()
+    for (const item of medicines) map.set(item._id, item)
+    for (const item of searchedMedicines ?? []) map.set(item._id, item)
+    return Array.from(map.values())
+  }, [medicines, searchedMedicines])
 
   const filteredMedicines = useMemo(() => {
     const q = search.trim().toLowerCase()
-    const source = q.length >= 2 ? (searchedMedicines ?? []) : medicines
+    const source = searchSource
+    const terms = normalizeSearchText(q).split(/\s+/).filter(Boolean)
     const items = source.filter((m) => {
       const matchesCategory = activeCategory === 'All' || m.category === activeCategory
       const matchesShop = !activeShopCategory || (m.shopCategory ?? DEFAULT_SHOP_CATEGORY) === activeShopCategory
-      const matchesSearch = !q || m.name.toLowerCase().includes(q) || (m.manufacturer ?? '').toLowerCase().includes(q) || m.description.toLowerCase().includes(q)
-      return matchesCategory && matchesShop && matchesSearch
+      const name = normalizeSearchText(m.name)
+      const brand = normalizeSearchText(m.manufacturer ?? '')
+      const desc = normalizeSearchText(m.description)
+      const fuzzyMatch = !q || name.includes(normalizeSearchText(q)) || brand.includes(normalizeSearchText(q)) || desc.includes(normalizeSearchText(q)) || terms.every((term) => name.split(/\s+/).some((token) => token.startsWith(term) || (term.length >= 4 && levenshtein(term, token) <= (term.length >= 7 ? 2 : 1))))
+      return matchesCategory && matchesShop && fuzzyMatch
     })
     return rankSearchResults(items, q)
-  }, [medicines, searchedMedicines, search, activeCategory, activeShopCategory])
+  }, [medicines, searchedMedicines, search, activeCategory, activeShopCategory, searchSource])
 
   const sameComposition = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -251,7 +331,7 @@ function Home() {
     const key = compositionKey(best)
     if (!key) return []
     const keyWords = key.split(' ').filter((word) => word.length > 2)
-    const source = searchedMedicines ?? medicines
+    const source = searchSource
     return source
       .filter((m) => m._id !== best._id && m.active)
       .filter((m) => {
@@ -260,18 +340,46 @@ function Home() {
         return other === key || keyWords.every((word) => other.includes(word))
       })
       .slice(0, 6)
-  }, [medicines, searchedMedicines, search, filteredMedicines])
+  }, [medicines, searchedMedicines, search, filteredMedicines, searchSource])
 
   const searchSuggestions = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const q = search.trim()
     if (q.length < 2) return []
-    const source = q.length >= 2 ? (searchedMedicines ?? []) : medicines
-    const matches = source.filter((m) => {
-      const name = m.name.toLowerCase()
-      return name.includes(q) || q.split(/\s+/).every((term) => name.includes(term))
+    return rankSearchResults(filteredMedicines, q).slice(0, 8)
+  }, [searchSource, search, filteredMedicines])
+
+  const searchBrands = useMemo(() => {
+    const q = normalizeSearchText(search)
+    if (!q) return []
+    return Array.from(new Set(searchSource.map((m) => m.manufacturer).filter(Boolean) as string[]))
+      .filter((brand) => normalizeSearchText(brand).includes(q) || normalizeSearchText(brand).split(/\s+/).some((part) => part.startsWith(q)))
+      .slice(0, 4)
+  }, [searchSource, search])
+
+  const searchCategories = useMemo(() => {
+    const q = normalizeSearchText(search)
+    if (!q) return []
+    return Array.from(new Set(searchSource.flatMap((m) => [m.category, m.shopCategory].filter(Boolean) as string[])))
+      .filter((category) => normalizeSearchText(category).includes(q))
+      .slice(0, 5)
+  }, [searchSource, search])
+
+  const searchHealthProducts = useMemo(() => {
+    const q = search.trim()
+    if (!q) return []
+    return rankSearchResults(filteredMedicines.filter((m) => m.shopCategory !== 'Pet Care' && !m.requiresPrescription), q).slice(0, 4)
+  }, [searchSource, search, filteredMedicines])
+
+  const filteredSearchMedicines = useMemo(() => {
+    if (!search.trim()) return filteredMedicines
+    return filteredMedicines.filter((m) => {
+      const brandOk = searchBrandFilter === 'All' || (m.manufacturer ?? '') === searchBrandFilter
+      const stockOk = searchAvailabilityFilter === 'all' || (searchAvailabilityFilter === 'in' ? m.stock > 0 : m.stock <= 0)
+      const rxOk = searchRxFilter === 'all' || (searchRxFilter === 'rx' ? m.requiresPrescription : !m.requiresPrescription)
+      const priceOk = searchPriceFilter === 'all' || (searchPriceFilter === 'under500' ? m.price < 500 : searchPriceFilter === '500to1000' ? m.price >= 500 && m.price <= 1000 : m.price > 1000)
+      return brandOk && stockOk && rxOk && priceOk
     })
-    return rankSearchResults(matches, q).slice(0, 7)
-  }, [medicines, searchedMedicines, search])
+  }, [filteredMedicines, search, searchBrandFilter, searchAvailabilityFilter, searchRxFilter, searchPriceFilter])
 
   const recentlyViewed = useMemo(() => recentIds.map((id) => medicines.find((m) => m._id === id)).filter(Boolean) as typeof medicines, [recentIds, medicines])
   const shopCounts = useMemo(() => {
@@ -323,7 +431,25 @@ function Home() {
     setActiveCategory('All')
     requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
-  function clearFilters() { setSearch(''); setShowSearchSuggestions(false); setActiveCategory('All'); setActiveShopCategory(null) }
+  function clearFilters() {
+    setSearch('')
+    setShowSearchSuggestions(false)
+    setActiveCategory('All')
+    setActiveShopCategory(null)
+    setSearchBrandFilter('All')
+    setSearchAvailabilityFilter('all')
+    setSearchRxFilter('all')
+    setSearchPriceFilter('all')
+  }
+  function applySearch(term: string) {
+    const value = term.trim()
+    setSearch(value)
+    if (value) saveSearchHistory(value)
+    setShowSearchSuggestions(false)
+    setActiveCategory('All')
+    setActiveShopCategory(null)
+    requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
   function handleAmazonNav(item: (typeof AMAZON_NAV_ITEMS)[number]) {
     setActiveAmazonNav(item)
     if (item === 'Pharmacy') {
@@ -366,42 +492,80 @@ function Home() {
     recognition.start()
   }
   function renderSearch(id: string) {
+    const hasQuery = search.trim().length > 0
+    const showPanel = showSearchSuggestions
     return (
       <div className="relative z-[210]">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-        <label htmlFor={id} className="sr-only">Search medicines and products</label>
+        <label htmlFor={id} className="sr-only">Search medicines, health products and more</label>
         <Input
           id={id}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setShowSearchSuggestions(true) }}
-          onFocus={() => { if (search.trim().length >= 2) setShowSearchSuggestions(true) }}
-          onKeyDown={(e) => { if (e.key === 'Enter' && searchSuggestions[0]) { setSearch(searchSuggestions[0].name); setShowSearchSuggestions(false) } }}
-          placeholder={t('search_placeholder')}
-          className="h-11 rounded-xl bg-background pl-10 pr-24 text-sm"
+          onFocus={() => setShowSearchSuggestions(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowSearchSuggestions(false)
+            if (e.key === 'Enter' && search.trim()) {
+              saveSearchHistory(search)
+              setShowSearchSuggestions(false)
+              requestAnimationFrame(scrollToProducts)
+            }
+          }}
+          placeholder="Search medicines, health products & more"
+          className="h-12 rounded-2xl border-border bg-background pl-10 pr-24 text-sm shadow-sm transition-[box-shadow,border-color] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
           autoComplete="off"
+          enterKeyHint="search"
+          inputMode="search"
         />
         <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center">
-          <button onClick={handleMicClick} className={`flex size-10 items-center justify-center rounded-md transition-colors ${listening ? 'text-brand-teal' : 'text-muted-foreground'} hover:bg-secondary`} aria-label="Search by voice"><Mic className="size-4" /></button>
-          <button onClick={handleCameraClick} className="flex size-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary" aria-label="Search by photo"><Camera className="size-4" /></button>
+          {search && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSearch(''); setShowSearchSuggestions(true) }} className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Clear search"><X className="size-4" /></button>}
+          <button type="button" onClick={handleMicClick} className={`flex size-10 items-center justify-center rounded-md transition-colors ${listening ? 'text-brand-teal' : 'text-muted-foreground'} hover:bg-secondary`} aria-label="Search by voice"><Mic className="size-4" /></button>
+          <button type="button" onClick={handleCameraClick} className="hidden flex size-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary sm:flex" aria-label="Search by photo"><Camera className="size-4" /></button>
         </div>
-        {showSearchSuggestions && searchSuggestions.length > 0 && (
-          <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-[9999] overflow-hidden rounded-2xl border border-border bg-white shadow-2xl dark:bg-slate-950">
-            <div className="border-b border-border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Suggested medicines</div>
-            <div className="max-h-80 overflow-y-auto p-1.5">
-              {searchSuggestions.map((med, index) => (
-                <button key={med._id} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSearch(med.name); setShowSearchSuggestions(false); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })) }} className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-secondary">
-                  <div className="size-11 shrink-0 overflow-hidden rounded-lg bg-secondary">
-                    <ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-lg ring-0" />
+        {showPanel && (
+          <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[9999] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl ring-1 ring-black/5">
+            <div className="max-h-[min(70vh,520px)] overflow-y-auto overscroll-contain p-2">
+              {!hasQuery && searchHistory.length > 0 && (
+                <section className="p-2" aria-label="Recent searches">
+                  <div className="mb-2 flex items-center justify-between"><div className="flex items-center gap-2 text-xs font-bold"><Clock3 className="size-4 text-primary" /> Recent searches</div><button type="button" onClick={clearSearchHistory} className="text-[11px] font-semibold text-primary">Clear all</button></div>
+                  <div className="flex flex-wrap gap-2">
+                    {searchHistory.map((item) => <button key={item} type="button" onClick={() => applySearch(item)} className="group inline-flex max-w-full items-center gap-1.5 rounded-full border border-border bg-background px-3 py-2 text-xs hover:border-primary/40 hover:bg-primary/5"><span className="max-w-[180px] truncate">{item}</span><span role="button" tabIndex={0} onMouseDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); removeSearchHistory(item) }} className="text-muted-foreground hover:text-foreground" aria-label={`Remove ${item}`}>×</span></button>)}
                   </div>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold">{med.name}</span>
-                    <span className="block truncate text-[11px] text-muted-foreground">{med.category} · {med.shopCategory ?? DEFAULT_SHOP_CATEGORY}</span>
-                  </span>
-                  {index === 0 && <span className="rounded-full bg-primary/10 px-2 py-1 text-[9px] font-bold text-primary">Best match</span>}
-                </button>
-              ))}
+                </section>
+              )}
+              {hasQuery && searchSuggestions.length > 0 && (
+                <section aria-label="Medicine suggestions">
+                  <div className="flex items-center justify-between px-3 pb-2 pt-1"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Top matches</div><span className="text-[10px] text-muted-foreground">Live search</span></div>
+                  <div className="space-y-0.5">
+                    {searchSuggestions.map((med, index) => (
+                      <button key={med._id} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => applySearch(med.name)} className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2.5 text-left transition hover:bg-secondary active:bg-secondary">
+                        <div className="size-12 shrink-0 overflow-hidden rounded-xl bg-secondary"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-xl ring-0" /></div>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center gap-2"><span className="truncate text-sm font-semibold">{med.name}</span>{med.requiresPrescription && <span className="shrink-0 rounded-full bg-highlight/10 px-1.5 py-0.5 text-[9px] font-bold text-highlight-foreground">Rx</span>}</span>
+                          <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">{med.manufacturer ? `${med.manufacturer} · ` : ''}{med.category}{med.stock <= 0 ? ' · Out of stock' : ''}</span>
+                        </span>
+                        <span className="shrink-0 text-right"><span className="block text-sm font-bold text-primary">{formatINR(med.price)}</span>{med.mrpPrice && med.mrpPrice > med.price && <span className="block text-[10px] text-muted-foreground line-through">{formatINR(med.mrpPrice)}</span>}</span>
+                        {index === 0 && <span className="hidden rounded-full bg-primary/10 px-2 py-1 text-[9px] font-bold text-primary sm:inline-flex">Best</span>}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+              {hasQuery && searchBrands.length > 0 && (
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Brand suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><Tag className="size-4 text-primary" /> Brands</div><div className="flex flex-wrap gap-2">{searchBrands.map((brand) => <button key={brand} type="button" onClick={() => { setSearchBrandFilter(brand); setSearch(brand); saveSearchHistory(brand); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{brand}</button>)}</div></section>
+              )}
+              {hasQuery && searchCategories.length > 0 && (
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Category suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><PackageSearch className="size-4 text-primary" /> Categories</div><div className="flex flex-wrap gap-2">{searchCategories.map((category) => <button key={category} type="button" onClick={() => { setSearch(category); setSearchHistory((prev) => prev); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{category}</button>)}</div></section>
+              )}
+              {hasQuery && searchHealthProducts.length > 0 && (
+                <section className="border-t border-border px-2 pb-1 pt-3" aria-label="Health products"><div className="mb-2 text-xs font-bold">Health products</div><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{searchHealthProducts.map((med) => <button key={med._id} type="button" onClick={() => applySearch(med.name)} className="min-w-0 rounded-xl border border-border bg-background p-2 text-left hover:border-primary/40"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-lg ring-0" /><p className="mt-1 line-clamp-2 text-[11px] font-semibold">{med.name}</p><p className="text-xs font-bold text-primary">{formatINR(med.price)}</p></button>)}</div></section>
+              )}
+              {hasQuery && searchSuggestions.length === 0 && searchBrands.length === 0 && searchCategories.length === 0 && (
+                <div className="px-4 py-7 text-center"><p className="text-sm font-semibold">Couldn't find what you're looking for</p><p className="mt-1 text-xs text-muted-foreground">Try a shorter medicine name, brand, or browse a category below.</p><div className="mt-3 flex flex-wrap justify-center gap-2">{categories.slice(1, 6).map((cat) => <button key={cat} type="button" onClick={() => { setSearch(cat); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border px-3 py-2 text-xs font-medium hover:border-primary/40">{cat}</button>)}</div></div>
+              )}
+              {!hasQuery && searchHistory.length === 0 && <div className="px-4 py-7 text-center"><Search className="mx-auto size-6 text-muted-foreground" /><p className="mt-2 text-sm font-semibold">Search your medicines & health products</p><p className="mt-1 text-xs text-muted-foreground">Try “parac”, “dolo 650”, or a brand name.</p></div>}
             </div>
-            <button type="button" onClick={scrollToProducts} className="w-full border-t border-border px-4 py-2.5 text-center text-xs font-semibold text-primary hover:bg-secondary">View all results for “{search.trim()}”</button>
+            {hasQuery && <button type="button" onClick={() => { saveSearchHistory(search); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="w-full border-t border-border bg-background px-4 py-3 text-center text-xs font-semibold text-primary hover:bg-secondary">View all results for “{search.trim()}”</button>}
           </div>
         )}
       </div>
@@ -410,7 +574,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="relative z-[200] isolate border-b border-border bg-card backdrop-blur md:sticky md:top-0">
+      <header className="sticky top-0 relative z-[200] isolate border-b border-border bg-card backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3">
           <div className="flex shrink-0 items-center gap-2"><ProfileDrawer /><BrandLogo /></div>
           <div className="hidden flex-1 md:block">{renderSearch('site-search-desktop')}</div>
@@ -536,7 +700,7 @@ function Home() {
 
       {!browsing && lastOrder && lastOrder.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Based on your previous orders"><SectionHeading title={t('reorder')} /><div className="flex gap-3 overflow-x-auto pb-1">{lastOrder.slice(0, 3).map((order) => <Card key={order._id} className="w-64 shrink-0 rounded-2xl"><CardContent className="p-3"><p className="text-xs text-muted-foreground">Order #{order._id.slice(-6).toUpperCase()}</p><p className="mt-1 line-clamp-2 text-sm">{order.items.map((it) => it.name).join(', ')}</p><Button size="sm" className="mt-2 w-full" onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}>{t('reorder')}</Button></CardContent></Card>)}</div></section>}
 
-      <main ref={gridRef} className="mx-auto max-w-[1600px] scroll-mt-40 px-4 py-6"><SectionHeading title={activeShopCategory ?? (search.trim() ? `Results for “${search.trim()}”` : t('all_products'))} subtitle={status === 'LoadingFirstPage' ? undefined : `${filteredMedicines.length} product${filteredMedicines.length === 1 ? '' : 's'}`} action={browsing ? <button onClick={clearFilters} className="text-xs font-medium text-primary underline-offset-2 hover:underline">Clear filters</button> : undefined} />
+      <main ref={gridRef} className="mx-auto max-w-[1600px] scroll-mt-40 px-4 py-6"><SectionHeading title={activeShopCategory ?? (search.trim() ? `Results for “${search.trim()}”` : t('all_products'))} subtitle={status === 'LoadingFirstPage' ? undefined : `${filteredSearchMedicines.length} product${filteredSearchMedicines.length === 1 ? '' : 's'}`} action={browsing ? <button onClick={clearFilters} className="text-xs font-medium text-primary underline-offset-2 hover:underline">Clear filters</button> : undefined} />
         {search.trim() && filteredMedicines.length > 0 && (
           <div className="mb-5 space-y-5">
             <section aria-label="Best match">
@@ -561,9 +725,29 @@ function Home() {
             )}
           </div>
         )}
-        {!search.trim() && <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">{categories.map((cat) => <button key={cat} onClick={() => setActiveCategory(cat)} aria-pressed={activeCategory === cat} className={cn('shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors', activeCategory === cat ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-foreground hover:border-primary/40')}>{cat}</button>)}</div>}
-        <ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}</div> : filteredMedicines.length === 0 ? <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card px-4 py-10 text-center"><p className="text-sm text-muted-foreground">No medicines or products found.</p><Button variant="outline" size="sm" onClick={clearFilters}>Browse all categories</Button></div> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{(search.trim() ? filteredMedicines.slice(1) : filteredMedicines).slice(0, visible).map((med) => <ProductCard key={med._id} med={med} label={med.shopCategory === 'Pet Care' ? 'Veterinary' : undefined} onAdd={handleAddToCart} />)}</div>}</ProductsErrorBoundary>
-        {filteredMedicines.length > visible && <div className="mt-6 flex justify-center"><Button variant="outline" onClick={() => setVisible((v) => v + 24)}>Show more ({filteredMedicines.length - visible} more)</Button></div>}{status === 'CanLoadMore' && <div className="mt-6 flex justify-center"><Button variant="outline" onClick={() => loadMore(PAGE_SIZE)}>Load more</Button></div>}
+        <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+          {(search.trim() ? ['All', ...Array.from(new Set(filteredMedicines.map((m) => m.category))).sort()] : categories).map((cat) => <button key={cat} onClick={() => setActiveCategory(cat)} aria-pressed={activeCategory === cat} className={cn('shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors', activeCategory === cat ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-foreground hover:border-primary/40')}>{cat}</button>)}
+        </div>
+        {search.trim() && (
+          <div className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-2.5">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><SlidersHorizontal className="size-4" /> Filters</div>
+            <select value={searchBrandFilter} onChange={(e) => setSearchBrandFilter(e.target.value)} className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="All">Brand: All</option>
+              {Array.from(new Set(filteredMedicines.map((m) => m.manufacturer).filter(Boolean) as string[])).sort().map((brand) => <option key={brand} value={brand}>{brand}</option>)}
+            </select>
+            <select value={searchPriceFilter} onChange={(e) => setSearchPriceFilter(e.target.value as typeof searchPriceFilter)} className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="all">Price: All</option><option value="under500">Under ₹500</option><option value="500to1000">₹500–₹1,000</option><option value="over1000">Above ₹1,000</option>
+            </select>
+            <select value={searchAvailabilityFilter} onChange={(e) => setSearchAvailabilityFilter(e.target.value as typeof searchAvailabilityFilter)} className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="all">Availability: All</option><option value="in">In stock</option><option value="out">Out of stock</option>
+            </select>
+            <select value={searchRxFilter} onChange={(e) => setSearchRxFilter(e.target.value as typeof searchRxFilter)} className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="all">Prescription: All</option><option value="rx">Prescription required</option><option value="nonrx">No prescription</option>
+            </select>
+          </div>
+        )}
+        <ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}</div> : filteredSearchMedicines.length === 0 ? <div className="rounded-2xl border border-dashed border-border bg-card px-4 py-10 text-center"><PackageSearch className="mx-auto size-8 text-muted-foreground" /><p className="mt-2 text-sm font-semibold">Couldn't find what you're looking for</p><p className="mt-1 text-xs text-muted-foreground">Try a related search, browse categories, or clear the filters.</p><div className="mt-4 flex flex-wrap justify-center gap-2">{['Paracetamol','Vitamin C','Cough Syrup','Pain Relief'].map((term) => <button key={term} type="button" onClick={() => applySearch(term)} className="rounded-full border border-border px-3 py-2 text-xs font-medium hover:border-primary/40">{term}</button>)}<Button variant="outline" size="sm" onClick={clearFilters}>Browse all categories</Button></div></div> : <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{filteredSearchMedicines.slice(0, visible).map((med) => <ProductCard key={med._id} med={med} label={med.shopCategory === 'Pet Care' ? 'Veterinary' : undefined} onAdd={handleAddToCart} />)}</div>}</ProductsErrorBoundary>
+        {filteredSearchMedicines.length > visible && <div className="mt-6 flex justify-center"><Button variant="outline" onClick={() => setVisible((v) => v + 24)}>Show more ({filteredSearchMedicines.length - visible} more)</Button></div>}{status === 'CanLoadMore' && <div className="mt-6 flex justify-center"><Button variant="outline" onClick={() => loadMore(PAGE_SIZE)}>Load more</Button></div>}
       </main>
 
       {!browsing && recentlyViewed.length > 0 && <section className="border-t border-border bg-card"><div className="mx-auto max-w-[1600px] px-4 py-6"><SectionHeading title={t('recently_viewed')} /><div className="flex gap-3 overflow-x-auto pb-1">{recentlyViewed.map((med) => <Link key={med._id} to="/medicine/$id" params={{ id: med._id }} className="w-32 shrink-0 transition-transform hover:-translate-y-0.5"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt={med.name} /><p className="mt-1.5 line-clamp-2 text-xs font-medium">{med.name}</p><p className="text-xs font-semibold text-primary">{formatINR(med.price)}</p></Link>)}</div></div></section>}
