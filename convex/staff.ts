@@ -1,10 +1,18 @@
-import { getAuthUserId } from '@convex-dev/auth/server'
 import { query, mutation } from './_generated/server'
 import { v } from 'convex/values'
 import type { Id } from './_generated/dataModel'
+import { getAppUserId } from './appAuth'
 const ADMIN_EMAIL='adnayyar786@gmail.com'
 const ok=(data:any)=>({ok:true as const,...data}), fail=(code:string,message:string)=>({ok:false as const,code,message})
-async function current(ctx:any){const uid=await getAuthUserId(ctx);if(!uid)return null;const user=await ctx.db.get(uid);const email=user?.email?.trim().toLowerCase();if(!email)return null;if(email===ADMIN_EMAIL)return null;const staff=await ctx.db.query('staff').withIndex('by_email',q=>q.eq('email',email)).first();return staff&&staff.active?staff:null}
+async function current(ctx:any){
+  const uid=await getAppUserId(ctx)
+  if(!uid)return null
+  const user=await ctx.db.get(uid)
+  const email=user?.email?.trim().toLowerCase()
+  if(!email || email===ADMIN_EMAIL)return null
+  const staff=await ctx.db.query('staff').withIndex('by_email',q=>q.eq('email',email)).first()
+  return staff&&staff.active?staff:null
+}
 async function requireAdmin(ctx:any){const identity=await ctx.auth.getUserIdentity();const email=typeof identity?.email==='string'?identity.email.trim().toLowerCase():'';if(email!==ADMIN_EMAIL)throw new Error('Only the Wellcare Medicose admin can manage staff access.');return email}
 const STAFF_PERMISSIONS=['dashboard','billing','orders','medicines_view','stock_view','customers','prescriptions','expiry','cash_shift','reports','tasks','returns','stock_adjust'] as const
 export const isAdmin=query({args:{},handler:async(ctx)=>{const identity=await ctx.auth.getUserIdentity();const email=typeof identity?.email==='string'?identity.email.trim().toLowerCase():'';return email===ADMIN_EMAIL?{email}:null}})
