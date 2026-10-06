@@ -1,4 +1,3 @@
-import { useAuthActions } from '@convex-dev/auth/react'
 import { useMutation, useQuery } from 'convex/react'
 import { MotionConfig, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -20,6 +19,7 @@ import {
 } from 'lucide-react'
 
 import { api } from '../../../convex/_generated/api'
+import { signOutFirebase } from '@/lib/firebase-auth'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -353,7 +353,7 @@ function NotificationsMenu({ onGo }: { onGo: (t: NavTarget) => void }) {
 }
 
 export function AdminApp({ adminEmail }: { adminEmail: string | null }) {
-  const { signOut } = useAuthActions()
+  const signOut = signOutFirebase
   const [menuOpen, setMenuOpen] = useState(false)
   const [nav, setNav] = useState<NavState>({
     section: 'dashboard',
