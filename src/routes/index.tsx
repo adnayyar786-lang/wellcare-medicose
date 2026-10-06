@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   Baby,
   Bell,
-  HeartPulse, Dumbbell, Stethoscope, Leaf, Heart, Activity, Droplets, Home as HomeIcon,
+  HeartPulse, Dumbbell, Stethoscope, Leaf, Heart,
   Camera,
   FlaskConical,
   Languages,
@@ -116,18 +116,6 @@ const SHOP_AND_CARE: CategoryRailItem[] = [
   { id: 'sexual-wellness', title: 'Sexual Wellness', subtitle: 'Intimate wellness', icon: Heart, routeKey: 'Sexual Wellness' },
 ]
 
-const DIAGNOSTICS: CategoryRailItem[] = [
-  { id: 'blood-tests', title: 'Blood Tests', subtitle: 'Reports', icon: Droplets, routeKey: 'Blood Tests' },
-  { id: 'full-body', title: 'Full Body', subtitle: 'Packages', icon: Stethoscope, routeKey: 'Full Body' },
-  { id: 'checkups', title: 'Health Checkups', subtitle: 'Complete care', icon: HeartPulse, routeKey: 'Health Checkups' },
-  { id: 'diabetes', title: 'Diabetes Tests', subtitle: 'Sugar monitoring', icon: Activity, routeKey: 'Diabetes Tests' },
-  { id: 'heart-tests', title: 'Heart Tests', subtitle: 'ECG & cardiac', icon: HeartPulse, routeKey: 'Heart Tests' },
-  { id: 'thyroid', title: 'Thyroid Tests', subtitle: 'Thyroid profile', icon: FlaskConical, routeKey: 'Thyroid Tests' },
-  { id: 'vitamin-tests', title: 'Vitamin Tests', subtitle: 'Deficiency tests', icon: FlaskConical, routeKey: 'Vitamin Tests' },
-  { id: 'liver-tests', title: 'Liver Tests', subtitle: 'Liver profile', icon: Activity, routeKey: 'Liver Tests' },
-  { id: 'kidney-tests', title: 'Kidney Tests', subtitle: 'Kidney profile', icon: Activity, routeKey: 'Kidney Tests' },
-  { id: 'home-sample', title: 'Home Sample Collection', subtitle: 'Sample at home', icon: HomeIcon, routeKey: 'Home Sample Collection' },
-]
 
 function CategoryRail({ title, subtitle, items, onSelect }: { title: string; subtitle: string; items: CategoryRailItem[]; onSelect: (item: CategoryRailItem) => void }) {
   return (
@@ -657,9 +645,6 @@ function Home() {
             selectShopCategory(item.routeKey)
           }} />
           <div className="py-3">{renderSearch('site-searchQuery')}</div>
-          <CategoryRail title="DIAGNOSTICS" subtitle="Tests & services" items={DIAGNOSTICS} onSelect={(item) => {
-            setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts)
-          }} />
           <div className="mt-2"><DeliveryLocationBar /></div>
         </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border md:block">
@@ -679,11 +664,6 @@ function Home() {
           if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
         }} />
-        <div className="border-t border-border">
-          <CategoryRail title="DIAGNOSTICS" subtitle="Tests & services" items={DIAGNOSTICS} onSelect={(item) => {
-            setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts)
-          }} />
-        </div>
       </div>
 
       {!browsing && <>
