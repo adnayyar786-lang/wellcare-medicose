@@ -258,6 +258,35 @@ export const seedManyV2 = mutation({
 // (so the product page can show a strikethrough price + % off) to any
 // medicine that doesn't have them yet. Safe to re-run; it only touches rows
 // missing the fields.
+export const verifyCatalogue = query({
+  args: { names: v.array(v.string()) },
+  returns: v.object({
+    expected: v.number(),
+    found: v.number(),
+    missing: v.array(v.string()),
+    duplicates: v.array(v.string()),
+    inactive: v.array(v.string()),
+  }),
+  handler: async (ctx, { names }) => {
+    const uniqueNames = [...new Set(names.map((n) => n.trim()).filter(Boolean))]
+    const missing: string[] = []
+    const duplicates: string[] = []
+    const inactive: string[] = []
+    let found = 0
+    for (const name of uniqueNames) {
+      const rows = await ctx.db.query('medicines').withIndex('by_name', (q) => q.eq('name', name)).collect()
+      if (rows.length === 0) {
+        missing.push(name)
+        continue
+      }
+      found += 1
+      if (rows.length > 1) duplicates.push(name)
+      if (rows.every((row) => !row.active)) inactive.push(name)
+    }
+    return { expected: uniqueNames.length, found, missing, duplicates, inactive }
+  },
+})
+
 export const backfillShopFields = mutation({
   args: { cursor: v.optional(v.string()) },
   returns: v.object({ processed: v.number(), continueCursor: v.union(v.string(), v.null()), isDone: v.boolean() }),
