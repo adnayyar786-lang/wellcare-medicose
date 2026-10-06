@@ -299,14 +299,17 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
       onTouchStart={() => { pausedRef.current = true }}
       onTouchEnd={() => { pausedRef.current = false }}
     >
-      <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
-        <div className="relative z-20 flex min-h-10 items-center justify-between gap-2 px-4 pt-3 sm:min-h-12 sm:px-6 sm:pt-4 lg:px-8">
-          <div className="inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded-full border border-white/20 bg-slate-950/70 px-3 py-1.5 text-[10px] font-black tracking-tight text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-2 sm:text-sm">
-            <span className="text-sm sm:text-base" aria-hidden="true">⚡</span>
-            <span className="truncate">DELIVERY IN 30–45 MIN</span>
+      <div className="mb-2 flex items-center justify-between gap-2 rounded-xl border border-primary/15 bg-primary/[0.06] px-3 py-2 shadow-sm sm:mb-3 sm:px-4 sm:py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm shadow-sm sm:size-8 sm:text-base" aria-hidden="true">⚡</span>
+          <div className="min-w-0">
+            <p className="truncate text-[11px] font-black tracking-tight text-foreground sm:text-sm">DELIVERY IN 30–45 MIN</p>
+            <p className="hidden text-[9px] font-medium text-muted-foreground sm:block">Fast local delivery</p>
           </div>
-          <span className="hidden shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold text-white/85 backdrop-blur-md sm:inline-flex">Fast local delivery</span>
         </div>
+        <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-extrabold text-primary sm:px-3 sm:py-1.5 sm:text-[10px]">QUICK DELIVERY</span>
+      </div>
+      <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
         {slide.image && <img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose healthcare products" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />}
         <div className={cn('absolute inset-0 bg-gradient-to-r', slide.tone)} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_30%,rgba(255,255,255,0.22),transparent_28%),radial-gradient(circle_at_12%_100%,rgba(16,185,129,0.22),transparent_30%)]" />
