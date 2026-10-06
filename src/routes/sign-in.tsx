@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { LoginScreen } from '@/components/auth-gate'
+import { useFirebaseAuthState } from '@/components/convex-client-provider'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/sign-in')({
@@ -9,19 +10,16 @@ export const Route = createFileRoute('/sign-in')({
 
 function SignInPage() {
   const navigate = useNavigate()
+  const { user, isLoading } = useFirebaseAuthState()
 
   useEffect(() => {
-    // Redirect only after the auth action has been explicitly confirmed by
-    // Firebase. A pre-existing/stale session must never auto-redirect this page.
-    const onSignedIn = (event: Event) => {
-      const user = (event as CustomEvent).detail
-      if (!user) return
+    // Navigate only from Firebase's persisted/authenticated state.
+    // Do not navigate from the raw Google popup result: doing that can move
+    // to Home before Firebase persistence and the Convex JWT session are ready.
+    if (!isLoading && user) {
       void navigate({ to: '/' })
     }
-
-    window.addEventListener('wellcare-firebase-signed-in', onSignedIn)
-    return () => window.removeEventListener('wellcare-firebase-signed-in', onSignedIn)
-  }, [navigate])
+  }, [isLoading, user, navigate])
 
   return <LoginScreen />
 }
