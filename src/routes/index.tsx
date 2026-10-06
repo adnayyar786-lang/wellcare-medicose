@@ -7,8 +7,6 @@ import {
   Baby,
   Bell,
   MessageCircle,
-  HelpCircle,
-  MapPinned,
   HeartPulse, Dumbbell, Stethoscope, Leaf, Heart,
   Camera,
   ChevronLeft,
@@ -986,7 +984,13 @@ function Home() {
           <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">A pharmacy experience built around trust</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          TRUST_ITEMS
+          {TRUST_ITEMS.map(({ icon: Icon, title, sub }) => (
+            <div key={title} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon className="size-5" /></span>
+              <h3 className="mt-3 text-sm font-extrabold">{title}</h3>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{sub}</p>
+            </div>
+          ))}
         </div>
       </section>
 
