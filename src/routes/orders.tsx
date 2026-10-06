@@ -61,16 +61,16 @@ function OrdersPage() {
 
 function OrderCard({ order, onReorder, active }: { order: { _id: Id<'orders'>; status: string; fulfillment: 'pickup'|'delivery'; _creationTime?: number; items: Array<{ medicineId: Id<'medicines'>; name: string; price: number; quantity: number }>; total: number }, onReorder: () => void, active?: boolean }) {
   const [cancelOpen, setCancelOpen] = useState(false)
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [selected, setSelected] = useState<Set<Id<'medicines'>>>(new Set())
   const [cancelling, setCancelling] = useState(false)
   const cancelItems = useMutation(api.orders.cancelItems)
   const canCancel = order.status === 'placed' || order.status === 'preparing'
 
-  function toggle(id: string) { setSelected((prev) => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next }) }
+  function toggle(id: Id<'medicines'>) { setSelected((prev) => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next }) }
   async function handleConfirmCancel() {
     if (!selected.size) { toast.error('Select at least one item'); return }
     setCancelling(true)
-    try { await cancelItems({ id: order._id, medicineIds: Array.from(selected) as Array<Id<'medicines'>>); toast.success('Order updated'); setCancelOpen(false); setSelected(new Set()) }
+    try { await cancelItems({ id: order._id, medicineIds: Array.from(selected)); toast.success('Order updated'); setCancelOpen(false); setSelected(new Set()) }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Could not cancel') }
     finally { setCancelling(false) }
   }
