@@ -1,7 +1,7 @@
-import { useAuthActions } from '@convex-dev/auth/react'
 import { useMutation,useQuery } from 'convex/react'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../../../convex/_generated/api'
+import { signOutFirebase } from '@/lib/firebase-auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card,CardContent,CardHeader,CardTitle } from '@/components/ui/card'
@@ -10,7 +10,7 @@ import { Tabs,TabsContent,TabsList,TabsTrigger } from '@/components/ui/tabs'
 import { LayoutDashboard,ReceiptText,Package,ShoppingCart,RotateCcw,ClipboardList,LogOut,WalletCards,Users,FileCheck,BarChart3 } from 'lucide-react'
 
 export function StaffApp(){
- const {signOut}=useAuthActions(),session=useQuery(api.staff.me),dash=useQuery(api.staff.dashboard),meds=useQuery(api.staff.medicines,{}),orders=useQuery(api.staff.orders,{}),tasks=useQuery(api.staff.tasks,{}),rxs=useQuery(api.staff.prescriptions,{}),reports=useQuery(api.staff.reports,{})
+ const signOut=signOutFirebase,session=useQuery(api.staff.me),dash=useQuery(api.staff.dashboard),meds=useQuery(api.staff.medicines,{}),orders=useQuery(api.staff.orders,{}),tasks=useQuery(api.staff.tasks,{}),rxs=useQuery(api.staff.prescriptions,{}),reports=useQuery(api.staff.reports,{})
  const start=useMutation(api.staff.startShift),close=useMutation(api.staff.closeShift),sale=useMutation(api.staff.createSale),adjust=useMutation(api.staff.adjustStock),ret=useMutation(api.staff.createReturn),orderStatus=useMutation(api.staff.updateOrderStatus),taskUpdate=useMutation(api.staff.updateTask),verifyRx=useMutation(api.staff.verifyPrescription),saveCustomer=useMutation(api.staff.saveCustomer)
  if(session===undefined) return <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6"><p className="text-sm text-muted-foreground">Checking staff access…</p></main>
  if(!session) return <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white"><section className="max-w-md rounded-3xl border border-white/10 bg-white/[0.06] p-7 text-center"><h1 className="text-xl font-bold">Staff access denied</h1><p className="mt-2 text-sm text-slate-300">This Gmail is not an active admin-approved staff account.</p></section></main>
