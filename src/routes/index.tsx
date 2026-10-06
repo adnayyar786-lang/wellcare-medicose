@@ -902,22 +902,21 @@ function Home() {
         </div>
       </section>}
       {!browsing && <OfferCards />}
-
-      {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Top brands">
-        <SectionHeading title="Top Brands" subtitle="Explore manufacturers currently available in our catalogue." />
-        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
-          {manufacturers.slice(0, 12).map((company) => (
-            <button key={company} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex min-w-[220px] snap-start items-center gap-3 rounded-2xl border border-border bg-card p-3.5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:min-w-0">
-              <span className={cn('flex size-12 shrink-0 items-center justify-center rounded-xl border border-white/15 shadow-sm', monogramTone('top-brand-' + company))}>
-                <span className="text-sm font-black text-white">{companyMonogram(company)}</span>
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-extrabold">{company}</span>
-                <span className="mt-0.5 block text-[11px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} catalogue products</span>
-              </span>
-              <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-            </button>
-          ))}
+      {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-5" aria-label="Top Brands and Companies">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-teal">Trusted manufacturers</p><h2 className="mt-1 text-lg font-extrabold tracking-tight text-foreground sm:text-xl">Top Brands & Companies</h2><p className="mt-0.5 text-[11px] text-muted-foreground">Shop medicines by manufacturer</p></div><span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">{manufacturers.length} brands</span></div>
+          <div className="relative w-full rounded-2xl border border-border bg-card shadow-sm">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
+            <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Top brands and company slider">
+              {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-top-brand-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " brand"}>
+                <span className={cn('relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 shadow-sm transition group-hover:scale-105 sm:size-11', monogramTone('company-' + company))} aria-hidden="true"><span className="absolute -right-2 -top-2 size-6 rounded-full bg-white/15 blur-sm" /><span className="relative text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
+                <span className="block max-w-full truncate text-[11px] font-bold sm:text-xs">{company}</span>
+                <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
+              </button>)}
+            </div>
+          </div>
+          <p className="mt-1.5 text-center text-[10px] text-muted-foreground">Swipe to explore • Auto-scroll pauses while you interact</p>
         </div>
       </section>}
 
