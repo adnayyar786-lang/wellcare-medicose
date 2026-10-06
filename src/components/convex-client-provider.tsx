@@ -52,6 +52,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const auth = getFirebaseAuth()
+      const firebase = (window as any).firebase
       if (!auth) {
         setIsLoading(false)
         return
@@ -64,6 +65,13 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         lastKnownUser = next
         setUser(next)
         setIsLoading(false)
+      }
+
+      // Explicitly restore Firebase LOCAL persistence before observing auth.
+      // This prevents Android/Chrome from briefly reporting a signed-out state
+      // after the Google popup returns and the app navigates between routes.
+      const preparePersistence = async () => {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       }
 
       // Keep the gate in loading state until Firebase has restored LOCAL
@@ -92,8 +100,16 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         setUser(restored as FirebaseUserLike)
       }
 
-      unsubscribe = auth.onAuthStateChanged(sync)
-      void processRedirect()
+      void (async () => {
+        try {
+          await preparePersistence()
+        } catch (error) {
+          console.error('Firebase persistence setup failed', error)
+        }
+        if (!mounted) return
+        unsubscribe = auth.onAuthStateChanged(sync)
+        await processRedirect()
+      })()
 
       const onSignedIn = (event: Event) => {
         const next = (event as CustomEvent<FirebaseUserLike | null>).detail
