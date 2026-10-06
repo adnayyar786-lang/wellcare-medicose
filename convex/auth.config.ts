@@ -2,6 +2,7 @@ import type { AuthConfig } from "convex/server"
 
 const firebaseProjectId = "wellcare-medicose"
 
+// Production Firebase JWT provider for the Wellcare Medicose Convex deployment.
 export default {
   providers: [
     {
