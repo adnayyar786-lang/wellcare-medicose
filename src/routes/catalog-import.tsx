@@ -98,7 +98,8 @@ const HUMAN = [
   ["Benzoyl Peroxide 2.5% Gel 20g","Generic","Gel",95,115],
   ["Adapalene 0.1% Gel 15g","Generic","Gel",115,135],
   ["Ketoconazole 2% Shampoo 100ml","Generic","Shampoo",120,145],
-  ["ORS Lemon Flavour Sachet 21g","Generic","Powder",18,20],\n] as const
+  ["ORS Lemon Flavour Sachet 21g","Generic","Powder",18,20],
+] as const
 
 const CHUNK = 50
 
