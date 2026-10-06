@@ -157,8 +157,13 @@ function CategoryRail({ title, subtitle, items, onSelect }: { title: string; sub
           return (
             <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)}
               className="group h-[96px] w-[168px] min-w-[168px] shrink-0 snap-start rounded-xl border border-border/80 bg-card p-2.5 text-left shadow-[0_1px_6px_rgba(15,23,42,0.05)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:h-[102px] sm:w-[190px] sm:min-w-[190px] lg:h-[108px] lg:w-[205px] lg:min-w-[205px]">
-              <span className={cn("flex size-8 items-center justify-center rounded-lg border border-white/20 shadow-sm sm:size-9", monogramTone(item.id))}>
-                <span className="text-[9px] font-black tracking-[0.02em] drop-shadow-sm">{item.mark ?? 'WC'}</span>
+              <span className={cn("relative flex size-9 items-center justify-center overflow-hidden rounded-xl border border-white/25 shadow-sm sm:size-10", monogramTone(item.id))}>
+                <span className="absolute -right-2 -top-2 size-7 rounded-full border border-white/15 bg-white/10" />
+                <span className="absolute -bottom-2 -left-2 size-6 rounded-full border border-white/10 bg-black/10" />
+                <span className="relative flex size-7 items-center justify-center rounded-lg border border-white/20 bg-white/10 backdrop-blur-sm sm:size-8">
+                  <Icon className="size-3.5 text-white/90 sm:size-4" strokeWidth={2.5} />
+                </span>
+                <span className="absolute bottom-0.5 right-0.5 rounded-md border border-white/25 bg-white/20 px-1 text-[6px] font-black leading-3 tracking-wider text-white shadow-sm backdrop-blur-sm sm:text-[7px]">{item.mark ?? 'WC'}</span>
               </span>
               <span className="mt-1.5 block truncate text-[13px] font-bold leading-tight sm:text-sm">{item.title}</span>
               <span className="mt-0.5 block truncate text-[10px] leading-tight text-muted-foreground sm:text-[11px]">{item.subtitle}</span>
@@ -227,7 +232,7 @@ const TRUST_ITEMS = [
   { icon: Lock, title: 'Safe & Secure Payments', sub: 'Pay the way you prefer' },
 ]
 
-const COMPANY_LOGO_STYLES: Record<string, string> = {
+// Company cards prefer verified brand artwork; graphical monograms remain the visual fallback.\nconst COMPANY_LOGO_STYLES: Record<string, string> = {
   "dr. reddy's": 'bg-violet-50 text-violet-700',
   'sun pharma': 'bg-orange-50 text-orange-600',
   cipla: 'bg-blue-50 text-blue-700',
