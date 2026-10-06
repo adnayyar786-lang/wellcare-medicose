@@ -1,19 +1,15 @@
 import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 
-const ADMIN_EMAIL = 'bullae01786@gmail.com'
-const STAFF = [
-  { email: 'sciencewithabd@gmail.com', name: 'Rao Sahab' },
-  { email: 'fzaamhk01786@gmail.com', name: 'Shahnawaz' },
-] as const
+const ADMIN_EMAIL = 'adnayyar786@gmail.com'
 
 async function currentRole(ctx: any) {
   const identity = await ctx.auth.getUserIdentity()
   const email = typeof identity?.email === 'string' ? identity.email.trim().toLowerCase() : ''
   if (!email) throw new Error('Please sign in with an authorized email account.')
   if (email === ADMIN_EMAIL) return { role: 'admin' as const, email }
-  const staff = STAFF.find(s => s.email === email)
-  if (staff) return { role: 'staff' as const, email, name: staff.name }
+  const staff = await ctx.db.query('staff').withIndex('by_email', q => q.eq('email', email)).first()
+  if (staff?.active) return { role: 'staff' as const, email, name: staff.name }
   throw new Error('You do not have permission to access shop operations.')
 }
 
@@ -63,7 +59,8 @@ export const create = mutation({ args: { name: v.string(), address: v.string(), 
   if (actor.role !== 'admin') throw new Error('Only the admin can create or configure branches.')
   const name = args.name.trim(), address = args.address.trim()
   if (!name || !address) throw new Error('Shop name and address are required.')
-  const allowedNames = STAFF.map(s => s.name)
+  const staffRows = await ctx.db.query('staff').withIndex('by_active', q => q.eq('active', true)).collect()
+  const allowedNames = staffRows.filter(s => s.role !== 'admin').map(s => s.name)
   const staffNames = [...new Set(args.staffNames.map(s => s.trim()).filter(s => allowedNames.includes(s as any)))]
   return await ctx.db.insert('shops', { name, address, staffNames, active: true, createdAt: Date.now() })
 } })
