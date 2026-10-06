@@ -14,9 +14,11 @@ const COMPANY_ALIASES: Array<[RegExp, string]> = [
   [/glenmark/i, 'Glenmark'],
   [/zydus/i, 'Zydus'],
   [/alembic/i, 'Alembic'],
+  [/alkem(?: laboratories)?/i, 'Alkem Laboratories'],
   [/franco\s*indian/i, 'Franco Indian'],
   [/allergan/i, 'Allergan'],
   [/apex\s*laboratories/i, 'Apex Laboratories'],
+  [/^bott$/i, 'BOTT'],
   [/leeford/i, 'Leeford'],
   [/baidyanath/i, 'Baidyanath'],
   [/dabur/i, 'Dabur'],
@@ -77,6 +79,8 @@ export function companyMonogram(company: string) {
     'franco indian': 'FI',
     allergan: 'AG',
     'apex laboratories': 'AP',
+    'alkem laboratories': 'AL',
+    'bott': 'BT',
     leeford: 'L',
     baidyanath: 'B',
     dabur: 'D',
@@ -109,3 +113,7 @@ export function allManufacturers(products: Array<{ name?: string; description: s
     new Set(products.map((product) => manufacturerOf(product)).filter(Boolean)),
   ).sort((a, b) => a.localeCompare(b));
 }
+
+// Curated companies requested for the home-page brand rail. These stay visible even
+// when the current catalogue has no products for that manufacturer yet.
+export const FEATURED_COMPANIES = ['BOTT', 'Alembic', 'Alkem Laboratories', 'Apex Laboratories', 'Apollo', 'Cipla'] as const;
