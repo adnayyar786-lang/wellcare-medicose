@@ -59,7 +59,46 @@ const HUMAN = [
   ["Centrum Multivitamin 50+ 50","Centrum","Tablet",586,720],
   ["Joint Support Advanced Tablet 60","Tata 1mg","Tablet",465,573],
   ["Tata 1mg Pain Relief Gel 30 gm","Tata 1mg","Gel",70.2,103],
-] as const
+  ["Paracetamol 500mg Tablet 10","Generic","Tablet",12,15],
+  ["Ibuprofen 400mg Tablet 10","Generic","Tablet",18,22],
+  ["Cetirizine 10mg Tablet 10","Generic","Tablet",15,20],
+  ["Levocetirizine 5mg Tablet 10","Generic","Tablet",18,24],
+  ["Pantoprazole 40mg Tablet 10","Generic","Tablet",25,32],
+  ["Omeprazole 20mg Capsule 10","Generic","Capsule",20,26],
+  ["Domperidone 10mg Tablet 10","Generic","Tablet",18,24],
+  ["Ondansetron 4mg Tablet 10","Generic","Tablet",28,35],
+  ["ORS Orange Flavour Sachet 21g","Generic","Powder",18,20],
+  ["Azithromycin 500mg Tablet 3","Generic","Tablet",25,35],
+  ["Amoxicillin 500mg Capsule 10","Generic","Capsule",45,55],
+  ["Metformin 500mg Tablet 10","Generic","Tablet",12,18],
+  ["Amlodipine 5mg Tablet 10","Generic","Tablet",10,15],
+  ["Losartan 50mg Tablet 10","Generic","Tablet",22,30],
+  ["Atorvastatin 10mg Tablet 10","Generic","Tablet",18,25],
+  ["Telmisartan 40mg Tablet 10","Generic","Tablet",25,35],
+  ["Montelukast 10mg Tablet 10","Generic","Tablet",28,38],
+  ["Ambroxol Syrup 100 ml","Generic","Syrup",65,78],
+  ["Salbutamol Syrup 100 ml","Generic","Syrup",55,65],
+  ["Mupirocin 2% Ointment 5g","Generic","Ointment",95,110],
+  ["Clotrimazole 1% Cream 20g","Generic","Cream",55,65],
+  ["Calamine Lotion 100ml","Generic","Lotion",75,90],
+  ["Diclofenac Gel 30g","Generic","Gel",75,90],
+  ["Antacid Suspension 170ml","Generic","Suspension",95,110],
+  ["Loperamide 2mg Capsule 10","Generic","Capsule",18,25],
+  ["B-Complex Tablet 20","Generic","Tablet",35,45],
+  ["Vitamin C 500mg Tablet 20","Generic","Tablet",45,60],
+  ["Calcium + Vitamin D3 Tablet 15","Generic","Tablet",70,85],
+  ["Iron Folic Acid Tablet 30","Generic","Tablet",45,55],
+  ["Multivitamin Tablet 30","Generic","Tablet",110,135],
+  ["Lactulose Solution 100ml","Generic","Syrup",125,145],
+  ["Povidone Iodine 10% Solution 100ml","Generic","Solution",95,115],
+  ["Hydrogen Peroxide Solution 100ml","Generic","Solution",45,55],
+  ["Normal Saline Nasal Drops 10ml","Generic","Drops",55,65],
+  ["Artificial Tears Eye Drops 10ml","Generic","Eye Drops",85,100],
+  ["Chlorhexidine Mouthwash 100ml","Generic","Mouthwash",85,100],
+  ["Benzoyl Peroxide 2.5% Gel 20g","Generic","Gel",95,115],
+  ["Adapalene 0.1% Gel 15g","Generic","Gel",115,135],
+  ["Ketoconazole 2% Shampoo 100ml","Generic","Shampoo",120,145],
+  ["ORS Lemon Flavour Sachet 21g","Generic","Powder",18,20],\n] as const
 
 const CHUNK = 50
 
@@ -118,7 +157,7 @@ function CatalogImport() {
         <div style={{ background: '#fff', borderRadius: 20, padding: 28, boxShadow: '0 8px 30px rgba(0,0,0,.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', opacity: .55 }}>Wellcare Medicose 2.0</div>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', opacity: .55 }}>Wellcare Medicose</div>
               <h1 style={{ margin: '6px 0', fontSize: 30 }}>Catalogue Import Center</h1>
               <p style={{ margin: 0, opacity: .65 }}>Controlled bulk catalogue setup. Nothing runs until you press Start Import.</p>
             </div>
