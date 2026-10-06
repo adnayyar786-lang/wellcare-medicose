@@ -18,7 +18,7 @@ const COMPANY_ALIASES: Array<[RegExp, string]> = [
   [/franco\s*indian/i, 'Franco Indian'],
   [/allergan/i, 'Allergan'],
   [/apex\s*laboratories/i, 'Apex Laboratories'],
-  [/^bott$/i, 'BOTT'],
+  [/^bott$/i, 'Abbott'],
   [/leeford/i, 'Leeford'],
   [/baidyanath/i, 'Baidyanath'],
   [/dabur/i, 'Dabur'],
@@ -80,7 +80,7 @@ export function companyMonogram(company: string) {
     allergan: 'AG',
     'apex laboratories': 'AP',
     'alkem laboratories': 'AL',
-    'bott': 'BT',
+    'bott': 'A',
     leeford: 'L',
     baidyanath: 'B',
     dabur: 'D',
@@ -101,6 +101,11 @@ export const COMPANY_LOGOS: Record<string, string> = {
   Pfizer: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/CHorsCSOBO1OVAV6W5VHT/company-pfizer-VKYn-Ao7.png',
   Glenmark: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/J1JVhtmmWofssD0f8yBpg/company-glenmark-GKGA9jFY.png',
   Zydus: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/VpdRiDEVaJ52VCGhkZOL5/company-zydus-Ap1orN7r.png',
+  Alembic: 'https://www.rameeshinstitutions.org/rit/images/logopharma/logo17.png',
+  'Alkem Laboratories': 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Alkem_Laboratories_logo.png',
+  'Apex Laboratories': 'https://www.google.com/s2/favicons?domain=apexlab.com&sz=128',
+  Abbott: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Abbott_Laboratories_2025_logo.svg',
+  Cipla: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Cipla_logo.svg',
 };
 
 export function companyLogo(company: string) {
@@ -115,4 +120,4 @@ export function allManufacturers(products: Array<{ name?: string; description: s
 
 // Curated companies requested for the home-page brand rail. These stay visible even
 // when the current catalogue has no products for that manufacturer yet.
-export const FEATURED_COMPANIES = ['BOTT', 'Alembic', 'Alkem Laboratories', 'Apex Laboratories', 'Apollo Pharmacy', 'Cipla'] as const;
+export const FEATURED_COMPANIES = ['Abbott', 'Alembic', 'Alkem Laboratories', 'Apex Laboratories', 'Apollo Pharmacy', 'Cipla'] as const;
