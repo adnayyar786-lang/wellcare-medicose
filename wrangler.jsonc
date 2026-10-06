@@ -8,4 +8,4 @@
     "enabled": true
   }
 }
-// Cloudflare production deployment trigger: robust profile drawer scrolling.
+// Cloudflare production deployment trigger: remove nested profile scrolling.
