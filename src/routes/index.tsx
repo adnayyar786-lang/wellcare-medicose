@@ -127,6 +127,18 @@ const MEDICINE_FORM_SLIDER: CategoryRailItem[] = [
   { id: 'injections', title: 'Injections', subtitle: 'Injectable medicines', icon: Syringe, routeKey: 'Injections', mark: 'INJ' },
 ]
 
+function monogramTone(id: string) {
+  const tones = [
+    'bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-800 text-white',
+    'bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 text-white',
+    'bg-gradient-to-br from-violet-900 via-purple-800 to-fuchsia-700 text-white',
+    'bg-gradient-to-br from-rose-900 via-red-800 to-orange-700 text-white',
+    'bg-gradient-to-br from-amber-900 via-orange-800 to-yellow-700 text-white',
+    'bg-gradient-to-br from-cyan-900 via-sky-800 to-blue-700 text-white',
+  ]
+  return tones[Math.abs(id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0)) % tones.length]
+}
+
 function CategoryRail({ title, subtitle, items, onSelect }: { title: string; subtitle: string; items: CategoryRailItem[]; onSelect: (item: CategoryRailItem) => void }) {
   return (
     <section className="mx-auto w-full max-w-[1600px] py-2.5 sm:py-3" aria-label={title}>
@@ -143,8 +155,8 @@ function CategoryRail({ title, subtitle, items, onSelect }: { title: string; sub
           return (
             <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)}
               className="group h-[96px] w-[168px] min-w-[168px] shrink-0 snap-start rounded-xl border border-border/80 bg-card p-2.5 text-left shadow-[0_1px_6px_rgba(15,23,42,0.05)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:h-[102px] sm:w-[190px] sm:min-w-[190px] lg:h-[108px] lg:w-[205px] lg:min-w-[205px]">
-              <span className="flex size-8 items-center justify-center rounded-lg border border-primary/10 bg-primary/5 text-primary sm:size-9">
-                <span className="text-[9px] font-black tracking-tight">{item.mark ?? 'WC'}</span>
+              <span className={cn("flex size-8 items-center justify-center rounded-lg border border-white/20 shadow-sm sm:size-9", monogramTone(item.id))}>
+                <span className="text-[9px] font-black tracking-[0.02em] drop-shadow-sm">{item.mark ?? 'WC'}</span>
               </span>
               <span className="mt-1.5 block truncate text-[13px] font-bold leading-tight sm:text-sm">{item.title}</span>
               <span className="mt-0.5 block truncate text-[10px] leading-tight text-muted-foreground sm:text-[11px]">{item.subtitle}</span>
@@ -250,14 +262,83 @@ function Home() {
     api.medicines.search,
     debouncedSearchQuery.length >= 2 ? { query: debouncedSearchQuery } : 'skip',
   )
+  const barcodeMedicine = useQuery(
+    api.medicines.getByBarcode,
+    scannedBarcode ? { barcode: scannedBarcode } : 'skip',
+  )
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearchQuery(searchQuery.trim()), 250)
     return () => window.clearTimeout(timer)
   }, [searchQuery])
+  useEffect(() => {
+    if (!cameraOpen) return
+    let cancelled = false
+    let raf = 0
+    const start = async () => {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera access is not supported')
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false })
+        if (cancelled) { stream.getTracks().forEach((track) => track.stop()); return }
+        cameraStreamRef.current = stream
+        if (cameraVideoRef.current) {
+          cameraVideoRef.current.srcObject = stream
+          await cameraVideoRef.current.play()
+        }
+        const Detector = (window as any).BarcodeDetector
+        if (!Detector) {
+          toast.info('Live barcode scanning is not supported in this browser. Use the search box to type the medicine name.')
+          return
+        }
+        const detector = new Detector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] })
+        const scan = async () => {
+          if (cancelled || !cameraVideoRef.current || cameraVideoRef.current.readyState < 2) {
+            if (!cancelled) raf = requestAnimationFrame(scan)
+            return
+          }
+          try {
+            const codes = await detector.detect(cameraVideoRef.current)
+            const value = codes?.[0]?.rawValue?.trim()
+            if (value) {
+              setScannedBarcode(value)
+              setCameraOpen(false)
+              return
+            }
+          } catch { /* keep scanning */ }
+          if (!cancelled) raf = requestAnimationFrame(scan)
+        }
+        raf = requestAnimationFrame(scan)
+      } catch {
+        toast.error('Camera permission was denied or the camera is unavailable.')
+        setCameraOpen(false)
+      }
+    }
+    void start()
+    return () => {
+      cancelled = true
+      if (raf) cancelAnimationFrame(raf)
+      cameraStreamRef.current?.getTracks().forEach((track) => track.stop())
+      cameraStreamRef.current = null
+      if (cameraVideoRef.current) cameraVideoRef.current.srcObject = null
+    }
+  }, [cameraOpen])
+
+  useEffect(() => {
+    if (!barcodeMedicine) return
+    setSelectedSuggestionId(barcodeMedicine._id)
+    setSearchQuery(barcodeMedicine.name)
+    setShowSearchSuggestions(false)
+    setScannedBarcode('')
+    requestAnimationFrame(scrollToProducts)
+    toast.success('Found: ' + barcodeMedicine.name)
+  }, [barcodeMedicine])
 
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [activeShopCategory, setActiveShopCategory] = useState<string | null>(null)
   const [listening, setListening] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const [scannedBarcode, setScannedBarcode] = useState('')
+  const cameraVideoRef = useRef<HTMLVideoElement>(null)
+  const cameraStreamRef = useRef<MediaStream | null>(null)
   const [visible, setVisible] = useState(24)
   const gridRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -544,8 +625,8 @@ function Home() {
     addToCart(med, (msg) => { failed = true; fireCartToast(msg) })
     if (!failed) fireCartToast(`✓ Added to Cart — ${med.name}`)
   }
-  function handleCameraClick() { fileInputRef.current?.click() }
-  function handlePhotoChosen() { toast.info('Photo searchQuery is coming soon — try typing the medicine name for now.') }
+  function handleCameraClick() { setScannedBarcode(''); setCameraOpen(true) }
+  function handlePhotoChosen() { toast.info('Use the camera button to scan a medicine barcode.') }
   function selectSearchSuggestion(med: (typeof medicines)[number]) {
     setSelectedSuggestionId(med._id)
     applySearch(med.name, med._id)
@@ -812,6 +893,22 @@ function Home() {
       </main>
 
       {!browsing && recentlyViewed.length > 0 && <section className="border-t border-border bg-card"><div className="mx-auto max-w-[1600px] px-4 py-6"><SectionHeading title={t('recently_viewed')} /><div className="flex gap-3 overflow-x-auto pb-1">{recentlyViewed.map((med) => <Link key={med._id} to="/medicine/$id" params={{ id: med._id }} className="w-32 shrink-0 transition-transform hover:-translate-y-0.5"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt={med.name} /><p className="mt-1.5 line-clamp-2 text-xs font-medium">{med.name}</p><p className="text-xs font-semibold text-primary">{formatINR(med.price)}</p></Link>)}</div></div></section>}
+      {cameraOpen && (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Scan medicine barcode">
+          <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-slate-950 text-white shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3">
+              <div><p className="text-sm font-bold">Scan medicine</p><p className="text-[11px] text-white/60">Point the camera at the product barcode</p></div>
+              <button type="button" onClick={() => setCameraOpen(false)} className="flex size-9 items-center justify-center rounded-full bg-white/10" aria-label="Close camera"><X className="size-4" /></button>
+            </div>
+            <div className="relative aspect-[4/3] overflow-hidden bg-black">
+              <video ref={cameraVideoRef} playsInline muted className="h-full w-full object-cover" aria-label="Medicine camera scanner" />
+              <div className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-2xl border-2 border-white/80 shadow-[0_0_0_999px_rgba(2,6,23,0.32)]" />
+              <div className="pointer-events-none absolute left-0 right-0 top-1/2 h-px bg-emerald-400/90" />
+            </div>
+            <div className="px-4 py-3 text-center text-[11px] text-white/65">Barcode scanning uses your device camera. Camera access stays on this page.</div>
+          </div>
+        </div>
+      )}
       <StoreInfoCards /><SiteFooter />
     </div>
   )
