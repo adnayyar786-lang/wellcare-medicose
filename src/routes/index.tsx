@@ -638,6 +638,12 @@ function Home() {
   }, [companyProducts])
   const heroProducts = useMemo(() => featured.filter((m) => m.imageUrl).slice(0, 3), [featured])
   const petProducts = useMemo(() => medicines.filter((m) => m.active && m.shopCategory === 'Pet Care').slice(0, 12), [medicines])
+  const careCollections = useMemo(() => [
+    { id: 'skin', title: 'Skin Care & Serums', subtitle: 'Daily skin & beauty care', mark: 'SKIN', tone: 'from-fuchsia-950 via-purple-900 to-slate-950', products: medicines.filter((m) => m.active && /skin|serum|face|cream|lotion|gel|moistur/i.test(`${m.name} ${m.category ?? ''}`)).slice(0, 10) },
+    { id: 'baby', title: 'Baby Care', subtitle: 'Gentle care for little ones', mark: 'BABY', tone: 'from-rose-950 via-pink-900 to-slate-950', products: medicines.filter((m) => m.active && /baby|infant|newborn|diaper|feeding/i.test(`${m.name} ${m.category ?? ''} ${m.shopCategory ?? ''}`)).slice(0, 10) },
+    { id: 'nutrition', title: 'Vitamins & Nutrition', subtitle: 'Daily nutrition & wellness', mark: 'VIT', tone: 'from-emerald-950 via-teal-900 to-slate-950', products: medicines.filter((m) => m.active && /vitamin|protein|nutrition|omega|calcium|supplement|multivit/i.test(`${m.name} ${m.category ?? ''} ${m.shopCategory ?? ''}`)).slice(0, 10) },
+    { id: 'pet', title: 'Pet & Veterinary', subtitle: 'Food, medicines & daily care', mark: 'VET', tone: 'from-sky-950 via-cyan-900 to-slate-950', products: medicines.filter((m) => m.active && m.shopCategory === 'Pet Care').slice(0, 10) },
+  ], [medicines])
   const visibleShopCategories = SHOP_CATEGORIES
   const companyRailRef = useRef<HTMLDivElement>(null)
   const [companyAutoPaused, setCompanyAutoPaused] = useState(false)
@@ -650,14 +656,20 @@ function Home() {
     if (manufacturers.length < 2 || companyAutoPaused) return
     const rail = companyRailRef.current
     if (!rail) return
-    const timer = window.setInterval(() => {
-      if (!rail.matches(':hover') && !companyAutoPaused && !rail.hasPointerCapture(1)) {
-        rail.scrollLeft += 0.2
+    let frame = 0
+    let last = performance.now()
+    const tick = (now: number) => {
+      const elapsed = now - last
+      last = now
+      if (!companyAutoPaused && !rail.matches(':hover')) {
+        rail.scrollLeft += Math.min(0.42, elapsed * 0.022)
         const half = rail.scrollWidth / 2
-        if (half > 0 && rail.scrollLeft >= half) rail.scrollLeft -= half
+        if (half > 1 && rail.scrollLeft >= half) rail.scrollLeft -= half
       }
-    }, 50)
-    return () => window.clearInterval(timer)
+      frame = window.requestAnimationFrame(tick)
+    }
+    frame = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(frame)
   }, [manufacturers.length, companyAutoPaused])
   const browsing = searchQuery.trim() !== '' || activeShopCategory !== null || activeCategory !== 'All'
 
@@ -861,36 +873,37 @@ function Home() {
 
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
 
-      {!browsing && manufacturers.length > 0 && <section className="w-full overflow-hidden px-4 py-6 sm:px-6 lg:px-8" aria-label="Shop by medicine company">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-teal">Explore trusted names</p><h2 className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">Shop by Company</h2><p className="mt-1 text-sm text-muted-foreground">Company folders are automatic — swipe, drag or tap any brand mark.</p></div><span className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground">{manufacturers.length} companies</span></div>
-        <div className="relative w-full rounded-2xl border border-border bg-card shadow-sm">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-8 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-12" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-8 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-12" />
-          <div
-            ref={companyRailRef}
-            className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            onMouseEnter={() => setCompanyAutoPaused(true)}
-            onMouseLeave={() => setCompanyAutoPaused(false)}
-            onPointerDown={() => setCompanyAutoPaused(true)}
-            onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 1200)}
-            onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 1200)}
-            onTouchStart={() => setCompanyAutoPaused(true)}
-            onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 1200)}
-            aria-label="Company brand slider"
-          >
-            {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory("All"); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex w-44 shrink-0 snap-start flex-col items-center justify-center gap-2.5 rounded-2xl border border-border bg-background p-4 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:w-48" aria-label={"Open " + company + " company folder"}>
-              <span className={cn('relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition group-hover:scale-105 sm:size-24', companyLogoStyle(company))} aria-hidden="true">
-                <span className="absolute -right-3 -top-3 size-10 rounded-full bg-white/60 blur-md" />
-                <span className="relative flex size-14 items-center justify-center rounded-xl border border-white/70 bg-white/85 text-xl font-black tracking-tight shadow-sm sm:size-16 sm:text-2xl">{companyMonogram(company)}</span>
-              </span>
-              <span className="block max-w-full truncate text-sm font-bold">{company}</span>
-              <span className="text-[10px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
-            </button>)}
+      {!browsing && manufacturers.length > 0 && <section className="w-full overflow-hidden px-4 py-5 sm:px-6 lg:px-8" aria-label="Shop by medicine company">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-teal">Trusted manufacturers</p><h2 className="mt-1 text-lg font-extrabold tracking-tight text-foreground sm:text-xl">Shop by Company</h2></div><span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">{manufacturers.length} companies</span></div>
+          <div className="relative w-full rounded-2xl border border-border bg-card shadow-sm">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
+            <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Company brand slider">
+              {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " company folder"}>
+                <span className={cn('relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 shadow-sm transition group-hover:scale-105 sm:size-11', companyMonogramTone(company))} aria-hidden="true"><span className="absolute -right-2 -top-2 size-6 rounded-full bg-white/15 blur-sm" /><span className="relative text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
+                <span className="block max-w-full truncate text-[11px] font-bold sm:text-xs">{company}</span>
+                <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
+              </button>)}
+            </div>
           </div>
+          <p className="mt-1.5 text-center text-[10px] text-muted-foreground">Swipe to explore • Auto-scroll pauses while you interact</p>
         </div>
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">Auto-scroll is on. Pause by touching/hovering, then swipe or tap a company to select it.</p>
       </section>}
       {!browsing && <OfferCards />}
+
+      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Care and shopping categories">
+        <SectionHeading title="Care for Every Need" subtitle="Explore healthcare, wellness and everyday essentials." />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {careCollections.map((item) => (
+            <button key={item.id} type="button" onClick={() => { setActiveCategory('All'); setSearchQuery(item.title); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group relative min-h-[132px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 p-4 text-left text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+              <div className={cn('absolute inset-0 bg-gradient-to-br opacity-95', item.tone)} />
+              <div className="relative z-10"><span className="inline-flex size-9 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[9px] font-black tracking-wider backdrop-blur-sm">{item.mark}</span><h3 className="mt-3 text-sm font-extrabold sm:text-base">{item.title}</h3><p className="mt-0.5 text-[10px] text-white/65">{item.subtitle}</p><span className="mt-3 inline-flex rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[9px] font-bold">Explore →</span></div>
+              <span className="absolute -bottom-8 -right-6 size-28 rounded-full border border-white/10 bg-white/5" />
+            </button>
+          ))}
+        </div>
+      </section>}
 
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicine formats">
         <SectionHeading title="Shop by Medicine Type" subtitle="Quick visual shortcuts for common medicine forms." />
@@ -911,6 +924,13 @@ function Home() {
           ))}
         </div>
       </section>}
+      {!browsing && <section className="border-y border-border bg-card" aria-label="Featured shopping collections">
+        <div className="mx-auto max-w-[1600px] px-4 py-6">
+          <SectionHeading title="Popular Healthcare Picks" subtitle="Available products from your current catalogue." action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} />
+          <ProductsErrorBoundary><Carousel>{featured.slice(0, 12).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel></ProductsErrorBoundary>
+        </div>
+      </section>}
+
       {!browsing && <section className="border-y border-border bg-card" aria-label="Shop by category"><div className="mx-auto max-w-[1600px] px-4 py-6"><SectionHeading title={t('shop_by_category')} /><div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">{status === 'LoadingFirstPage' ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />) : visibleShopCategories.map(({ name, icon: Icon, mark }) => <button key={name} type="button" onClick={() => selectShopCategory(name)} aria-pressed={activeShopCategory === name} className={cn('group flex flex-col items-center gap-3 rounded-2xl border p-4 text-center transition duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0', activeShopCategory === name ? 'border-primary bg-primary/5' : 'border-border bg-background hover:border-primary/40')}><span className={cn('relative flex size-20 items-center justify-center overflow-hidden rounded-2xl border border-white/70 shadow-sm transition-transform duration-200 group-hover:scale-105', name === 'Medicines (Branded)' && 'bg-gradient-to-br from-sky-100 via-blue-50 to-cyan-100 text-blue-700', name === 'Generic Medicines' && 'bg-gradient-to-br from-emerald-100 via-green-50 to-lime-100 text-emerald-700', name === 'Mankind Products' && 'bg-gradient-to-br from-violet-100 via-fuchsia-50 to-pink-100 text-violet-700', name === "Dr. Reddy's Products" && 'bg-gradient-to-br from-rose-100 via-red-50 to-orange-100 text-rose-700', name === 'Pet Care' && 'bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 text-amber-700', name === 'Grocery / Health Supplements' && 'bg-gradient-to-br from-lime-100 via-green-50 to-teal-100 text-green-700', name === 'Baby Care' && 'bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 text-pink-700', name === 'Personal Care' && 'bg-gradient-to-br from-fuchsia-100 via-pink-50 to-sky-100 text-fuchsia-700', name === 'Medical Devices' && 'bg-gradient-to-br from-sky-100 via-cyan-50 to-blue-100 text-sky-700', name === 'Nutrition & Fitness' && 'bg-gradient-to-br from-lime-100 via-emerald-50 to-teal-100 text-emerald-700', name === 'Mother & Child Care' && 'bg-gradient-to-br from-pink-100 via-rose-50 to-orange-100 text-rose-700', name === 'Home Health Care' && 'bg-gradient-to-br from-blue-100 via-indigo-50 to-cyan-100 text-blue-700', name === 'Ayurveda & Herbal' && 'bg-gradient-to-br from-green-100 via-lime-50 to-amber-100 text-green-700')}><span className="absolute -right-3 -top-4 size-14 rounded-full bg-white/50 blur-sm" /><span className="absolute left-1.5 top-1.5 rounded-md border border-white/80 bg-white/80 px-1.5 py-0.5 text-[9px] font-black tracking-wider text-slate-700 shadow-sm">{mark}</span><Icon className="relative size-10 drop-shadow-sm transition-transform duration-200 group-hover:scale-110" strokeWidth={1.5} aria-hidden="true" /></span><span className="text-xs font-semibold leading-tight">{name}</span>{status === 'Exhausted' && <span className="text-[10px] text-muted-foreground">{shopCounts.get(name) ?? 0} products</span>}</button>)}</div></div></section>}
 
       {!browsing && <section className="relative isolate overflow-hidden border-y border-teal-100 bg-gradient-to-br from-slate-50 via-cyan-50/70 to-emerald-50" aria-label="Browse medicines"><div className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-teal-200/30 blur-3xl" /><div className="pointer-events-none absolute -bottom-24 left-1/4 size-72 rounded-full bg-blue-200/30 blur-3xl" /><div className="relative mx-auto max-w-[1600px] px-4 py-8 sm:py-10"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p className="text-[11px] font-bold uppercase tracking-[0.22em] text-teal-700">Your health, just a few taps away</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Browse Medicines</h2><p className="mt-1 text-sm text-slate-600">Explore available products from our medicine catalogue.</p></div><Button onClick={scrollToProducts} className="rounded-full shadow-lg shadow-teal-900/10">View all medicines <span aria-hidden="true">→</span></Button></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{featured.slice(0, 5).map((med, index) => <motion.div key={med._id} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.42, delay: index * 0.07 }} whileHover={{ y: -6, rotateX: 2, rotateY: -2 }} style={{ transformStyle: 'preserve-3d' }} className="rounded-2xl"><ProductCard med={med} onAdd={handleAddToCart} /></motion.div>)}</div>{featured.length === 0 && <p className="rounded-xl border border-dashed border-teal-200 bg-white/70 p-5 text-sm text-slate-600">Medicines will appear here as products are added to the catalogue.</p>}</div></section>}
