@@ -22,6 +22,7 @@ const medicineValidator = v.object({
   shopCategory: v.optional(v.string()),
   featured: v.optional(v.boolean()),
   updatedAt: v.optional(v.number()),
+  barcode: v.optional(v.string()),
 })
 
 export const list = query({
@@ -52,6 +53,21 @@ export const search = query({
       .query('medicines')
       .withSearchIndex('search_name', (search) => search.search('name', q).eq('active', true))
       .take(50)
+  },
+})
+
+
+export const getByBarcode = query({
+  args: { barcode: v.string() },
+  returns: v.union(medicineValidator, v.null()),
+  handler: async (ctx, { barcode }) => {
+    const code = barcode.trim()
+    if (!code) return null
+    return await ctx.db
+      .query('medicines')
+      .withIndex('by_barcode', (q) => q.eq('barcode', code))
+      .filter((q) => q.eq(q.field('active'), true))
+      .first()
   },
 })
 
