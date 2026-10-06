@@ -7,7 +7,7 @@ import { api } from '../../convex/_generated/api'
 
 const CONVEX_URL =
   (import.meta as any).env.VITE_CONVEX_URL ||
-  'https://impartial-reindeer-344.eu-west-1.convex.cloud'
+  'https://hardy-parakeet-432.convex.cloud'
 const convex = new ConvexReactClient(CONVEX_URL)
 
 type FirebaseAuthState = { user: FirebaseUserLike | null; isLoading: boolean }
