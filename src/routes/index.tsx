@@ -101,37 +101,55 @@ export const BANNERS = [
 
 const OFFER_TONES = ['from-primary to-brand-teal', 'from-brand-teal to-primary', 'from-navy to-primary']
 
-type CategoryRailItem = { id: string; title: string; subtitle: string; icon: typeof Pill; routeKey: string }
+type CategoryRailItem = { id: string; title: string; subtitle: string; icon: typeof Pill; routeKey: string; mark?: string }
 
 const SHOP_AND_CARE: CategoryRailItem[] = [
-  { id: 'pharmacy', title: 'Pharmacy', subtitle: 'Medicines & essentials', icon: Pill, routeKey: 'Medicines (Branded)' },
-  { id: 'latest', title: 'Latest', subtitle: 'New arrivals', icon: Sparkles, routeKey: 'Latest' },
-  { id: 'medicines', title: 'Medicines', subtitle: 'All medicines', icon: PillBottle, routeKey: 'Medicines (Branded)' },
-  { id: 'otc', title: 'OTC & Wellness', subtitle: 'Everyday health', icon: HeartPulse, routeKey: 'OTC & Wellness' },
-  { id: 'vitamins', title: 'Vitamins & Nutrition', subtitle: 'Vitamins & supplements', icon: FlaskConical, routeKey: 'Grocery / Health Supplements' },
-  { id: 'personal-care', title: 'Personal Care', subtitle: 'Care & hygiene', icon: Sparkles, routeKey: 'Personal Care' },
-  { id: 'baby-care', title: 'Baby Care', subtitle: 'Baby essentials', icon: Baby, routeKey: 'Baby Care' },
-  { id: 'petcare', title: 'Petcare', subtitle: 'For pets', icon: PawPrint, routeKey: 'Pet Care' },
-  { id: 'devices', title: 'Health Devices', subtitle: 'Healthcare devices', icon: Stethoscope, routeKey: 'Medical Devices' },
-  { id: 'sexual-wellness', title: 'Sexual Wellness', subtitle: 'Intimate wellness', icon: Heart, routeKey: 'Sexual Wellness' },
+  { id: 'pharmacy', title: 'Pharmacy', subtitle: 'Medicines & essentials', icon: Pill, routeKey: 'Medicines (Branded)', mark: 'RX' },
+  { id: 'latest', title: 'Latest', subtitle: 'New arrivals', icon: Sparkles, routeKey: 'Latest', mark: 'NEW' },
+  { id: 'medicines', title: 'Medicines', subtitle: 'All medicines', icon: PillBottle, routeKey: 'Medicines (Branded)', mark: 'MED' },
+  { id: 'otc', title: 'OTC & Wellness', subtitle: 'Everyday health', icon: HeartPulse, routeKey: 'OTC & Wellness', mark: 'OTC' },
+  { id: 'vitamins', title: 'Vitamins & Nutrition', subtitle: 'Vitamins & supplements', icon: FlaskConical, routeKey: 'Grocery / Health Supplements', mark: 'VIT' },
+  { id: 'personal-care', title: 'Personal Care', subtitle: 'Care & hygiene', icon: Sparkles, routeKey: 'Personal Care', mark: 'PC' },
+  { id: 'baby-care', title: 'Baby Care', subtitle: 'Baby essentials', icon: Baby, routeKey: 'Baby Care', mark: 'BABY' },
+  { id: 'petcare', title: 'Petcare', subtitle: 'For pets', icon: PawPrint, routeKey: 'Pet Care', mark: 'PET' },
+  { id: 'devices', title: 'Health Devices', subtitle: 'Healthcare devices', icon: Stethoscope, routeKey: 'Medical Devices', mark: 'DEV' },
+  { id: 'sexual-wellness', title: 'Sexual Wellness', subtitle: 'Intimate wellness', icon: Heart, routeKey: 'Sexual Wellness', mark: 'SW' },
 ]
 
 
+const MEDICINE_FORM_SLIDER: CategoryRailItem[] = [
+  { id: 'tablets', title: 'Tablets', subtitle: 'Common medicines', icon: Pill, routeKey: 'Tablets', mark: 'TAB' },
+  { id: 'syrups', title: 'Syrups', subtitle: 'Liquid medicines', icon: PillBottle, routeKey: 'Syrups', mark: 'SYR' },
+  { id: 'capsules', title: 'Capsules', subtitle: 'Capsule medicines', icon: Pill, routeKey: 'Capsules', mark: 'CAP' },
+  { id: 'drops', title: 'Drops', subtitle: 'Drops & solutions', icon: FlaskConical, routeKey: 'Drops', mark: 'DRP' },
+  { id: 'creams', title: 'Creams & Gels', subtitle: 'Topical care', icon: Sparkles, routeKey: 'Creams & Gels', mark: 'CRM' },
+  { id: 'inhalers', title: 'Inhalers', subtitle: 'Respiratory care', icon: Wind, routeKey: 'Inhalers', mark: 'INH' },
+  { id: 'injections', title: 'Injections', subtitle: 'Injectable medicines', icon: Syringe, routeKey: 'Injections', mark: 'INJ' },
+]
+
 function CategoryRail({ title, subtitle, items, onSelect }: { title: string; subtitle: string; items: CategoryRailItem[]; onSelect: (item: CategoryRailItem) => void }) {
   return (
-    <section className="mx-auto w-full max-w-[1600px] py-3 sm:py-4" aria-label={title}>
-      <div className="mb-2.5 flex items-end justify-between gap-3 sm:mb-3">
-        <div><h2 className="text-sm font-black tracking-[0.08em] text-foreground sm:text-base">{title}</h2><p className="mt-0.5 text-[11px] text-muted-foreground sm:text-xs">{subtitle}</p></div>
-        <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">Swipe to explore →</span>
+    <section className="mx-auto w-full max-w-[1600px] py-2.5 sm:py-3" aria-label={title}>
+      <div className="mb-2 flex items-end justify-between gap-3 sm:mb-2.5">
+        <div>
+          <h2 className="text-xs font-black tracking-[0.08em] text-foreground sm:text-sm">{title}</h2>
+          <p className="mt-0.5 text-[10px] text-muted-foreground sm:text-[11px]">{subtitle}</p>
+        </div>
+        <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">Swipe →</span>
       </div>
-      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x' }}>
+      <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x' }}>
         {items.map((item) => {
           const Icon = item.icon
-          return <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)} className="group h-[136px] w-[268px] min-w-[268px] shrink-0 snap-start rounded-2xl border border-border/80 bg-card p-3.5 text-left shadow-[0_2px_10px_rgba(15,23,42,0.06)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:h-[140px] sm:w-[250px] sm:min-w-[250px] lg:h-[144px] lg:w-[260px] lg:min-w-[260px]">
-            <span className="flex size-10 items-center justify-center rounded-full border border-primary/10 bg-primary/5 text-primary shadow-sm transition-transform group-hover:scale-105 sm:size-11"><Icon className="size-[18px]" strokeWidth={2} aria-hidden="true" /></span>
-            <span className="mt-2.5 block truncate text-[15px] font-bold leading-tight">{item.title}</span>
-            <span className="mt-1 block truncate text-xs leading-tight text-muted-foreground">{item.subtitle}</span>
-          </motion.button>
+          return (
+            <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)}
+              className="group h-[96px] w-[168px] min-w-[168px] shrink-0 snap-start rounded-xl border border-border/80 bg-card p-2.5 text-left shadow-[0_1px_6px_rgba(15,23,42,0.05)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:h-[102px] sm:w-[190px] sm:min-w-[190px] lg:h-[108px] lg:w-[205px] lg:min-w-[205px]">
+              <span className="flex size-8 items-center justify-center rounded-lg border border-primary/10 bg-primary/5 text-primary sm:size-9">
+                <span className="text-[9px] font-black tracking-tight">{item.mark ?? 'WC'}</span>
+              </span>
+              <span className="mt-1.5 block truncate text-[13px] font-bold leading-tight sm:text-sm">{item.title}</span>
+              <span className="mt-0.5 block truncate text-[10px] leading-tight text-muted-foreground sm:text-[11px]">{item.subtitle}</span>
+            </motion.button>
+          )
         })}
       </div>
     </section>
@@ -628,7 +646,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 relative z-[200] isolate border-b border-border bg-card backdrop-blur">
+      <header className="relative z-[200] isolate border-b border-border bg-card backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3">
           <div className="flex shrink-0 items-center gap-2"><ProfileDrawer /><BrandLogo /></div>
           <div className="hidden flex-1 md:block">{renderSearch('site-searchQuery-desktop')}</div>
@@ -644,8 +662,14 @@ function Home() {
             if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
             selectShopCategory(item.routeKey)
           }} />
-          <div className="py-3">{renderSearch('site-searchQuery')}</div>
-          <div className="mt-2"><DeliveryLocationBar /></div>
+          <div className="py-2">{renderSearch('site-searchQuery')}</div>
+          <CategoryRail title="MEDICINE TYPES" subtitle="Quick shortcuts" items={MEDICINE_FORM_SLIDER} onSelect={(item) => {
+            setSelectedSuggestionId(null)
+            setSearchQuery(item.routeKey)
+            setShowSearchSuggestions(false)
+            requestAnimationFrame(scrollToProducts)
+          }} />
+          <div className="mt-1 pb-2"><DeliveryLocationBar /></div>
         </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border md:block">
           <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -663,6 +687,12 @@ function Home() {
           if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
           if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
+        }} />
+        <CategoryRail title="MEDICINE TYPES" subtitle="Quick shortcuts" items={MEDICINE_FORM_SLIDER} onSelect={(item) => {
+          setSelectedSuggestionId(null)
+          setSearchQuery(item.routeKey)
+          setShowSearchSuggestions(false)
+          requestAnimationFrame(scrollToProducts)
         }} />
       </div>
 
