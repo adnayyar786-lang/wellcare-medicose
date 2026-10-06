@@ -115,4 +115,4 @@ export function allManufacturers(products: Array<{ name?: string; description: s
 
 // Curated companies requested for the home-page brand rail. These stay visible even
 // when the current catalogue has no products for that manufacturer yet.
-export const FEATURED_COMPANIES = ['BOTT', 'Alembic', 'Alkem Laboratories', 'Apex Laboratories', 'Apollo', 'Cipla'] as const;
+export const FEATURED_COMPANIES = ['BOTT', 'Alembic', 'Alkem Laboratories', 'Apex Laboratories', 'Apollo Pharmacy', 'Cipla'] as const;
