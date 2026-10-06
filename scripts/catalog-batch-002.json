@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "name": "Dolo 650 Tablet - 15 Tablets",
+      "category": "Pain Relief & Fever",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Paracetamol 650mg tablet. Strip of 15 tablets. Manufacturer: Micro Labs Ltd. Prescription status and batch MRP should be verified against the physical pack before dispensing.",
+      "price": 29,
+      "mrpPrice": 32.28,
+      "stock": 0,
+      "requiresPrescription": false,
+      "manufacturer": "Micro Labs Ltd"
+    },
+    {
+      "name": "Dolopar 650 Tablet - 15 Tablets",
+      "category": "Pain Relief & Fever",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Paracetamol 650mg tablet. Strip of 15 tablets. Manufacturer: Micro Labs Ltd. Prescription status and batch MRP should be verified against the physical pack before dispensing.",
+      "price": 30.2,
+      "mrpPrice": 32.13,
+      "stock": 0,
+      "requiresPrescription": false,
+      "manufacturer": "Micro Labs Ltd"
+    },
+    {
+      "name": "Cetiriz 10mg Tablet - 10 Tablets",
+      "category": "Allergy & Cold",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Cetirizine 10mg tablet. Strip of 10 tablets. Prescription required according to the referenced listing; batch MRP should be verified against the physical pack.",
+      "price": 18.1,
+      "mrpPrice": 20.06,
+      "stock": 0,
+      "requiresPrescription": true,
+      "manufacturer": "Cipla Ltd"
+    },
+    {
+      "name": "Azid 500 Tablet - 5 Tablets",
+      "category": "Anti-infectives",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Azithromycin 500mg tablet. Strip of 5 tablets. Prescription required. Antibiotics must be dispensed according to applicable prescription and pharmacy requirements.",
+      "price": 115,
+      "mrpPrice": 123.69,
+      "stock": 0,
+      "requiresPrescription": true,
+      "manufacturer": "Indi Pharma"
+    }
+  ]
+}
