@@ -903,10 +903,10 @@ function Home() {
       </section>}
 
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Care and shopping categories">
-        <SectionHeading title="Care for Every Need" subtitle="Explore healthcare, wellness and everyday essentials." />
+        <SectionHeading title="Top Categories" subtitle="Explore the essentials customers shop most." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {careCollections.map((item) => (
-            <button key={item.id} type="button" onClick={() => { setActiveCategory('All'); setSearchQuery(item.query); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group relative min-h-[132px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 p-4 text-left text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+            <button key={item.id} type="button" onClick={() => { setActiveCategory('All'); setSearchQuery(item.query); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group relative min-h-[132px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 p-4 text-left text-white shadow-[0_10px_28px_-18px_rgba(15,23,42,0.7)] ring-1 ring-white/5 transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-16px_rgba(15,23,42,0.75)]">
               <div className={cn('absolute inset-0 bg-gradient-to-br opacity-95', item.tone)} />
               <div className="relative z-10"><span className="inline-flex size-9 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[9px] font-black tracking-wider backdrop-blur-sm">{item.mark}</span><h3 className="mt-3 text-sm font-extrabold sm:text-base">{item.title}</h3><p className="mt-0.5 text-[10px] text-white/65">{item.subtitle}</p><span className="mt-3 inline-flex rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[9px] font-bold">Explore →</span></div>
               <span className="absolute -bottom-8 -right-6 size-28 rounded-full border border-white/10 bg-white/5" />
