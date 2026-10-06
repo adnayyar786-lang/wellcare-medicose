@@ -187,8 +187,16 @@ export const seedMany = mutation({
         .query('medicines')
         .withIndex('by_category', (q) => q.eq('category', item.category))
         .collect()
-      const alreadyThere = existing.some((m) => m.name === item.name)
-      if (alreadyThere) continue
+      const alreadyThere = existing.find((m) => m.name === item.name)
+      if (alreadyThere) {
+        if (item.imageUrl && alreadyThere.imageUrl !== item.imageUrl) {
+          await ctx.db.patch(alreadyThere._id, {
+            imageUrl: item.imageUrl,
+            updatedAt: Date.now(),
+          })
+        }
+        continue
+      }
       await ctx.db.insert('medicines', {
         name: item.name,
         category: item.category,
