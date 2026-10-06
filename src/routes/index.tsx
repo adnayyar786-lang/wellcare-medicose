@@ -152,7 +152,7 @@ function CategoryRail({ title, subtitle, items, onSelect }: { title: string; sub
         </div>
         <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">Swipe →</span>
       </div>
-      <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x' }}>
+      <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x pan-y' }}>
         {items.map((item) => {
           const Icon = item.icon
           return (
