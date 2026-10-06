@@ -762,7 +762,8 @@ function Home() {
     const showPanel = showSearchSuggestions
     return (
       <div className="relative z-[210]">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-primary" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-primary/10 blur-md" aria-hidden="true" />
         <label htmlFor={id} className="sr-only">Search medicines, health products and more</label>
         <Input
           id={id}
@@ -779,12 +780,12 @@ function Home() {
             }
           }}
           placeholder="Search medicines, health products & more"
-          className="h-12 rounded-2xl border-border bg-background pl-10 pr-24 text-sm shadow-sm transition-[box-shadow,border-color] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+          className="h-12 rounded-2xl border-2 border-primary/35 bg-primary/[0.035] pl-10 pr-28 text-sm font-medium shadow-[0_4px_18px_rgba(15,23,42,0.10)] transition-[box-shadow,border-color,background-color] hover:border-primary/55 hover:bg-primary/[0.055] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/15"
           autoComplete="off"
           enterKeyHint="searchQuery"
           inputMode="searchQuery"
         />
-        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center">
+        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center rounded-xl bg-background/90 shadow-sm ring-1 ring-primary/10">
           {searchQuery && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSelectedSuggestionId(null); setSearchQuery(''); setDebouncedSearchQuery(''); setShowSearchSuggestions(true) }} className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Clear searchQuery"><X className="size-4" /></button>}
           <button type="button" onClick={handleMicClick} className={`flex size-10 items-center justify-center rounded-md transition-colors ${listening ? 'text-brand-teal' : 'text-muted-foreground'} hover:bg-secondary`} aria-label="Search by voice"><Mic className="size-4" /></button>
           <button type="button" onClick={handleCameraClick} className="hidden flex size-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary sm:flex" aria-label="Search by photo"><Camera className="size-4" /></button>
