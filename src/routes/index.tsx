@@ -770,19 +770,27 @@ function Home() {
           onChange={(e) => { setSelectedSuggestionId(null); setSearchQuery(e.target.value); setShowSearchSuggestions(true) }}
           onFocus={() => setShowSearchSuggestions(true)}
           onKeyDown={(e) => {
-            if (e.key === 'Escape') setShowSearchSuggestions(false)
-            if (e.key === 'Enter' && searchQuery.trim()) {
-              setSelectedSuggestionId(null)
-              saveSearchHistory(searchQuery)
+            // Only an explicit Enter key should submit the search. Android/browser
+            // keyboards can occasionally report an input key event unexpectedly,
+            // so keep normal alphabetic typing completely passive.
+            if (e.key === 'Escape') {
               setShowSearchSuggestions(false)
-              requestAnimationFrame(scrollToProducts)
+              return
             }
+            if (e.key !== 'Enter' || e.isComposing || e.nativeEvent.isComposing) return
+            e.preventDefault()
+            const value = searchQuery.trim()
+            if (!value) return
+            setSelectedSuggestionId(null)
+            saveSearchHistory(value)
+            setShowSearchSuggestions(false)
+            requestAnimationFrame(scrollToProducts)
           }}
           placeholder="Search medicines, health products & more"
           className="h-12 rounded-2xl border-2 border-primary/35 bg-primary/[0.035] pl-10 pr-28 text-sm font-medium shadow-[0_4px_18px_rgba(15,23,42,0.10)] transition-[box-shadow,border-color,background-color] hover:border-primary/55 hover:bg-primary/[0.055] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/15"
           autoComplete="off"
-          enterKeyHint="searchQuery"
-          inputMode="searchQuery"
+          enterKeyHint="search"
+          inputMode="search"
         />
         <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center rounded-xl bg-background/90 shadow-sm ring-1 ring-primary/10">
           {searchQuery && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setSelectedSuggestionId(null); setSearchQuery(''); setDebouncedSearchQuery(''); setShowSearchSuggestions(true) }} className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Clear searchQuery"><X className="size-4" /></button>}
