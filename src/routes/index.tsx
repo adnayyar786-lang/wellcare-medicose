@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   Baby,
   Bell,
-  HeartPulse, Dumbbell, Stethoscope, Leaf,
+  HeartPulse, Dumbbell, Stethoscope, Leaf, Heart, Activity, Droplets, Home,
   Camera,
   FlaskConical,
   Languages,
@@ -100,6 +100,55 @@ export const BANNERS = [
 ]
 
 const OFFER_TONES = ['from-primary to-brand-teal', 'from-brand-teal to-primary', 'from-navy to-primary']
+
+type CategoryRailItem = { id: string; title: string; subtitle: string; icon: typeof Pill; routeKey: string }
+
+const SHOP_AND_CARE: CategoryRailItem[] = [
+  { id: 'pharmacy', title: 'Pharmacy', subtitle: 'Medicines & essentials', icon: Pill, routeKey: 'Medicines (Branded)' },
+  { id: 'latest', title: 'Latest', subtitle: 'New arrivals', icon: Sparkles, routeKey: 'Latest' },
+  { id: 'medicines', title: 'Medicines', subtitle: 'All medicines', icon: PillBottle, routeKey: 'Medicines (Branded)' },
+  { id: 'otc', title: 'OTC & Wellness', subtitle: 'Everyday health', icon: HeartPulse, routeKey: 'OTC & Wellness' },
+  { id: 'vitamins', title: 'Vitamins & Nutrition', subtitle: 'Vitamins & supplements', icon: FlaskConical, routeKey: 'Grocery / Health Supplements' },
+  { id: 'personal-care', title: 'Personal Care', subtitle: 'Care & hygiene', icon: Sparkles, routeKey: 'Personal Care' },
+  { id: 'baby-care', title: 'Baby Care', subtitle: 'Baby essentials', icon: Baby, routeKey: 'Baby Care' },
+  { id: 'petcare', title: 'Petcare', subtitle: 'For pets', icon: PawPrint, routeKey: 'Pet Care' },
+  { id: 'devices', title: 'Health Devices', subtitle: 'Healthcare devices', icon: Stethoscope, routeKey: 'Medical Devices' },
+  { id: 'sexual-wellness', title: 'Sexual Wellness', subtitle: 'Intimate wellness', icon: Heart, routeKey: 'Sexual Wellness' },
+]
+
+const DIAGNOSTICS: CategoryRailItem[] = [
+  { id: 'blood-tests', title: 'Blood Tests', subtitle: 'Reports', icon: Droplets, routeKey: 'Blood Tests' },
+  { id: 'full-body', title: 'Full Body', subtitle: 'Packages', icon: Stethoscope, routeKey: 'Full Body' },
+  { id: 'checkups', title: 'Health Checkups', subtitle: 'Complete care', icon: HeartPulse, routeKey: 'Health Checkups' },
+  { id: 'diabetes', title: 'Diabetes Tests', subtitle: 'Sugar monitoring', icon: Activity, routeKey: 'Diabetes Tests' },
+  { id: 'heart-tests', title: 'Heart Tests', subtitle: 'ECG & cardiac', icon: HeartPulse, routeKey: 'Heart Tests' },
+  { id: 'thyroid', title: 'Thyroid Tests', subtitle: 'Thyroid profile', icon: FlaskConical, routeKey: 'Thyroid Tests' },
+  { id: 'vitamin-tests', title: 'Vitamin Tests', subtitle: 'Deficiency tests', icon: FlaskConical, routeKey: 'Vitamin Tests' },
+  { id: 'liver-tests', title: 'Liver Tests', subtitle: 'Liver profile', icon: Activity, routeKey: 'Liver Tests' },
+  { id: 'kidney-tests', title: 'Kidney Tests', subtitle: 'Kidney profile', icon: Activity, routeKey: 'Kidney Tests' },
+  { id: 'home-sample', title: 'Home Sample Collection', subtitle: 'Sample at home', icon: Home, routeKey: 'Home Sample Collection' },
+]
+
+function CategoryRail({ title, subtitle, items, onSelect }: { title: string; subtitle: string; items: CategoryRailItem[]; onSelect: (item: CategoryRailItem) => void }) {
+  return (
+    <section className="mx-auto w-full max-w-[1600px] py-3 sm:py-4" aria-label={title}>
+      <div className="mb-2.5 flex items-end justify-between gap-3 sm:mb-3">
+        <div><h2 className="text-sm font-black tracking-[0.08em] text-foreground sm:text-base">{title}</h2><p className="mt-0.5 text-[11px] text-muted-foreground sm:text-xs">{subtitle}</p></div>
+        <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">Swipe to explore →</span>
+      </div>
+      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden]" style={{ touchAction: 'pan-x' }}>
+        {items.map((item) => {
+          const Icon = item.icon
+          return <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)} className="group w-[calc((100vw-44px)/1.7)] min-w-[178px] max-w-[235px] shrink-0 snap-start rounded-2xl border border-border bg-card p-3.5 text-left shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:w-[205px] sm:min-w-[205px] lg:w-[220px] lg:min-w-[220px]">
+            <span className="flex size-11 items-center justify-center rounded-xl border border-primary/10 bg-primary/5 text-primary shadow-sm transition-transform group-hover:scale-105 sm:size-12"><Icon className="size-5" strokeWidth={2} aria-hidden="true" /></span>
+            <span className="mt-3 block truncate text-sm font-bold leading-tight">{item.title}</span>
+            <span className="mt-1 block truncate text-[11px] leading-tight text-muted-foreground">{item.subtitle}</span>
+          </motion.button>
+        })}
+      </div>
+    </section>
+  )
+}
 
 function Carousel({ children }: { children: React.ReactNode }) {
   return (
@@ -602,43 +651,15 @@ function Home() {
           </div>
         </div>
         <div className="mx-auto max-w-[1600px] px-4 pt-2 md:hidden">
-          <nav aria-label="Quick sections" className="-mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 pb-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {([
-              { name: 'Pharmacy', mark: 'Rx', icon: Pill, hint: 'Medicines' },
-              { name: 'Latest', mark: 'NEW', icon: Sparkles, hint: 'New arrivals' },
-              { name: 'Petcare', mark: 'PET', icon: PawPrint, hint: 'Pet health' },
-              { name: 'Consult', mark: 'DOC', icon: Stethoscope, hint: 'Doctor help' },
-              { name: 'Adult', mark: '18+', icon: HeartPulse, hint: 'Adult health' },
-              { name: 'Health', mark: 'H+', icon: ShieldCheck, hint: 'Wellness' },
-              { name: 'Health Plan', mark: 'HP', icon: HeartPulse, hint: 'Health plans' },
-            ] as const).map(({ name, mark, icon: Icon, hint }) => (
-              <button
-                key={name}
-                type="button"
-                onClick={() => handleAmazonNav(name)}
-                aria-pressed={activeAmazonNav === name}
-                className={cn(
-                  'group flex h-[74px] w-[92px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-2xl border px-2 py-2 text-center transition-all duration-200',
-                  activeAmazonNav === name
-                    ? 'border-primary bg-primary text-primary-foreground shadow-md'
-                    : 'border-border bg-card text-foreground shadow-sm hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',
-                )}
-              >
-                <span className={cn(
-                  'flex size-9 items-center justify-center rounded-xl border text-[10px] font-black tracking-tight shadow-sm transition-transform group-hover:scale-105',
-                  activeAmazonNav === name
-                    ? 'border-white/20 bg-white/15 text-white'
-                    : 'border-primary/10 bg-primary/5 text-primary',
-                )}>
-                  <Icon className="size-4.5" strokeWidth={2} aria-hidden="true" />
-                  <span className="sr-only">{mark}</span>
-                </span>
-                <span className="block w-full truncate text-[11px] font-bold leading-tight">{name}</span>
-                <span className={cn('block w-full truncate text-[8px] leading-tight', activeAmazonNav === name ? 'text-white/75' : 'text-muted-foreground')}>{hint}</span>
-              </button>
-            ))}
-          </nav>
-          {renderSearch('site-searchQuery')}
+          <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
+            if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
+            if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
+            selectShopCategory(item.routeKey)
+          }} />
+          <div className="py-3">{renderSearch('site-searchQuery')}</div>
+          <CategoryRail title="DIAGNOSTICS" subtitle="Tests & services" items={DIAGNOSTICS} onSelect={(item) => {
+            setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts)
+          }} />
           <div className="mt-2"><DeliveryLocationBar /></div>
         </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border md:block">
