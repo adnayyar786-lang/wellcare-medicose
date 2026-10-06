@@ -258,6 +258,13 @@ function Home() {
   const [searchAvailabilityFilter, setSearchAvailabilityFilter] = useState<'all' | 'in' | 'out'>('all')
   const [searchRxFilter, setSearchRxFilter] = useState<'all' | 'rx' | 'nonrx'>('all')
   const [searchPriceFilter, setSearchPriceFilter] = useState<'all' | 'under500' | '500to1000' | 'over1000'>('all')
+  const [activeCategory, setActiveCategory] = useState<string>('All')
+  const [activeShopCategory, setActiveShopCategory] = useState<string | null>(null)
+  const [listening, setListening] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const [scannedBarcode, setScannedBarcode] = useState('')
+  const cameraVideoRef = useRef<HTMLVideoElement>(null)
+  const cameraStreamRef = useRef<MediaStream | null>(null)
   const searchedMedicines = useQuery(
     api.medicines.search,
     debouncedSearchQuery.length >= 2 ? { query: debouncedSearchQuery } : 'skip',
@@ -332,13 +339,6 @@ function Home() {
     toast.success('Found: ' + barcodeMedicine.name)
   }, [barcodeMedicine])
 
-  const [activeCategory, setActiveCategory] = useState<string>('All')
-  const [activeShopCategory, setActiveShopCategory] = useState<string | null>(null)
-  const [listening, setListening] = useState(false)
-  const [cameraOpen, setCameraOpen] = useState(false)
-  const [scannedBarcode, setScannedBarcode] = useState('')
-  const cameraVideoRef = useRef<HTMLVideoElement>(null)
-  const cameraStreamRef = useRef<MediaStream | null>(null)
   const [visible, setVisible] = useState(24)
   const gridRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
