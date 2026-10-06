@@ -1,7 +1,5 @@
-import { ConvexAuthProvider } from '@convex-dev/auth/react'
 import { ConvexProviderWithAuth, ConvexReactClient, useMutation } from 'convex/react'
 import { useCallback, useEffect, useMemo, useState, createContext, useContext } from 'react'
-import { useRouterState } from '@tanstack/react-router'
 import { getFirebaseAuth, type FirebaseUserLike } from '@/lib/firebase-auth'
 import { api } from '../../convex/_generated/api'
 
@@ -152,11 +150,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
 }
 
 export default function AppConvexProvider({ children }: { children: React.ReactNode }) {
-  const pathname = useRouterState({ select: s => s.location.pathname })
-  const staffPath = pathname === '/admin' || pathname.startsWith('/admin/') || pathname === '/staff' || pathname.startsWith('/staff/')
-    || pathname === '/staff-login'
-  if (staffPath) {
-    return <ConvexAuthProvider client={convex}>{children}</ConvexAuthProvider>
-  }
+  // Customer, staff and admin share one Firebase -> Convex identity bridge.
+  // This prevents route changes from switching authentication providers.
   return <FirebaseProvider>{children}</FirebaseProvider>
 }
