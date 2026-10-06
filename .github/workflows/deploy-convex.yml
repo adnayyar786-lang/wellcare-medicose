@@ -2,8 +2,7 @@ name: Deploy Convex backend
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "convex/**"
       - "package.json"
@@ -12,7 +11,12 @@ on:
       - "scripts/catalog-batch-001.json"
       - "scripts/catalog-batch-002.json"
       - "scripts/catalog-batch-003a.json"
+      - "scripts/validate-catalogue.mjs"
   workflow_dispatch:
+
+concurrency:
+  group: wellcare-medicose-production-catalogue
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -30,18 +34,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate complete catalogue before production changes
+        run: node scripts/validate-catalogue.mjs
+
       - name: Deploy Convex production backend
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex deploy --typecheck=disable
 
-      - name: Seed verified catalogue batches
+      - name: Seed catalogue batch 001
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-001.json)" --prod
+
+      - name: Seed catalogue batch 002
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-002.json)" --prod
+
+      - name: Seed catalogue batch 003a
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-003a.json)" --prod
+
+      - name: Verify production catalogue count and records
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
-          ARGS=$(cat scripts/catalog-batch-001.json)
-          npx convex run medicines:seedManyV2 "$ARGS" --prod
-          ARGS=$(cat scripts/catalog-batch-002.json)
-          npx convex run medicines:seedManyV2 "$ARGS" --prod
-          ARGS=$(cat scripts/catalog-batch-003a.json)
-          npx convex run medicines:seedManyV2 "$ARGS" --prod
+          node -e "const fs=require('fs'); const all=[1,2,3].flatMap(n=>JSON.parse(fs.readFileSync('scripts/catalog-batch-00'+n+(n===3?'a':'')+'.json','utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
+          npx convex run medicines:verifyCatalogue "$(cat /tmp/catalog-verify.json)" --prod
+
+      - name: Production catalogue gate
+        run: echo "Catalogue deployment completed only after validation, seed and production verification."
