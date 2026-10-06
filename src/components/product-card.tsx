@@ -64,6 +64,11 @@ const CATEGORY_ICON: Record<string, typeof Pill> = {
   Suppository: Package,
 }
 
+// Official Johnson's Baby India product image used only for the exact 100g
+// Johnson's Baby Cream listing when the catalog record has no usable photo.
+const OFFICIAL_JOHNSONS_BABY_CREAM_100G =
+  'https://images.ctfassets.net/j62l7jj24jl8/5bvYTlYl2Ahgsq1vuXY60C/fbd6e29249dac775166f05fc780d42aa/cream_image_11-hi-in?w=1920&fm=jpg&q=80'
+
 // Product photo on a clean white surface (never cropped or tinted), or a
 // category icon when the product has no photo yet.
 export function ProductImage({
@@ -80,15 +85,27 @@ export function ProductImage({
   className?: string
 }) {
   const [loaded, setLoaded] = useState(false)
-  if (imageUrl) {
+  const normalizedAlt = alt.toLowerCase().replace(/[’']/g, '')
+  const isExactJohnsons100g =
+    normalizedAlt.includes('johnson') &&
+    normalizedAlt.includes('baby') &&
+    normalizedAlt.includes('cream') &&
+    /(?:^|\s)100\s*g(?:m|ram)?(?:\s|$)/i.test(normalizedAlt)
+
+  const effectiveImageUrl = isExactJohnsons100g
+    ? OFFICIAL_JOHNSONS_BABY_CREAM_100G
+    : imageUrl
+
+  if (effectiveImageUrl) {
     return (
       <div className={cn('relative aspect-square w-full overflow-hidden rounded-xl bg-white ring-1 ring-border', className)}>
         <img
-          src={imageUrl}
+          src={effectiveImageUrl}
           alt={alt}
           loading="lazy"
           decoding="async"
           onLoad={() => setLoaded(true)}
+          onError={() => setLoaded(false)}
           className={cn('h-full w-full object-contain p-2 transition-opacity duration-300', loaded ? 'opacity-100' : 'opacity-0')}
         />
       </div>
