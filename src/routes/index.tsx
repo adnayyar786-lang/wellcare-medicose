@@ -299,15 +299,15 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
       onTouchStart={() => { pausedRef.current = true }}
       onTouchEnd={() => { pausedRef.current = false }}
     >
-      <div className="mb-2 flex items-center justify-between gap-2 rounded-xl border border-primary/15 bg-primary/[0.06] px-3 py-2 shadow-sm sm:mb-3 sm:px-4 sm:py-2.5">
-        <div className="flex min-w-0 items-center gap-2">
+      <div className="mb-3 flex w-full items-center overflow-hidden rounded-xl border border-primary/15 bg-primary/[0.06] px-3 py-2 shadow-sm sm:mb-3.5 sm:px-4 sm:py-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm shadow-sm sm:size-8 sm:text-base" aria-hidden="true">⚡</span>
           <div className="min-w-0">
             <p className="truncate text-[11px] font-black tracking-tight text-foreground sm:text-sm">DELIVERY IN 30–45 MIN</p>
             <p className="hidden text-[9px] font-medium text-muted-foreground sm:block">Fast local delivery</p>
           </div>
         </div>
-        <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-extrabold text-primary sm:px-3 sm:py-1.5 sm:text-[10px]">QUICK DELIVERY</span>
+        <span className="ml-3 hidden shrink-0 rounded-full bg-primary/10 px-3 py-1.5 text-[10px] font-extrabold text-primary sm:inline-flex">QUICK DELIVERY</span>
       </div>
       <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
         {slide.image && <img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose healthcare products" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />}
