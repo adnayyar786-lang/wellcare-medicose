@@ -884,23 +884,6 @@ function Home() {
 
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
 
-      {!browsing && manufacturers.length > 0 && <section className="w-full overflow-hidden px-4 py-5 sm:px-6 lg:px-8" aria-label="Shop by medicine company">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="mb-3 flex flex-wrap items-end justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-teal">Trusted manufacturers</p><h2 className="mt-1 text-lg font-extrabold tracking-tight text-foreground sm:text-xl">Shop by Company</h2></div><span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">{manufacturers.length} companies</span></div>
-          <div className="relative w-full rounded-2xl border border-border bg-card shadow-sm">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-10" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
-            <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Company brand slider">
-              {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " company folder"}>
-                <span className={cn('relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 shadow-sm transition group-hover:scale-105 sm:size-11', monogramTone('company-' + company))} aria-hidden="true"><span className="absolute -right-2 -top-2 size-6 rounded-full bg-white/15 blur-sm" /><span className="relative text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
-                <span className="block max-w-full truncate text-[11px] font-bold sm:text-xs">{company}</span>
-                <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
-              </button>)}
-            </div>
-          </div>
-          <p className="mt-1.5 text-center text-[10px] text-muted-foreground">Swipe to explore • Auto-scroll pauses while you interact</p>
-        </div>
-      </section>}
       {!browsing && <OfferCards />}
       {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-5" aria-label="Top Brands and Companies">
         <div className="mx-auto max-w-[1600px]">
