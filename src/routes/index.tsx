@@ -300,12 +300,12 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
       onTouchEnd={() => { pausedRef.current = false }}
     >
       <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
-        <div className="absolute left-3 right-3 top-3 z-20 flex items-center justify-between gap-2 sm:left-5 sm:right-5 sm:top-4">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/65 px-3 py-1.5 text-[11px] font-black tracking-tight text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-2 sm:text-sm">
-            <span className="text-base sm:text-lg" aria-hidden="true">⚡</span>
-            <span>DELIVERY IN 30–45 MIN</span>
+        <div className="relative z-20 flex min-h-10 items-center justify-between gap-2 px-4 pt-3 sm:min-h-12 sm:px-6 sm:pt-4 lg:px-8">
+          <div className="inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded-full border border-white/20 bg-slate-950/70 px-3 py-1.5 text-[10px] font-black tracking-tight text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-2 sm:text-sm">
+            <span className="text-sm sm:text-base" aria-hidden="true">⚡</span>
+            <span className="truncate">DELIVERY IN 30–45 MIN</span>
           </div>
-          <span className="hidden rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold text-white/85 backdrop-blur-md sm:inline-flex">Fast local delivery</span>
+          <span className="hidden shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold text-white/85 backdrop-blur-md sm:inline-flex">Fast local delivery</span>
         </div>
         {slide.image && <img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose healthcare products" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />}
         <div className={cn('absolute inset-0 bg-gradient-to-r', slide.tone)} />
@@ -322,7 +322,7 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
             </div>
           </div>
         )}
-        <div className="relative z-10 flex min-h-[250px] max-w-2xl flex-col justify-center px-6 py-8 text-white sm:min-h-[300px] sm:px-10 lg:min-h-[360px] lg:px-14">
+        <div className="relative z-10 flex min-h-[200px] max-w-2xl flex-col justify-center px-6 py-7 text-white sm:min-h-[248px] sm:px-10 sm:py-8 lg:min-h-[300px] lg:px-14">
           <span className="mb-2 w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[9px] font-bold tracking-[0.18em] backdrop-blur-sm sm:text-[10px]">{slide.eyebrow}</span>
           <h1 className="whitespace-pre-line text-3xl font-black leading-[1.02] tracking-tight sm:text-4xl lg:text-5xl">{slide.title}</h1>
           <p className="mt-3 max-w-xl text-xs leading-relaxed text-white/85 sm:text-sm lg:text-base">{slide.subtitle}</p>
