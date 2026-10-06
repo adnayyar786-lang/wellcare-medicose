@@ -853,7 +853,7 @@ function Home() {
         </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border/80 md:block">
           <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <Link to="/categories" className="mr-1 inline-flex items-center gap-1.5 rounded-lg bg-primary/5 px-3 py-2.5 font-bold text-primary hover:bg-primary/10"><Menu className="size-4" /> Shop by Category</Link>
+            
             <button onClick={() => { clearFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="border-b-2 border-transparent px-3 py-2.5 font-medium text-muted-foreground transition-colors hover:text-foreground">All Products</button>
             {visibleShopCategories.map(({ name }) => <button key={name} onClick={() => selectShopCategory(name)} aria-pressed={activeShopCategory === name} className={cn('border-b-2 px-3 py-2.5 font-medium transition-colors', activeShopCategory === name ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>{name}</button>)}
             <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-[10px] text-muted-foreground"><MapPin className="size-3.5" /> Deliver to <span className="font-bold text-foreground">Roorkee {STORE_LOCATION.pincode}</span></span>
