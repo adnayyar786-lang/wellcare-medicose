@@ -908,7 +908,7 @@ function Home() {
                   <span data-brand-fallback className={cn('size-9 items-center justify-center rounded-lg', companyLogo(company) ? 'hidden' : 'inline-flex', monogramTone('company-' + company))}><span className="text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
                 </span>
                 <span className="block max-w-full truncate text-[11px] font-bold sm:text-xs">{company}</span>
-                <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
+                <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? manufacturerCounts.get(company.replace(/\s+Pharmacy$/i, '')) ?? 0} products</span>
               </button>)}
             </div>
           </div>
