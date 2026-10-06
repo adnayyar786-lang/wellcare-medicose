@@ -232,7 +232,8 @@ const TRUST_ITEMS = [
   { icon: Lock, title: 'Safe & Secure Payments', sub: 'Pay the way you prefer' },
 ]
 
-// Company cards prefer verified brand artwork; graphical monograms remain the visual fallback.\nconst COMPANY_LOGO_STYLES: Record<string, string> = {
+// Company cards prefer verified brand artwork; graphical monograms remain the visual fallback.
+const COMPANY_LOGO_STYLES: Record<string, string> = {
   "dr. reddy's": 'bg-violet-50 text-violet-700',
   'sun pharma': 'bg-orange-50 text-orange-600',
   cipla: 'bg-blue-50 text-blue-700',
