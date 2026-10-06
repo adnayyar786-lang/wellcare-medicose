@@ -38,3 +38,5 @@ export async function getAppUserId(ctx: any): Promise<Id<'users'> | null> {
 
   return null
 }
+
+// Production Firebase customer-auth resolver; deployed with the migrated Convex backend.
