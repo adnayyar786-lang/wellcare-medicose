@@ -136,7 +136,7 @@ function CategoryRail({ title, subtitle, items, onSelect }: { title: string; sub
         <div><h2 className="text-sm font-black tracking-[0.08em] text-foreground sm:text-base">{title}</h2><p className="mt-0.5 text-[11px] text-muted-foreground sm:text-xs">{subtitle}</p></div>
         <span className="hidden text-[10px] font-medium text-muted-foreground sm:block">Swipe to explore →</span>
       </div>
-      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden]" style={{ touchAction: 'pan-x' }}>
+      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ touchAction: 'pan-x' }}>
         {items.map((item) => {
           const Icon = item.icon
           return <motion.button key={item.id} type="button" whileTap={{ scale: 0.98 }} onClick={() => onSelect(item)} className="group w-[calc((100vw-44px)/1.7)] min-w-[178px] max-w-[235px] shrink-0 snap-start rounded-2xl border border-border bg-card p-3.5 text-left shadow-sm transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:w-[205px] sm:min-w-[205px] lg:w-[220px] lg:min-w-[220px]">
@@ -672,6 +672,19 @@ function Home() {
         </nav>
         <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoChosen} />
       </header>
+
+      <div className="hidden border-b border-border bg-background md:block">
+        <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
+          if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
+          if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
+          selectShopCategory(item.routeKey)
+        }} />
+        <div className="border-t border-border">
+          <CategoryRail title="DIAGNOSTICS" subtitle="Tests & services" items={DIAGNOSTICS} onSelect={(item) => {
+            setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts)
+          }} />
+        </div>
+      </div>
 
       {!browsing && <>
         <section className="mx-auto max-w-[1600px] px-4 pt-4" aria-label="Wellcare pharmacy banner"><img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose — order medicines and healthcare products online" className="block h-auto w-full rounded-2xl object-contain shadow-sm" fetchPriority="high" /></section>
