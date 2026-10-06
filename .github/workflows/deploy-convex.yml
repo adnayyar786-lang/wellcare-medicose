@@ -11,6 +11,7 @@ on:
       - "convex.json"
       - "scripts/catalog-batch-001.json"
       - "scripts/catalog-batch-002.json"
+      - "scripts/catalog-batch-003a.json"
   workflow_dispatch:
 
 jobs:
@@ -34,11 +35,13 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex deploy --typecheck=disable
 
-      - name: Seed verified catalogue batch 001
+      - name: Seed verified catalogue batches
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
           ARGS=$(cat scripts/catalog-batch-001.json)
           npx convex run medicines:seedManyV2 "$ARGS" --prod
           ARGS=$(cat scripts/catalog-batch-002.json)
+          npx convex run medicines:seedManyV2 "$ARGS" --prod
+          ARGS=$(cat scripts/catalog-batch-003a.json)
           npx convex run medicines:seedManyV2 "$ARGS" --prod
