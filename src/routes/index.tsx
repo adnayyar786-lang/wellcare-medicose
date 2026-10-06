@@ -327,7 +327,7 @@ function Home() {
   const sameComposition = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q || filteredMedicines.length === 0) return []
-    const best = filteredSearchMedicines[0]
+    const best = filteredMedicines[0]
     const key = compositionKey(best)
     if (!key) return []
     const keyWords = key.split(' ').filter((word) => word.length > 2)
