@@ -93,7 +93,6 @@ export const COMPANY_LOGOS: Record<string, string> = {
   Apollo: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/vP3ZQunAcUF-CNdDMt-CX/company-apollo-5Uvhg8Fx.png',
   Mankind: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/8eAcXm9RY77QUr5B8Yd5-/company-mankind-9AY05cGy.png',
   "Dr. Reddy's": 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/5AO031WbOsUjVHxIYnRdq/company-dr-reddys-1YH1txbT.png',
-  Cipla: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/ylNuo577Tj90yDV2A-kWu/company-cipla-AWU9TOat.png',
   'Sun Pharma': 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/_v1tROLemC01-4J7JwuO4/company-sun-pharma-uHxrRUA9.png',
   Abbott: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/VAs5UA2XOKZi_htVucdKe/company-abbott-5gIxY5eN.png',
   Lupin: 'https://assets.macaly-user-data.dev/exm42o5pehv6v9ztijohgy2n/bvngjnb4cw1qdnud5e9kc4hd/LbLpf8StQv61IkKFnJB9U/company-lupin-GLbipg9q.png',
