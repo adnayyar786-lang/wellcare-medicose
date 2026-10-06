@@ -89,6 +89,7 @@ export const create = mutation({
     requiresPrescription: v.boolean(),
     imageUrl: v.optional(v.string()),
     shopCategory: v.optional(v.string()),
+    barcode: v.optional(v.string()),
   },
   returns: v.id('medicines'),
   handler: async (ctx, args) => {
@@ -108,6 +109,7 @@ export const create = mutation({
       imageUrl: args.imageUrl,
       active: true,
       shopCategory: args.shopCategory || 'Medicines (Branded)',
+      barcode: args.barcode?.trim() || undefined,
       updatedAt: Date.now(),
     })
   },
@@ -128,6 +130,7 @@ export const update = mutation({
     active: v.optional(v.boolean()),
     shopCategory: v.optional(v.string()),
     featured: v.optional(v.boolean()),
+    barcode: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, { id, ...patch }) => {
@@ -137,7 +140,8 @@ export const update = mutation({
       throw new Error('Price cannot be negative')
     if (patch.stock !== undefined && patch.stock < 0)
       throw new Error('Stock cannot be negative')
-    await ctx.db.patch(id, { ...patch, updatedAt: Date.now() })
+    const normalizedPatch = { ...patch, barcode: patch.barcode?.trim() || undefined }
+    await ctx.db.patch(id, { ...normalizedPatch, updatedAt: Date.now() })
     return null
   },
 })
