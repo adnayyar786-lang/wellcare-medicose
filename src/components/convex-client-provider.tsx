@@ -5,9 +5,9 @@ import { useRouterState } from '@tanstack/react-router'
 import { getFirebaseAuth, type FirebaseUserLike } from '@/lib/firebase-auth'
 import { api } from '../../convex/_generated/api'
 
-const CONVEX_URL =
-  (import.meta as any).env.VITE_CONVEX_URL ||
-  'https://hardy-parakeet-432.convex.cloud'
+// Customer production backend is fixed to the migrated Wellcare Medicose deployment.
+// Do not allow a stale Cloudflare VITE_CONVEX_URL to redirect customers to the old Macaly Convex project.
+const CONVEX_URL = 'https://hardy-parakeet-432.convex.cloud'
 const convex = new ConvexReactClient(CONVEX_URL)
 
 type FirebaseAuthState = { user: FirebaseUserLike | null; isLoading: boolean }
