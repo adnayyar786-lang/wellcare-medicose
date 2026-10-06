@@ -15,7 +15,8 @@ export function GoogleAuthButton({ premium = false }: { premium?: boolean }) {
       // FirebaseAuthProvider owns the authenticated state and persistence.
       // The sign-in page navigates only after that state is restored, so we
       // never race navigation against Firebase/Convex session setup.
-      await signInWithGoogleFirebase()
+      const user = await signInWithGoogleFirebase()
+      window.dispatchEvent(new CustomEvent('wellcare-firebase-signed-in', { detail: user }))
     } catch (e) {
       setError(
         e instanceof Error && e.message
