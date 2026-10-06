@@ -21,7 +21,7 @@ export const Route = createFileRoute('/admin')({
 
 function AdminGate() {
   const { user, isLoading: authLoading } = useFirebaseAuthState()
-  const admin = useQuery(api.staff.isAdmin, user ? {} : 'skip')
+  // Convex can briefly be undefined while the Firebase ID token is being attached.\n  // Do not turn that synchronization window into an access-denied screen.\n  const admin = useQuery(api.staff.isAdmin, user ? {} : 'skip')
 
   if (authLoading) {
     return <AdminStatus message="Restoring your Wellcare session…" />
