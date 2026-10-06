@@ -828,16 +828,6 @@ function Home() {
             <Button variant="default" className="relative size-9 gap-2 rounded-full p-0 sm:w-auto sm:px-3" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT))} data-testid="cart-button" aria-label="Open cart"><ShoppingCart className="size-4" /><span className="hidden sm:inline">Cart</span>{count > 0 && <Badge className="absolute -right-1 -top-1 ml-0 bg-highlight px-1.5 text-[9px] text-highlight-foreground sm:static sm:px-1.5">{count}</Badge>}</Button>
           </div>
         </div>
-        <div className="mx-auto max-w-[1600px] px-3 pb-2 md:hidden">
-          <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
-            if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
-            if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
-            selectShopCategory(item.routeKey)
-          }} />
-          <div className="py-1.5">{renderSearch('site-searchQuery')}</div>
-          <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
-          <div className="pt-1"><DeliveryLocationBar /></div>
-        </div>
         <nav aria-label="Shop by category" className="hidden border-t border-border/80 md:block">
           <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Link to="/categories" className="mr-1 inline-flex items-center gap-1.5 rounded-lg bg-primary/5 px-3 py-2.5 font-bold text-primary hover:bg-primary/10"><Menu className="size-4" /> Shop by Category</Link>
@@ -849,16 +839,26 @@ function Home() {
         <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoChosen} />
       </header>
 
-      <div className="hidden border-b border-border/70 bg-background md:block">
+      {!browsing && <HeroCarousel onShop={scrollToProducts} />}
+      {!browsing && <div className="mx-auto max-w-[1600px] px-3 md:hidden">
+        <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
+          if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
+          if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
+          selectShopCategory(item.routeKey)
+        }} />
+        <div className="py-1.5">{renderSearch('site-searchQuery')}</div>
+        <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
+        <div className="pt-1"><DeliveryLocationBar /></div>
+      </div>}
+      {!browsing && <div className="hidden border-b border-border/70 bg-background md:block">
         <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
           if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
           if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
         }} />
         <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
-      </div>
+      </div>}
 
-      {!browsing && <HeroCarousel onShop={scrollToProducts} />}
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
 
       {!browsing && manufacturers.length > 0 && <section className="w-full overflow-hidden px-4 py-6 sm:px-6 lg:px-8" aria-label="Shop by medicine company">
