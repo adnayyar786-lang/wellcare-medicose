@@ -194,7 +194,7 @@ function OfferCards() {
   }
 
   return (
-    <section aria-label="Offers" className="mx-auto max-w-[1600px] px-4 py-6">
+    <section aria-label="Offers" className="mx-auto max-w-[1600px] px-4 py-2.5">
       <SectionHeading title="Offers for you" subtitle="Tap a coupon to save it, then apply it in your cart." />
       <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
         {banners.map((b, i) => (
@@ -881,7 +881,7 @@ function Home() {
         <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
       </div>}
 
-      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
+      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-3" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
 
       {!browsing && <OfferCards />}
       {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-5" aria-label="Top Brands and Companies">
