@@ -70,7 +70,7 @@ function OrderCard({ order, onReorder, active }: { order: { _id: Id<'orders'>; s
   async function handleConfirmCancel() {
     if (!selected.size) { toast.error('Select at least one item'); return }
     setCancelling(true)
-    try { await cancelItems({ id: order._id, medicineIds: Array.from(selected) as Id<'medicines'>[]); toast.success('Order updated'); setCancelOpen(false); setSelected(new Set()) }
+    try { await cancelItems({ id: order._id, medicineIds: Array.from(selected) as Array<Id<'medicines'>>); toast.success('Order updated'); setCancelOpen(false); setSelected(new Set()) }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Could not cancel') }
     finally { setCancelling(false) }
   }
