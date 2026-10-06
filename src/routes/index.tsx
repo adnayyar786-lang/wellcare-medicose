@@ -62,7 +62,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import siteMetadata from '../metadata.json'
-import { allManufacturers, companyMonogram, manufacturerOf } from '@/config/brand-folders'
+import { allManufacturers, companyLogo, companyMonogram, FEATURED_COMPANIES, manufacturerOf } from '@/config/brand-folders'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -637,7 +637,10 @@ function Home() {
     return [...pool.filter((m) => m.imageUrl), ...pool.filter((m) => !m.imageUrl)].slice(0, 20)
   }, [medicines])
   const companyProducts = useMemo(() => medicines.filter((m) => m.active && shopOf(m) !== 'Pet Care'), [medicines])
-  const manufacturers = useMemo(() => allManufacturers(companyProducts), [companyProducts])
+  const manufacturers = useMemo(() => {
+    const fromCatalogue = allManufacturers(companyProducts)
+    return Array.from(new Set([...FEATURED_COMPANIES, ...fromCatalogue]))
+  }, [companyProducts])
   const manufacturerCounts = useMemo(() => {
     const counts = new Map<string, number>()
     companyProducts.forEach((m) => {
@@ -900,7 +903,10 @@ function Home() {
             <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
             <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Top brands and company slider">
               {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-top-brand-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " brand"}>
-                <span className={cn('relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/15 shadow-sm transition group-hover:scale-105 sm:size-11', monogramTone('company-' + company))} aria-hidden="true"><span className="absolute -right-2 -top-2 size-6 rounded-full bg-white/15 blur-sm" /><span className="relative text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
+                <span className={cn('relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm transition group-hover:scale-105 sm:size-11')} aria-hidden="true">
+                  {companyLogo(company) ? <img src={companyLogo(company)} alt="" className="max-h-8 max-w-12 object-contain sm:max-h-9 sm:max-w-14" loading="lazy" referrerPolicy="no-referrer" onError={(event) => { event.currentTarget.style.display = 'none'; const fallback = event.currentTarget.parentElement?.querySelector('[data-brand-fallback]') as HTMLElement | null; if (fallback) fallback.style.display = 'inline-flex' }} /> : null}
+                  <span data-brand-fallback className={cn('size-9 items-center justify-center rounded-lg', companyLogo(company) ? 'hidden' : 'inline-flex', monogramTone('company-' + company))}><span className="text-xs font-black tracking-tight text-white sm:text-sm">{companyMonogram(company)}</span></span>
+                </span>
                 <span className="block max-w-full truncate text-[11px] font-bold sm:text-xs">{company}</span>
                 <span className="text-[9px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} products</span>
               </button>)}
