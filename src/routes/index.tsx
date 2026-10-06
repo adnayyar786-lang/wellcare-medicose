@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   Baby,
   Bell,
-  HeartPulse, Dumbbell, Stethoscope, Leaf, Heart, Activity, Droplets, Home,
+  HeartPulse, Dumbbell, Stethoscope, Leaf, Heart, Activity, Droplets, Home as HomeIcon,
   Camera,
   FlaskConical,
   Languages,
@@ -126,7 +126,7 @@ const DIAGNOSTICS: CategoryRailItem[] = [
   { id: 'vitamin-tests', title: 'Vitamin Tests', subtitle: 'Deficiency tests', icon: FlaskConical, routeKey: 'Vitamin Tests' },
   { id: 'liver-tests', title: 'Liver Tests', subtitle: 'Liver profile', icon: Activity, routeKey: 'Liver Tests' },
   { id: 'kidney-tests', title: 'Kidney Tests', subtitle: 'Kidney profile', icon: Activity, routeKey: 'Kidney Tests' },
-  { id: 'home-sample', title: 'Home Sample Collection', subtitle: 'Sample at home', icon: Home, routeKey: 'Home Sample Collection' },
+  { id: 'home-sample', title: 'Home Sample Collection', subtitle: 'Sample at home', icon: HomeIcon, routeKey: 'Home Sample Collection' },
 ]
 
 function CategoryRail({ title, subtitle, items, onSelect }: { title: string; subtitle: string; items: CategoryRailItem[]; onSelect: (item: CategoryRailItem) => void }) {
