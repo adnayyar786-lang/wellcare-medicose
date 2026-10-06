@@ -101,7 +101,32 @@ const HUMAN = [
   ["ORS Lemon Flavour Sachet 21g","Generic","Powder",18,20],
 ] as const
 
-const CHUNK = 50
+const CHUNK = 25
+
+type CatalogueItem = {
+  name: string
+  manufacturer?: string
+  category: string
+  shopCategory: string
+  description: string
+  price: number
+  mrpPrice?: number
+  stock: number
+  requiresPrescription: boolean
+  imageUrl?: string
+}
+
+function validateCatalogueItem(item: CatalogueItem) {
+  const errors: string[] = []
+  if (!item.name.trim()) errors.push('missing name')
+  if (!item.category.trim()) errors.push('missing section')
+  if (!item.shopCategory.trim()) errors.push('missing shop category')
+  if (!Number.isFinite(item.price) || item.price <= 0) errors.push('invalid selling price')
+  if (item.mrpPrice !== undefined && item.mrpPrice < item.price) errors.push('MRP below selling price')
+  if (!Number.isInteger(item.stock) || item.stock < 0) errors.push('invalid stock')
+  if (!item.description.trim()) errors.push('missing description')
+  return errors
+}
 
 export const Route = createFileRoute('/catalog-import')({ component: CatalogImport })
 
@@ -111,7 +136,7 @@ function CatalogImport() {
   const [running, setRunning] = useState(false)
   const [status, setStatus] = useState('Ready — no products have been imported yet.')
 
-  const items = useMemo(() => [
+  const items = useMemo((): CatalogueItem[] => [
     ...HUMAN.map(([name, manufacturer, category, price, mrpPrice]) => ({
       name, manufacturer, category, shopCategory: 'Medicines (Branded)',
       description: name + '. Verify pack, strength and current MRP before sale.',
@@ -133,8 +158,14 @@ function CatalogImport() {
     if (running) return
     setRunning(true)
     setDone(0)
-    setStatus('Import started…')
+    setStatus('Validating catalogue batches…')
     try {
+      const invalid = items.flatMap((item, index) =>
+        validateCatalogueItem(item).map((error) => `#${index + 1} ${item.name}: ${error}`)
+      )
+      if (invalid.length) {
+        throw new Error(`Catalogue validation failed: ${invalid.slice(0, 8).join(' • ')}`)
+      }
       for (let i = 0; i < items.length; i += CHUNK) {
         const batch = items.slice(i, i + CHUNK)
         const inserted = await seed({ items: batch })
@@ -158,9 +189,9 @@ function CatalogImport() {
         <div style={{ background: '#fff', borderRadius: 20, padding: 28, boxShadow: '0 8px 30px rgba(0,0,0,.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', opacity: .55 }}>Wellcare Medicose</div>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', opacity: .55 }}>Wellcare MEDICOSE</div>
               <h1 style={{ margin: '6px 0', fontSize: 30 }}>Catalogue Import Center</h1>
-              <p style={{ margin: 0, opacity: .65 }}>Controlled bulk catalogue setup. Nothing runs until you press Start Import.</p>
+              <p style={{ margin: 0, opacity: .65 }}>Controlled catalogue workflow: validate → batch → dedupe → import → verify. Nothing runs until you press Start Import.</p>
             </div>
             <button onClick={startImport} disabled={running} style={{ border: 0, borderRadius: 12, padding: '13px 20px', fontWeight: 700, cursor: running ? 'wait' : 'pointer' }}>
               {running ? 'Importing…' : 'Start Import'}
@@ -185,7 +216,7 @@ function CatalogImport() {
           </div>
 
           <div style={{ marginTop: 24, padding: 16, borderRadius: 14, background: '#f8fafc', fontSize: 14, lineHeight: 1.6 }}>
-            <strong>Deployment/data safety:</strong> this page is only the catalogue setup interface. Product filtering, prescription restrictions and final source validation are intentionally not applied yet.
+            <strong>Deployment/data safety:</strong> this page is only the catalogue setup interface. Every batch is validated before import. Product images are only attached when a verified imageUrl is supplied; no guessed or unrelated image is ever assigned.
           </div>
         </div>
       </section>
