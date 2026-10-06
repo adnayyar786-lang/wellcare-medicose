@@ -893,6 +893,24 @@ function Home() {
       </section>}
       {!browsing && <OfferCards />}
 
+      {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Top brands">
+        <SectionHeading title="Top Brands" subtitle="Explore manufacturers currently available in our catalogue." />
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+          {manufacturers.slice(0, 12).map((company) => (
+            <button key={company} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex min-w-[220px] snap-start items-center gap-3 rounded-2xl border border-border bg-card p-3.5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md sm:min-w-0">
+              <span className={cn('flex size-12 shrink-0 items-center justify-center rounded-xl border border-white/15 shadow-sm', monogramTone('top-brand-' + company))}>
+                <span className="text-sm font-black text-white">{companyMonogram(company)}</span>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-extrabold">{company}</span>
+                <span className="mt-0.5 block text-[11px] text-muted-foreground">{manufacturerCounts.get(company) ?? 0} catalogue products</span>
+              </span>
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+            </button>
+          ))}
+        </div>
+      </section>}
+
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Care and shopping categories">
         <SectionHeading title="Care for Every Need" subtitle="Explore healthcare, wellness and everyday essentials." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
