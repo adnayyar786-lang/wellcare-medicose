@@ -44,7 +44,6 @@ import { HERO_BACKGROUND_IMAGE } from '@/config/hero-image'
 import { STORE_LOCATION } from '@/config/store-location'
 import { OPEN_CART_EVENT } from '@/components/cart-drawer'
 import { ProfileDrawer } from '@/components/profile-drawer'
-import { DeliveryLocationBar } from '@/components/delivery-location-bar'
 import { fireCartToast } from '@/components/cart-confirmation-toast'
 import { BrandLogo, SectionHeading, SiteFooter, StoreInfoCards } from '@/components/brand'
 import {
@@ -205,7 +204,7 @@ function OfferCards() {
             whileTap={{ scale: 0.98 }}
             onClick={() => handleClick(b.code)}
             className={cn(
-              'w-72 shrink-0 snap-start rounded-2xl bg-gradient-to-br p-4 text-left text-white shadow-sm',
+              'w-72 shrink-0 snap-start rounded-2xl border border-white/15 bg-gradient-to-br p-4 text-left text-white shadow-[0_12px_30px_-16px_rgba(15,23,42,0.65)] transition-shadow hover:shadow-[0_18px_36px_-16px_rgba(15,23,42,0.75)]',
               OFFER_TONES[i % OFFER_TONES.length],
               !b.code && 'cursor-default',
             )}
@@ -299,12 +298,12 @@ function HeroCarousel({ onShop }: { onShop: () => void }) {
       onTouchStart={() => { pausedRef.current = true }}
       onTouchEnd={() => { pausedRef.current = false }}
     >
-      <div className="mb-3 flex w-full items-center overflow-hidden rounded-xl border border-primary/15 bg-primary/[0.06] px-3 py-2 shadow-sm sm:mb-3.5 sm:px-4 sm:py-2.5">
+      <div className="mb-3 flex w-full items-center overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-primary/[0.08] via-background to-brand-teal/[0.08] px-3 py-2 shadow-[0_4px_18px_rgba(15,23,42,0.08)] sm:mb-3.5 sm:px-4 sm:py-2.5">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm shadow-sm sm:size-8 sm:text-base" aria-hidden="true">⚡</span>
           <div className="min-w-0">
             <p className="truncate text-[11px] font-black tracking-tight text-foreground sm:text-sm">DELIVERY IN 30–45 MIN</p>
-            <p className="hidden text-[9px] font-medium text-muted-foreground sm:block">Fast local delivery</p>
+            <p className="truncate text-[9px] font-semibold text-brand-teal sm:text-[10px]">CUSTOMER DISCOUNT • UP TO 20% OFF</p>
           </div>
         </div>
         <span className="ml-3 hidden shrink-0 rounded-full bg-primary/10 px-3 py-1.5 text-[10px] font-extrabold text-primary sm:inline-flex">QUICK DELIVERY</span>
@@ -872,8 +871,7 @@ function Home() {
         }} />
         <div className="py-1.5">{renderSearch('site-searchQuery')}</div>
         <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
-        <div className="pt-1"><DeliveryLocationBar /></div>
-      </div>}
+              </div>}
       {!browsing && <div className="hidden border-b border-border/70 bg-background md:block">
         <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
           if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
@@ -889,7 +887,7 @@ function Home() {
       {!browsing && manufacturers.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-5" aria-label="Top Brands and Companies">
         <div className="mx-auto max-w-[1600px]">
           <div className="mb-3 flex flex-wrap items-end justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-teal">Trusted manufacturers</p><h2 className="mt-1 text-lg font-extrabold tracking-tight text-foreground sm:text-xl">Top Brands & Companies</h2><p className="mt-0.5 text-[11px] text-muted-foreground">Shop medicines by manufacturer</p></div><span className="rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-semibold text-muted-foreground">{manufacturers.length} brands</span></div>
-          <div className="relative w-full rounded-2xl border border-border bg-card shadow-sm">
+          <div className="relative w-full rounded-2xl border border-primary/15 bg-card shadow-[0_10px_30px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-10" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
             <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Top brands and company slider">
@@ -917,25 +915,6 @@ function Home() {
         </div>
       </section>}
 
-      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicine formats">
-        <SectionHeading title="Shop by Medicine Type" subtitle="Quick visual shortcuts for common medicine forms." />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-          {[
-            { name: 'Tablets', icon: Pill, mark: 'TAB', tone: 'from-blue-100 to-cyan-50 text-blue-700' },
-            { name: 'Syrups', icon: PillBottle, mark: 'SYR', tone: 'from-amber-100 to-yellow-50 text-amber-700' },
-            { name: 'Capsules', icon: Pill, mark: 'CAP', tone: 'from-violet-100 to-fuchsia-50 text-violet-700' },
-            { name: 'Drops', icon: FlaskConical, mark: 'DROP', tone: 'from-emerald-100 to-teal-50 text-emerald-700' },
-            { name: 'Creams & Gels', icon: Sparkles, mark: 'CRM', tone: 'from-pink-100 to-rose-50 text-pink-700' },
-            { name: 'Inhalers', icon: Wind, mark: 'INH', tone: 'from-sky-100 to-blue-50 text-sky-700' },
-            { name: 'Injections', icon: Syringe, mark: 'INJ', tone: 'from-orange-100 to-amber-50 text-orange-700' },
-          ].map(({ name, icon: Icon, mark, tone }) => (
-            <button key={name} type="button" onClick={() => { setSearchQuery(name); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group rounded-2xl border border-border bg-card p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md">
-              <span className={cn('relative flex h-20 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br', tone)}><span className="absolute left-2 top-2 rounded-md bg-white/85 px-1.5 py-0.5 text-[9px] font-black shadow-sm">{mark}</span><Icon className="size-10 transition-transform group-hover:scale-110" strokeWidth={1.5} /></span>
-              <span className="mt-2 block text-xs font-bold">{name}</span>
-            </button>
-          ))}
-        </div>
-      </section>}
       {!browsing && <section className="border-y border-border bg-card" aria-label="Featured shopping collections">
         <div className="mx-auto max-w-[1600px] px-4 py-6">
           <SectionHeading title="Popular Healthcare Picks" subtitle="Available products from your current catalogue." action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} />
@@ -947,7 +926,7 @@ function Home() {
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Why Wellcare</p>
         <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">A pharmacy experience built around trust</h2>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><ShieldCheck className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Licensed Pharmacy</h3><p className="mt-1 text-[11px] text-muted-foreground">Your trusted local store.</p></div>
+          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_8px_24px_-18px_rgba(15,23,42,0.55)] ring-1 ring-primary/5"><ShieldCheck className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Licensed Pharmacy</h3><p className="mt-1 text-[11px] text-muted-foreground">Your trusted local store.</p></div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><Truck className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Delivery & Pickup</h3><p className="mt-1 text-[11px] text-muted-foreground">Use the options available at checkout.</p></div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><PillBottle className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Clear Product Details</h3><p className="mt-1 text-[11px] text-muted-foreground">Prescription status and product information are shown on products.</p></div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><Lock className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Secure Checkout</h3><p className="mt-1 text-[11px] text-muted-foreground">Use the payment options provided by checkout.</p></div>
