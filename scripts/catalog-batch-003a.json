@@ -9,7 +9,8 @@
       "mrpPrice": 155,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Sun Pharmaceutical Industries Ltd"
+      "manufacturer": "Sun Pharmaceutical Industries Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/cropped/y6khp04ugd6csjrlehgd.jpg?dpr=3&format=auto&h=200&w=240"
     },
     {
       "name": "Pan 40 Tablet - 15 Tablets",
@@ -31,7 +32,8 @@
       "mrpPrice": 128,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Glenmark Pharmaceuticals Ltd"
+      "manufacturer": "Glenmark Pharmaceuticals Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/d36c6b9ab0e14725828210b432b46ed8.jpg"
     },
     {
       "name": "Atorva 10 Tablet - 15 Tablets",
@@ -53,7 +55,8 @@
       "mrpPrice": 42,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "USV Private Limited"
+      "manufacturer": "USV Private Limited",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/utyaqcplcvlw6shx3lmm.jpg"
     },
     {
       "name": "Allegra 120 Tablet - 10 Tablets",
@@ -64,7 +67,8 @@
       "mrpPrice": 198,
       "stock": 0,
       "requiresPrescription": false,
-      "manufacturer": "Sanofi India Ltd"
+      "manufacturer": "Sanofi India Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/fa7427131ec64163b5bbafb529df0736.jpg"
     },
     {
       "name": "Azithral 500 Tablet - 5 Tablets",
@@ -75,7 +79,8 @@
       "mrpPrice": 120,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Alembic Pharmaceuticals Ltd"
+      "manufacturer": "Alembic Pharmaceuticals Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/cropped/kqkouvaqejbyk47dvjfu.jpg?dpr=3&format=auto&h=200&w=240"
     },
     {
       "name": "Omez 20 Capsule - 20 Capsules",
@@ -108,7 +113,8 @@
       "mrpPrice": 185,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Cipla Ltd"
+      "manufacturer": "Cipla Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/wbcmitb6ibmotmsy9st6.jpg"
     },
     {
       "name": "Crocin Advance 500 Tablet - 15 Tablets",
@@ -119,7 +125,8 @@
       "mrpPrice": 30.5,
       "stock": 0,
       "requiresPrescription": false,
-      "manufacturer": "GlaxoSmithKline Pharmaceuticals Ltd"
+      "manufacturer": "GlaxoSmithKline Pharmaceuticals Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/d1b5d11ee8ba4b68a6a5c6f1c872dbfc.jpg"
     },
     {
       "name": "Calpol 650 Tablet - 15 Tablets",
@@ -130,7 +137,8 @@
       "mrpPrice": 30.5,
       "stock": 0,
       "requiresPrescription": false,
-      "manufacturer": "GlaxoSmithKline Pharmaceuticals Ltd"
+      "manufacturer": "GlaxoSmithKline Pharmaceuticals Ltd",
+      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/1d48d04c1bc34081a2d14e00facde38a.jpg"
     },
     {
       "name": "Eltroxin 50mcg Tablet - 100 Tablets",
