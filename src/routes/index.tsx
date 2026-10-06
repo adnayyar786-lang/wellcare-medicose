@@ -922,14 +922,19 @@ function Home() {
         </div>
       </section>}
 
-      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-7" aria-label="Why choose Wellcare Medicose">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Why Wellcare</p>
-        <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">A pharmacy experience built around trust</h2>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_8px_24px_-18px_rgba(15,23,42,0.55)] ring-1 ring-primary/5"><ShieldCheck className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Licensed Pharmacy</h3><p className="mt-1 text-[11px] text-muted-foreground">Your trusted local store.</p></div>
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><Truck className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Delivery & Pickup</h3><p className="mt-1 text-[11px] text-muted-foreground">Use the options available at checkout.</p></div>
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><PillBottle className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Clear Product Details</h3><p className="mt-1 text-[11px] text-muted-foreground">Prescription status and product information are shown on products.</p></div>
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><Lock className="size-5 text-primary" /><h3 className="mt-3 text-sm font-extrabold">Secure Checkout</h3><p className="mt-1 text-[11px] text-muted-foreground">Use the payment options provided by checkout.</p></div>
+      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Why choose Wellcare Medicose">
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-teal">Why Wellcare</p>
+            <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Simple, local & trustworthy</h2>
+          </div>
+          <span className="hidden rounded-full border border-primary/10 bg-primary/[0.04] px-3 py-1 text-[10px] font-bold text-primary sm:inline-flex">Wellcare Medicose</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><ShieldCheck className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Trusted Pharmacy</h3><p className="mt-1 text-[11px] text-muted-foreground">Your local pharmacy for everyday healthcare needs.</p></div>
+          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><Truck className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Delivery & Pickup</h3><p className="mt-1 text-[11px] text-muted-foreground">Choose the available fulfilment option at checkout.</p></div>
+          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><PillBottle className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Clear Details</h3><p className="mt-1 text-[11px] text-muted-foreground">Product information and prescription status stay visible.</p></div>
+          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><Lock className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Secure Checkout</h3><p className="mt-1 text-[11px] text-muted-foreground">Checkout keeps your order and payment preference in one flow.</p></div>
         </div>
       </section>}
 
