@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { LoginScreen } from '@/components/auth-gate'
-import { useFirebaseAuthState } from '@/components/convex-client-provider'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/sign-in')({
@@ -10,16 +9,30 @@ export const Route = createFileRoute('/sign-in')({
 
 function SignInPage() {
   const navigate = useNavigate()
-  const { user, isLoading } = useFirebaseAuthState()
 
   useEffect(() => {
-    // Navigate only from Firebase's persisted/authenticated state.
-    // Do not navigate from the raw Google popup result: doing that can move
-    // to Home before Firebase persistence and the Convex JWT session are ready.
-    if (!isLoading && user) {
+    // IMPORTANT: Do not redirect merely because Firebase has a persisted user.
+    // A stale/partial Firebase session can exist while the customer has not
+    // completed the current login flow. Redirect only after this login screen
+    // itself produces a Firebase session and Convex confirms it is ready.
+    let signedInThisVisit = false
+
+    const onSignedIn = () => {
+      signedInThisVisit = true
+    }
+
+    const onConvexReady = () => {
+      if (!signedInThisVisit) return
       void navigate({ to: '/' })
     }
-  }, [isLoading, user, navigate])
+
+    window.addEventListener('wellcare-firebase-signed-in', onSignedIn)
+    window.addEventListener('wellcare-convex-user-ready', onConvexReady)
+    return () => {
+      window.removeEventListener('wellcare-firebase-signed-in', onSignedIn)
+      window.removeEventListener('wellcare-convex-user-ready', onConvexReady)
+    }
+  }, [navigate])
 
   return <LoginScreen />
 }
