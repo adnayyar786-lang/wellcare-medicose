@@ -59,7 +59,7 @@ function OrdersPage() {
   </div>
 }
 
-function OrderCard({ order, onReorder, active }: { order: { _id: Id<'orders'; status: string; fulfillment: 'pickup'|'delivery'; _creationTime?: number; items: Array<{ medicineId: Id<'medicines'>; name: string; price: number; quantity: number }>; total: number }, onReorder: () => void, active?: boolean }) {
+function OrderCard({ order, onReorder, active }: { order: { _id: Id<'orders'>; status: string; fulfillment: 'pickup'|'delivery'; _creationTime?: number; items: Array<{ medicineId: Id<'medicines'>; name: string; price: number; quantity: number }>; total: number }, onReorder: () => void, active?: boolean }) {
   const [cancelOpen, setCancelOpen] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [cancelling, setCancelling] = useState(false)
