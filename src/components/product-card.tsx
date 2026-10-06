@@ -194,7 +194,7 @@ export function ProductCard({
           <span className={cn('size-1.5 rounded-full', out ? 'bg-destructive' : 'bg-emerald-500')} aria-hidden="true" />
           {out ? t('out_of_stock') : med.stock <= 5 ? `Only ${med.stock} left` : 'In stock'}
         </p>
-        <Button size="sm" className="mt-1 w-full transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] motion-reduce:transform-none" disabled={out} onClick={() => onAdd(med)}>
+        <Button size="sm" className="mt-1 w-full rounded-xl bg-gradient-to-r from-primary to-brand-teal font-extrabold shadow-[0_8px_18px_-10px_rgba(15,118,110,0.75)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_22px_-10px_rgba(15,118,110,0.85)] active:translate-y-0 active:scale-[0.98] motion-reduce:transform-none" disabled={out} onClick={() => onAdd(med)}>
           {out ? t('out_of_stock') : t('add_to_cart')}
         </Button>
       </div>
