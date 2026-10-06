@@ -8,6 +8,8 @@ import {
   Bell,
   HeartPulse, Dumbbell, Stethoscope, Leaf, Heart,
   Camera,
+  ChevronLeft,
+  ChevronRight,
   FlaskConical,
   Languages,
   Lock,
@@ -241,6 +243,95 @@ const COMPANY_LOGO_STYLES: Record<string, string> = {
 
 function companyLogoStyle(company: string) {
   return COMPANY_LOGO_STYLES[company.toLowerCase()] ?? 'bg-teal-50 text-teal-800'
+}
+
+
+const HERO_SLIDES = [
+  {
+    id: 'healthcare',
+    eyebrow: 'YOUR HEALTH, OUR PRIORITY',
+    title: 'Quality Medicines &\nHealthcare Products',
+    subtitle: 'Trusted products from your local pharmacy, delivered with care.',
+    cta: 'Shop Medicines',
+    tone: 'from-emerald-950/95 via-teal-900/80 to-slate-900/30',
+    accent: 'Genuine products · Fast delivery · Pharmacist support',
+    image: true,
+  },
+  {
+    id: 'wellness',
+    eyebrow: 'EVERYDAY WELLNESS',
+    title: 'Skin Care, Serums &\nPersonal Care Essentials',
+    subtitle: 'Build your daily care routine with trusted healthcare and wellness products.',
+    cta: 'Explore Wellness',
+    tone: 'from-violet-950/95 via-purple-900/80 to-rose-900/35',
+    accent: 'Skin care · Serums · Hygiene · Beauty care',
+    image: false,
+  },
+  {
+    id: 'family',
+    eyebrow: 'CARE FOR EVERY FAMILY MEMBER',
+    title: 'Baby, Pet &\nVeterinary Care',
+    subtitle: 'From baby essentials to pet medicines and nutrition, find everyday care in one place.',
+    cta: 'Explore Family Care',
+    tone: 'from-sky-950/95 via-cyan-900/80 to-emerald-900/35',
+    accent: 'Baby care · Pet care · Veterinary · Nutrition',
+    image: false,
+  },
+] as const
+
+function HeroCarousel({ onShop }: { onShop: () => void }) {
+  const [active, setActive] = useState(0)
+  const pausedRef = useRef(false)
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (!pausedRef.current) setActive((value) => (value + 1) % HERO_SLIDES.length)
+    }, 6500)
+    return () => window.clearInterval(timer)
+  }, [])
+  const slide = HERO_SLIDES[active]
+  return (
+    <section
+      className="mx-auto w-full max-w-[1600px] px-3 pt-3 sm:px-4 sm:pt-4"
+      aria-label="Wellcare promotional banners"
+      onMouseEnter={() => { pausedRef.current = true }}
+      onMouseLeave={() => { pausedRef.current = false }}
+      onTouchStart={() => { pausedRef.current = true }}
+      onTouchEnd={() => { pausedRef.current = false }}
+    >
+      <div className="relative min-h-[250px] overflow-hidden rounded-[22px] border border-emerald-900/10 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.16)] sm:min-h-[300px] lg:min-h-[360px]">
+        {slide.image && <img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose healthcare products" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />}
+        <div className={cn('absolute inset-0 bg-gradient-to-r', slide.tone)} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_30%,rgba(255,255,255,0.22),transparent_28%),radial-gradient(circle_at_12%_100%,rgba(16,185,129,0.22),transparent_30%)]" />
+        {!slide.image && (
+          <div className="absolute right-[-40px] top-1/2 hidden -translate-y-1/2 sm:block lg:right-16">
+            <div className="relative flex size-52 items-center justify-center rounded-full border border-white/15 bg-white/10 backdrop-blur-sm lg:size-64">
+              <div className="absolute size-40 rounded-full border border-white/10 bg-white/10 lg:size-52" />
+              <div className="relative grid grid-cols-2 gap-3 p-6 lg:gap-4">
+                {(slide.id === 'wellness' ? ['SERUM', 'SKIN', 'CARE', 'GLOW'] : ['BABY', 'PET', 'VET', 'CARE']).map((mark, i) => (
+                  <span key={mark} className={cn('flex size-16 items-center justify-center rounded-2xl border border-white/20 bg-white/15 text-center text-[9px] font-black tracking-wider text-white shadow-lg backdrop-blur-sm lg:size-20')}>{mark}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="relative z-10 flex min-h-[250px] max-w-2xl flex-col justify-center px-6 py-8 text-white sm:min-h-[300px] sm:px-10 lg:min-h-[360px] lg:px-14">
+          <span className="mb-2 w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[9px] font-bold tracking-[0.18em] backdrop-blur-sm sm:text-[10px]">{slide.eyebrow}</span>
+          <h1 className="whitespace-pre-line text-3xl font-black leading-[1.02] tracking-tight sm:text-4xl lg:text-5xl">{slide.title}</h1>
+          <p className="mt-3 max-w-xl text-xs leading-relaxed text-white/85 sm:text-sm lg:text-base">{slide.subtitle}</p>
+          <p className="mt-3 text-[10px] font-semibold tracking-wide text-white/75 sm:text-xs">{slide.accent}</p>
+          <div className="mt-5 flex items-center gap-3">
+            <button type="button" onClick={onShop} className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-extrabold text-slate-900 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl sm:px-6 sm:py-3">{slide.cta}<ChevronRight className="size-4" /></button>
+            <span className="hidden rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-semibold text-white/80 backdrop-blur-sm sm:inline-flex">Wellcare Medicose</span>
+          </div>
+        </div>
+        <button type="button" onClick={() => setActive((active - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)} className="absolute left-3 top-1/2 z-20 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-slate-950/35 text-white backdrop-blur-sm transition hover:bg-slate-950/60" aria-label="Previous banner"><ChevronLeft className="size-4" /></button>
+        <button type="button" onClick={() => setActive((active + 1) % HERO_SLIDES.length)} className="absolute right-3 top-1/2 z-20 flex size-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-slate-950/35 text-white backdrop-blur-sm transition hover:bg-slate-950/60" aria-label="Next banner"><ChevronRight className="size-4" /></button>
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-white/15 bg-slate-950/25 px-2.5 py-1.5 backdrop-blur-sm">
+          {HERO_SLIDES.map((item, index) => <button key={item.id} type="button" onClick={() => setActive(index)} className={cn('h-1.5 rounded-full transition-all', active === index ? 'w-7 bg-white' : 'w-1.5 bg-white/50')} aria-label={`Show banner ${index + 1}`} />)}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 
@@ -727,61 +818,47 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="relative z-[200] isolate border-b border-border bg-card backdrop-blur">
-        <div className="mx-auto flex max-w-[1600px] items-center gap-3 px-4 py-3">
+      <header className="relative z-[200] isolate border-b border-border bg-card/95 shadow-[0_1px_12px_rgba(15,23,42,0.06)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1600px] items-center gap-2.5 px-3 py-2.5 sm:gap-3 sm:px-4 sm:py-3">
           <div className="flex shrink-0 items-center gap-2"><ProfileDrawer /><BrandLogo /></div>
-          <div className="hidden flex-1 md:block">{renderSearch('site-searchQuery-desktop')}</div>
-          <div className="ml-auto flex shrink-0 items-center gap-2">
-            <button onClick={toggleLang} className="flex items-center gap-1 rounded-full border border-border px-3 py-2 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground" aria-label="Switch language"><Languages className="size-3.5" />{lang === 'en' ? 'हिंदी' : 'English'}</button>
-            <Popover><PopoverTrigger asChild><button className="flex size-9 items-center justify-center rounded-full bg-secondary text-foreground transition-transform hover:scale-105" aria-label="Notifications"><Bell className="size-4" /></button></PopoverTrigger><PopoverContent className="w-64 text-sm text-muted-foreground">No new notifications right now.</PopoverContent></Popover>
-            <Button variant="default" className="relative gap-2" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT))} data-testid="cart-button" aria-label="Open cart"><ShoppingCart className="size-4" />{count > 0 && <Badge className="ml-0.5 bg-highlight text-highlight-foreground">{count}</Badge>}</Button>
+          <div className="hidden min-w-0 flex-1 md:block">{renderSearch('site-searchQuery-desktop')}</div>
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <button onClick={toggleLang} className="hidden items-center gap-1 rounded-full border border-border bg-background px-3 py-2 text-[11px] font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground sm:flex" aria-label="Switch language"><Languages className="size-3.5" />{lang === 'en' ? 'हिंदी' : 'English'}</button>
+            <Popover><PopoverTrigger asChild><button className="flex size-9 items-center justify-center rounded-full border border-border bg-background text-foreground transition hover:border-primary/30 hover:bg-secondary" aria-label="Notifications"><Bell className="size-4" /></button></PopoverTrigger><PopoverContent className="w-64 text-sm text-muted-foreground">No new notifications right now.</PopoverContent></Popover>
+            <Button variant="default" className="relative size-9 gap-2 rounded-full p-0 sm:w-auto sm:px-3" onClick={() => window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT))} data-testid="cart-button" aria-label="Open cart"><ShoppingCart className="size-4" /><span className="hidden sm:inline">Cart</span>{count > 0 && <Badge className="absolute -right-1 -top-1 ml-0 bg-highlight px-1.5 text-[9px] text-highlight-foreground sm:static sm:px-1.5">{count}</Badge>}</Button>
           </div>
         </div>
-        <div className="mx-auto max-w-[1600px] px-4 pt-2 md:hidden">
+        <div className="mx-auto max-w-[1600px] px-3 pb-2 md:hidden">
           <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
             if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
             if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
             selectShopCategory(item.routeKey)
           }} />
-          <div className="py-2">{renderSearch('site-searchQuery')}</div>
-          <CategoryRail title="MEDICINE TYPES" subtitle="Quick shortcuts" items={MEDICINE_FORM_SLIDER} onSelect={(item) => {
-            setSelectedSuggestionId(null)
-            setSearchQuery(item.routeKey)
-            setShowSearchSuggestions(false)
-            requestAnimationFrame(scrollToProducts)
-          }} />
-          <div className="mt-1 pb-2"><DeliveryLocationBar /></div>
+          <div className="py-1.5">{renderSearch('site-searchQuery')}</div>
+          <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
+          <div className="pt-1"><DeliveryLocationBar /></div>
         </div>
-        <nav aria-label="Shop by category" className="hidden border-t border-border md:block">
-          <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <Link to="/categories" className="mr-2 inline-flex items-center gap-1.5 py-2.5 pr-2 font-semibold text-primary hover:underline"><Menu className="size-4" /> Shop by Category</Link>
-            <button onClick={() => { clearFilters(); scrollToProducts() }} className="border-b-2 border-transparent px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground">All Products</button>
-            {visibleShopCategories.map(({ name }) => <button key={name} onClick={() => selectShopCategory(name)} aria-pressed={activeShopCategory === name} className={cn('border-b-2 px-3 py-2.5 transition-colors', activeShopCategory === name ? 'border-primary font-medium text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>{name}</button>)}
-            <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="size-3.5" /> Deliver to: <span className="font-medium text-foreground">Roorkee {STORE_LOCATION.pincode}</span></span>
+        <nav aria-label="Shop by category" className="hidden border-t border-border/80 md:block">
+          <div className="mx-auto flex max-w-[1600px] min-w-0 items-center gap-1 overflow-x-auto px-4 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <Link to="/categories" className="mr-1 inline-flex items-center gap-1.5 rounded-lg bg-primary/5 px-3 py-2.5 font-bold text-primary hover:bg-primary/10"><Menu className="size-4" /> Shop by Category</Link>
+            <button onClick={() => { clearFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="border-b-2 border-transparent px-3 py-2.5 font-medium text-muted-foreground transition-colors hover:text-foreground">All Products</button>
+            {visibleShopCategories.map(({ name }) => <button key={name} onClick={() => selectShopCategory(name)} aria-pressed={activeShopCategory === name} className={cn('border-b-2 px-3 py-2.5 font-medium transition-colors', activeShopCategory === name ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>{name}</button>)}
+            <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-[10px] text-muted-foreground"><MapPin className="size-3.5" /> Deliver to <span className="font-bold text-foreground">Roorkee {STORE_LOCATION.pincode}</span></span>
           </div>
         </nav>
         <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoChosen} />
       </header>
 
-      <div className="hidden border-b border-border bg-background md:block">
+      <div className="hidden border-b border-border/70 bg-background md:block">
         <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
           if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
           if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
         }} />
-        <CategoryRail title="MEDICINE TYPES" subtitle="Quick shortcuts" items={MEDICINE_FORM_SLIDER} onSelect={(item) => {
-          setSelectedSuggestionId(null)
-          setSearchQuery(item.routeKey)
-          setShowSearchSuggestions(false)
-          requestAnimationFrame(scrollToProducts)
-        }} />
+        <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
       </div>
 
-      {!browsing && <>
-        <section className="mx-auto max-w-[1600px] px-4 pt-4" aria-label="Wellcare pharmacy banner"><img src={HERO_BACKGROUND_IMAGE} alt="Wellcare Medicose — order medicines and healthcare products online" className="block h-auto w-full rounded-2xl object-contain shadow-sm" fetchPriority="high" /></section>
-        <section className="mx-auto mt-4 max-w-[1600px] px-4" aria-label="Why shop with us"><ul className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 lg:grid-cols-4">{TRUST_ITEMS.map(({ icon: Icon, title, sub }) => <li key={title} className="flex items-start gap-3"><span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary"><Icon className="size-5" /></span><span><span className="block text-sm font-semibold leading-tight">{title}</span><span className="block text-xs text-muted-foreground">{sub}</span></span></li>)}</ul></section>
-      </>}
-
+      {!browsing && <HeroCarousel onShop={scrollToProducts} />}
       {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Medicines and healthcare"><SectionHeading title="Medicines & Healthcare" subtitle="Trusted brands, better health." icon={<Pill className="size-5" />} action={<Button variant="ghost" size="sm" className="text-primary" onClick={scrollToProducts}>View all</Button>} /><ProductsErrorBoundary>{status === 'LoadingFirstPage' ? <Carousel>{Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} variant="carousel" />)}</Carousel> : featured.length === 0 ? <p className="text-sm text-muted-foreground">Products will appear here soon.</p> : <Carousel>{featured.slice(0, 20).map((med) => <ProductCard key={med._id} med={med} variant="carousel" onAdd={handleAddToCart} />)}</Carousel>}</ProductsErrorBoundary></section>}
 
       {!browsing && manufacturers.length > 0 && <section className="w-full overflow-hidden px-4 py-6 sm:px-6 lg:px-8" aria-label="Shop by medicine company">
