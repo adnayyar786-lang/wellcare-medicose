@@ -1,0 +1,32 @@
+name: Seed catalog batch 001
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/catalog-batch-001.json"
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Seed verified catalogue batch
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          ARGS=$(cat scripts/catalog-batch-001.json)
+          npx convex run medicines:seedManyV2 "$ARGS" --prod
