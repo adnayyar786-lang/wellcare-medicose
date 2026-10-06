@@ -9,6 +9,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "convex.json"
+      - "scripts/catalog-batch-001.json"
   workflow_dispatch:
 
 jobs:
