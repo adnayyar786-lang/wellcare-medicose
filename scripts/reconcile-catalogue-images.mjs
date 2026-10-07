@@ -1,4 +1,5 @@
 // Production Batch 004 verification trigger: keep this reconciliation gate deterministic.
+// Exact image-to-product verification is executed after production seed.
 import fs from 'node:fs';
 
 const productionFiles = [
