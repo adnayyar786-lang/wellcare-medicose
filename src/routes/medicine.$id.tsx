@@ -184,7 +184,7 @@ function MedicinePage() {
 
         <section className="w-full min-w-0 overflow-hidden rounded-[2rem] border border-white/80 bg-white/70 p-4 shadow-[0_24px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-6 lg:p-8">
           <div className="grid w-full min-w-0 gap-7 lg:grid-cols-2 lg:gap-10">
-            <motion.div className="min-w-0" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} className="lg:sticky lg:top-24 lg:self-start">
+            <motion.div className="min-w-0 lg:sticky lg:top-24 lg:self-start" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}}>
               <div className="w-full min-w-0 rounded-3xl border border-white bg-white/85 p-3 shadow-sm"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt={med.name} className="rounded-2xl"/></div>
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[[ 'Genuine Product',ShieldCheck ],[ 'Easy to Buy',ShoppingBag ],[ 'Pharma Assist',CheckCircle2 ],[ 'Secure Checkout',Lock ]].map(([label,Icon])=><div key={String(label)} className="rounded-2xl border border-white bg-white/75 px-2 py-3 text-center shadow-sm"><Icon className="mx-auto size-4 text-brand-teal"/><span className="mt-1 block text-[10px] font-bold leading-tight text-slate-600">{String(label)}</span></div>)}
