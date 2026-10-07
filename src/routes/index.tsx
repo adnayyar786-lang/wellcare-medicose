@@ -769,9 +769,10 @@ function Home() {
     const hasQuery = searchQuery.trim().length > 0
     const showPanel = showSearchSuggestions
     return (
-      <div className="relative z-[210]">
-        <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-primary" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-primary/10 blur-md" aria-hidden="true" />
+      <div className="relative z-[210] rounded-[1.35rem] border-2 border-primary/20 bg-gradient-to-r from-primary/[0.07] via-white to-brand-teal/[0.07] p-1.5 shadow-[0_10px_30px_-14px_rgba(15,23,42,0.55)]">
+        <span className="pointer-events-none absolute -top-2.5 left-4 z-10 rounded-full border border-primary/20 bg-white px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.18em] text-primary shadow-sm">Search medicines</span>
+        <Search className="pointer-events-none absolute left-5 top-1/2 z-10 size-5 -translate-y-1/2 text-primary" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-1 -z-0 rounded-xl bg-primary/[0.035]" aria-hidden="true" />
         <label htmlFor={id} className="sr-only">Search medicines, health products and more</label>
         <Input
           id={id}
@@ -796,7 +797,7 @@ function Home() {
             requestAnimationFrame(scrollToProducts)
           }}
           placeholder="Search medicines, health products & more"
-          className="h-12 rounded-2xl border-2 border-primary/35 bg-primary/[0.035] pl-10 pr-28 text-sm font-medium shadow-[0_4px_18px_rgba(15,23,42,0.10)] transition-[box-shadow,border-color,background-color] hover:border-primary/55 hover:bg-primary/[0.055] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/15"
+          className="h-14 rounded-xl border-0 bg-white pl-12 pr-28 text-sm font-semibold shadow-inner transition-[box-shadow,background-color] hover:bg-primary/[0.02] focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-primary/25 sm:text-base"
           autoComplete="off"
           enterKeyHint="search"
           inputMode="search"
@@ -886,7 +887,7 @@ function Home() {
           if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
         }} />
-        <div className="py-1.5">{renderSearch('site-searchQuery')}</div>
+        <div className="px-0.5 py-3">{renderSearch('site-searchQuery')}</div>
         <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
               </div>}
       {!browsing && <div className="hidden border-b border-border/70 bg-background md:block">
