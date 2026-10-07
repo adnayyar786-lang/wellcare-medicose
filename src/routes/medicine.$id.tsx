@@ -351,7 +351,6 @@ function MedicinePage() {
                 </div>
               )}
 
-              <div className="mt-4 hidden gap-3 sm:flex" aria-hidden="true">{purchaseButtons}</div>
             </motion.div>
           </div>
         </section>
