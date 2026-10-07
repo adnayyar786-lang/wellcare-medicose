@@ -100,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Chat with us on WhatsApp"
-                      className="fixed bottom-20 right-4 z-20 lg:bottom-6" flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105"
+                      className="fixed bottom-20 right-4 z-20 flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 lg:bottom-6"
                     >
                       <MessageCircle className="size-6" />
                     </a>
