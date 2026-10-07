@@ -10,7 +10,7 @@
       "stock": 0,
       "requiresPrescription": true,
       "manufacturer": "Sun Pharmaceutical Industries Ltd",
-      "imageUrl": "https://onemg.gumlet.io/l_watermark_346%2Cw_480%2Ch_480/a_ignore%2Cw_480%2Ch_480%2Cc_fit%2Cq_auto%2Cf_auto/cropped/y6khp04ugd6csjrlehgd.jpg?dpr=3&format=auto&h=200&w=240"
+      "imageUrl": "https://ik.imagekit.io/wlfr/wellness/images/products/331616-2.jpg"
     },
     {
       "name": "Pan 40 Tablet - 15 Tablets",
@@ -21,7 +21,8 @@
       "mrpPrice": 155,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Alkem Laboratories Ltd"
+      "manufacturer": "Alkem Laboratories Ltd",
+      "imageUrl": "https://www.jeevandip.com/media/product/image/pan-40-tablet-mainimage-w3o4mc5ejzz93npf3gxf8pnq.webp"
     },
     {
       "name": "Telma 40 Tablet - 15 Tablets",
@@ -91,7 +92,8 @@
       "mrpPrice": 112,
       "stock": 0,
       "requiresPrescription": true,
-      "manufacturer": "Dr. Reddy's Laboratories Ltd"
+      "manufacturer": "Dr. Reddy's Laboratories Ltd",
+      "imageUrl": "https://cpimg.tistatic.com/6566689/b/4/omeprazole-capsule.jpg"
     },
     {
       "name": "Zifi 200 Tablet - 10 Tablets",
