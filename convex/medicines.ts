@@ -367,6 +367,53 @@ export const verifyCatalogueImages = query({
   },
 })
 
+
+export const registerVerifiedCatalogueImages = mutation({
+  args: { items: v.array(v.object({ name: v.string(), imageUrl: v.string(), source: v.string() })) },
+  returns: v.object({ registered: v.number(), rejected: v.array(v.string()) }),
+  handler: async (ctx, { items }) => {
+    let registered = 0
+    const rejected: string[] = []
+    for (const item of items) {
+      const name = item.name.trim(), imageUrl = item.imageUrl.trim(), source = item.source.trim()
+      const rows = await ctx.db.query('medicines').withIndex('by_name', (q) => q.eq('name', name)).collect()
+      const activeRows = rows.filter((row) => row.active)
+      if (activeRows.length !== 1 || !imageUrl || !source || activeRows[0].imageUrl !== imageUrl) {
+        rejected.push(name)
+        continue
+      }
+      const medicine = activeRows[0]
+      const existing = await ctx.db.query('imageRegistry').withIndex('by_medicine', (q) => q.eq('medicineId', medicine._id)).first()
+      const record = { medicineId: medicine._id, medicineName: medicine.name, imageUrl, source, verifiedAt: Date.now(), status: 'verified' as const }
+      if (existing) await ctx.db.patch(existing._id, record)
+      else await ctx.db.insert('imageRegistry', record)
+      registered += 1
+    }
+    return { registered, rejected }
+  },
+})
+
+export const verifyVerifiedImageRegistry = query({
+  args: { items: v.array(v.object({ name: v.string(), imageUrl: v.string() })) },
+  returns: v.object({ expected: v.number(), verified: v.number(), missingRegistry: v.array(v.string()), registryMismatch: v.array(v.string()), revoked: v.array(v.string()) }),
+  handler: async (ctx, { items }) => {
+    const unique = new Map<string, string>()
+    for (const item of items) unique.set(item.name.trim(), item.imageUrl.trim())
+    const missingRegistry: string[] = [], registryMismatch: string[] = [], revoked: string[] = []
+    let verified = 0
+    for (const [name, imageUrl] of unique) {
+      const medicine = await ctx.db.query('medicines').withIndex('by_name', (q) => q.eq('name', name)).filter((q) => q.eq(q.field('active'), true)).first()
+      if (!medicine) { missingRegistry.push(name); continue }
+      const registry = await ctx.db.query('imageRegistry').withIndex('by_medicine', (q) => q.eq('medicineId', medicine._id)).first()
+      if (!registry) { missingRegistry.push(name); continue }
+      if (registry.status === 'revoked') { revoked.push(name); continue }
+      if (registry.imageUrl !== imageUrl || medicine.imageUrl !== registry.imageUrl) { registryMismatch.push(name); continue }
+      verified += 1
+    }
+    return { expected: unique.size, verified, missingRegistry, registryMismatch, revoked }
+  },
+})
+
 export const backfillShopFields = mutation({
   args: { cursor: v.optional(v.string()) },
   returns: v.object({ processed: v.number(), continueCursor: v.union(v.string(), v.null()), isDone: v.boolean() }),
