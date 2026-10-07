@@ -157,6 +157,25 @@ export const setImageUrl = internalMutation({
   },
 })
 
+export const setImageUrlAndRegister = internalMutation({
+  args: { id: v.id('medicines'), imageUrl: v.optional(v.string()), source: v.string() },
+  returns: v.null(),
+  handler: async (ctx, { id, imageUrl, source }) => {
+    await ctx.db.patch(id, { imageUrl, updatedAt: Date.now() })
+    const existing = await ctx.db.query('imageRegistry').withIndex('by_medicine', (q) => q.eq('medicineId', id)).first()
+    if (!imageUrl) {
+      if (existing) await ctx.db.patch(existing._id, { imageUrl: '', source, verifiedAt: Date.now(), status: 'revoked' })
+      return null
+    }
+    const medicine = await ctx.db.get(id)
+    if (!medicine) throw new Error('Medicine not found')
+    const record = { medicineId: id, medicineName: medicine.name, imageUrl, source, verifiedAt: Date.now(), status: 'verified' as const }
+    if (existing) await ctx.db.patch(existing._id, record)
+    else await ctx.db.insert('imageRegistry', record)
+    return null
+  },
+})
+
 export const remove = mutation({
   args: { id: v.id('medicines') },
   returns: v.null(),
