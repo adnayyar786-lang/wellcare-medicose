@@ -14,7 +14,7 @@ export function BottomNav() {
   const isActive = (path: string) => (path === '/' ? pathname === '/' : pathname.startsWith(path))
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-20 lg:hidden border-t border-border bg-background/95 backdrop-blur">
       <div className="mx-auto grid max-w-6xl grid-cols-5">
         <Link
           to="/"
