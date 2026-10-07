@@ -433,6 +433,32 @@ export const verifyVerifiedImageRegistry = query({
   },
 })
 
+export const assertVerifiedImageRegistry = query({
+  args: { items: v.array(v.object({ name: v.string(), imageUrl: v.string() })) },
+  returns: v.null(),
+  handler: async (ctx, { items }) => {
+    const unique = new Map<string, string>()
+    for (const item of items) unique.set(item.name.trim(), item.imageUrl.trim())
+    const failures: string[] = []
+    for (const [name, imageUrl] of unique) {
+      const medicine = await ctx.db
+        .query('medicines')
+        .withIndex('by_name', (q) => q.eq('name', name))
+        .filter((q) => q.eq(q.field('active'), true))
+        .first()
+      if (!medicine) { failures.push(name + ': missing active medicine'); continue }
+      if (!medicine.imageUrl) { failures.push(name + ': missing medicine image'); continue }
+      if (medicine.imageUrl !== imageUrl) { failures.push(name + ': medicine image mismatch'); continue }
+      const registry = await ctx.db.query('imageRegistry').withIndex('by_medicine', (q) => q.eq('medicineId', medicine._id)).first()
+      if (!registry) { failures.push(name + ': missing registry'); continue }
+      if (registry.status !== 'verified') { failures.push(name + ': registry not verified'); continue }
+      if (registry.imageUrl !== imageUrl || registry.imageUrl !== medicine.imageUrl) failures.push(name + ': registry image mismatch')
+    }
+    if (failures.length) throw new Error('Production image gate failed: ' + failures.join('; '))
+    return null
+  },
+})
+
 export const backfillShopFields = mutation({
   args: { cursor: v.optional(v.string()) },
   returns: v.object({ processed: v.number(), continueCursor: v.union(v.string(), v.null()), isDone: v.boolean() }),
