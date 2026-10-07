@@ -169,6 +169,7 @@ function MedicinePage() {
     : 'Related options from the same treatment category'
 
   return (
+    <>
     <div className="min-h-screen bg-slate-50 text-slate-900" style={{ backgroundImage: `linear-gradient(rgba(248,250,252,0.91),rgba(248,250,252,0.97)),url(${HERO_BACKGROUND_IMAGE})`, backgroundAttachment: 'fixed', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
       <header className="sticky top-0 z-20 border-b border-white/70 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
@@ -317,4 +318,5 @@ function MedicinePage() {
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.5)] backdrop-blur-xl lg:hidden"><div className="mx-auto flex max-w-6xl gap-3">{purchaseButtons}</div></div>
       <div className="bg-navy pb-20 lg:pb-0"><SiteFooter/></div>
     </div>
+    </> 
   )}
