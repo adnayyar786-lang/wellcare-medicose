@@ -157,6 +157,29 @@ function ProfilePage() {
             </div>
           </section>
 
+          {isAuthenticated && firebaseUser?.email && <section className="rounded-[1.75rem] border border-border bg-card p-5 shadow-sm">
+            <div className="flex items-center gap-3"><span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><Mail className="size-5"/></span><div><h2 className="font-bold">Email sign-in</h2><p className="text-xs text-muted-foreground">Use the same Wellcare account with email + password.</p></div></div>
+            <div className="mt-4 space-y-3">
+              <input className={fieldClass} value={firebaseUser.email} readOnly aria-label="Wellcare account email"/>
+              <input className={fieldClass} type="password" minLength={6} autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="New password (minimum 6 characters)"/>
+              <input className={fieldClass} type="password" minLength={6} autoComplete="new-password" value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)} placeholder="Confirm new password"/>
+              {passwordNotice && <p role="status" className="rounded-xl bg-muted p-3 text-xs">{passwordNotice}</p>}
+              <button type="button" disabled={passwordBusy} onClick={async()=>{
+                setPasswordBusy(true); setPasswordNotice('')
+                try{
+                  await setEmailPasswordFirebase(firebaseUser.email!,password,confirmPassword)
+                  setPassword(''); setConfirmPassword('')
+                  setPasswordNotice('Email + password sign-in is now enabled for this same Wellcare account.')
+                }catch(err){
+                  setPasswordNotice(err instanceof Error ? err.message : 'Could not set the email password. Please try again.')
+                }finally{setPasswordBusy(false)}
+              }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+                {passwordBusy ? <Loader2 className="size-4 animate-spin"/> : <Mail className="size-4"/>}
+                {passwordBusy ? 'Saving password…' : 'Enable Email Sign-In'}
+              </button>
+              <p className="text-[11px] leading-4 text-muted-foreground">If you originally used Google or phone login, this adds email/password to the existing account instead of creating a duplicate.</p>
+            </div>
+          </section>}
           <section className="rounded-[1.75rem] border border-border bg-card p-5 shadow-sm">
             <div className="flex items-center gap-3"><span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary"><Shield/></span><div><h2 className="font-bold">Store access</h2><p className="text-xs text-muted-foreground">For Wellcare Medicose team members.</p></div></div>
             <div className="mt-4 space-y-2">
