@@ -13,20 +13,6 @@ export type ProductCardMed = { _id: Id<'medicines'>; name: string; category: str
 export function formatINR(n: number) { return `₹${n.toFixed(2)}` }
 export function discountOf(price: number, mrpPrice?: number) { const mrp = mrpPrice && mrpPrice > price ? mrpPrice : null; return { mrp, pct: mrp ? Math.round(((mrp - price) / mrp) * 100) : null } }
 
-const MEDICINE_IMAGE_FALLBACKS: Record<string, string> = {
-  'paracetamol 500mg tablet': 'https://cpimg.tistatic.com/10590319/b/4/Paracetamol-Tablets-IP-500-mg-Paracip-500.jpg',
-  'levocetirizine 5mg tablet': 'https://cpimg.tistatic.com/4933058/b/4/lece-5-5mg-levocetirizine-tablets-i-p-.jpg',
-  'omeprazole 20mg capsule': 'https://medwiki.co.in/cdn-cgi/image/fit%3Dcover%2Cformat%3Dwebp/https%3A/storage.googleapis.com/dawaadost.appspot.com/blogs/d4426017-e597-4e7c-8399-e6ab90e08814.jpg',
-  'ors orange flavour': 'https://asset.sastasundar.com/incom/images/product/ORS-Orange-Flavour-Sachet-1771928186-10162673-a.jpg',
-  'azithromycin 500mg tablet': 'https://aajpharmacy.com/uploads/214.jpg',
-  'amoxicillin 500mg capsule': 'https://tiimg.tistatic.com/fp/1/007/502/atmoxid-500-amoxycillin-trihydrate-capsules-ip-for-bacterial-infections-500mg-10x10-blister-pack-595.jpg',
-  'metformin 500mg tablet': 'https://www.nepmeds.com.np/public/files/8938585BEA30414-91zJsek8TeL.jpg',
-  'amlodipine 5mg tablet': 'https://ik.imagekit.io/wlfr/wellness/images/products/219494-1.jpg',
-  'losartan 50mg tablet': 'https://cpimg.tistatic.com/8454280/b/4/50-mg-losartan-potassium-tablets-ip.jpg',
-  'telmisartan 40mg tablet': 'https://assets.pharmahopers.com/assets/images/products/4c618140-82a0-421e-a18f-3d255ca05d50-TELIVA-40.jpg',
-  'montelukast 10mg tablet': 'https://tiimg.tistatic.com/fp/2/010/042/montelukast-10-mg-tablet-333.jpg',
-};
-
 const CATEGORY_ICON: Record<string, typeof Pill> = { Tablet: Pill, Capsule: Pill, Syrup: FlaskConical, Solution: FlaskConical, Suspension: FlaskConical, Gel: Droplets, Cream: Droplets, Ointment: Bandage, Drops: Droplet, Oil: Droplet, Injection: Syringe, Powder: Package, Inhaler: Wind, Spray: SprayCan, Lozenges: Pill, Suppository: Package }
 
 // Verified fallback image. A real catalog imageUrl always takes priority.
@@ -35,13 +21,7 @@ const OFFICIAL_JOHNSONS_BABY_CREAM_100G = 'https://images.ctfassets.net/j62l7jj2
 
 export function ProductImage({ category, shopCategory, imageUrl, alt, className }: { category: string; shopCategory?: string; imageUrl?: string; alt: string; className?: string }) {
   const [loaded, setLoaded] = useState(false)
-  const normalizedAlt = alt.toLowerCase().replace(/[’']/g, '')
-  const isJohnsonsBabyCream = normalizedAlt.includes('johnson') && normalizedAlt.includes('baby') && normalizedAlt.includes('cream')
-  const isExactJohnsons50g = isJohnsonsBabyCream && /(?:^|\s)50\s*g(?:m|ram)?(?:\s|$)/i.test(normalizedAlt)
-  const isExactJohnsons100g = isJohnsonsBabyCream && /(?:^|\s)100\s*g(?:m|ram)?(?:\s|$)/i.test(normalizedAlt)
-  const fallbackImageUrl = isExactJohnsons50g ? OFFICIAL_JOHNSONS_BABY_CREAM_50G : isExactJohnsons100g ? OFFICIAL_JOHNSONS_BABY_CREAM_100G : undefined
-  const fallbackMedicineImage = Object.entries(MEDICINE_IMAGE_FALLBACKS).find(([key]) => normalizedAlt.includes(key))?.[1]
-  const effectiveImageUrl = imageUrl || fallbackImageUrl || fallbackMedicineImage
+  const effectiveImageUrl = imageUrl
 
   if (effectiveImageUrl) return <div className={cn('relative aspect-square w-full overflow-hidden rounded-xl bg-white ring-1 ring-border', className)}><img src={effectiveImageUrl} alt={alt} loading="lazy" decoding="async" onLoad={() => setLoaded(true)} onError={() => setLoaded(false)} className={cn('h-full w-full object-contain p-2 transition-opacity duration-300', loaded ? 'opacity-100' : 'opacity-0')} /></div>
   const Icon = shopCategory === 'Pet Care' ? PawPrint : (CATEGORY_ICON[category] ?? Pill)
