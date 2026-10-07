@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+import fs from 'node:fs';
 
 const files = [
   'scripts/catalog-batch-001.json',
