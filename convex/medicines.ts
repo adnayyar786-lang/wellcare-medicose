@@ -93,6 +93,7 @@ export const create = mutation({
     imageUrl: v.optional(v.string()),
     shopCategory: v.optional(v.string()),
     barcode: v.optional(v.string()),
+    batchNumber: v.optional(v.string()),
   },
   returns: v.id('medicines'),
   handler: async (ctx, args) => {
@@ -113,6 +114,7 @@ export const create = mutation({
       active: true,
       shopCategory: args.shopCategory || 'Medicines (Branded)',
       barcode: args.barcode?.trim() || undefined,
+      batchNumber: args.batchNumber?.trim() || undefined,
       updatedAt: Date.now(),
     })
   },
@@ -134,6 +136,7 @@ export const update = mutation({
     shopCategory: v.optional(v.string()),
     featured: v.optional(v.boolean()),
     barcode: v.optional(v.string()),
+    batchNumber: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, { id, ...patch }) => {
