@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams } from '@tanstack/react-router'
+import { createPortal } from 'react-dom'
 import { useMutation, usePaginatedQuery, useQuery } from 'convex/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -45,6 +46,25 @@ function estimatedDelivery() {
 }
 
 const DEFAULT_SHOP_CATEGORY = 'Medicines (Branded)'
+
+function PurchaseActionBar({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
+  return createPortal(
+    <div className="fixed inset-x-0 bottom-16 z-[90] border-t border-white/80 bg-white/80 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-18px_45px_-28px_rgba(15,23,42,.65)] backdrop-blur-2xl lg:bottom-0">
+      <div className="mx-auto flex w-full max-w-7xl gap-2 sm:gap-3">
+        {children}
+      </div>
+    </div>,
+    document.body,
+  )
+}
 
 function MedicinePage() {
   const { id } = useParams({ from: '/medicine/$id' })
@@ -510,11 +530,7 @@ function MedicinePage() {
         )}
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/80 bg-white/80 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-18px_45px_-28px_rgba(15,23,42,.6)] backdrop-blur-2xl lg:bottom-0">
-        <div className="mx-auto flex w-full max-w-7xl gap-2 sm:gap-3">
-          {purchaseButtons}
-        </div>
-      </div>
+      <PurchaseActionBar>{purchaseButtons}</PurchaseActionBar>
     </div>
   )
 }
