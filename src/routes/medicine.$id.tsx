@@ -170,28 +170,28 @@ function MedicinePage() {
 
   return (
     <>
-    <div className="min-h-screen bg-slate-50 text-slate-900" style={{ backgroundImage: `linear-gradient(rgba(248,250,252,0.91),rgba(248,250,252,0.97)),url(${HERO_BACKGROUND_IMAGE})`, backgroundAttachment: 'fixed', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
-      <header className="sticky top-0 z-20 border-b border-white/70 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
+    <div className="min-h-screen w-full min-w-0 bg-slate-50 text-slate-900" style={{ backgroundImage: `linear-gradient(rgba(248,250,252,0.91),rgba(248,250,252,0.97)),url(${HERO_BACKGROUND_IMAGE})`, backgroundAttachment: 'fixed', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
+      <header className="sticky top-0 z-20 w-full border-b border-white/70 bg-white/80 backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-2.5">
           <Link to="/" className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm text-slate-600 hover:bg-white"><ChevronLeft className="size-4"/> Back</Link>
           <BrandLogo/>
           <button onClick={() => toggle(med._id)} aria-label="Save to wishlist" className="flex size-10 items-center justify-center rounded-full bg-white/80 shadow-sm ring-1 ring-slate-200"><Heart className={cn('size-5',saved?'fill-highlight text-highlight':'text-slate-500')}/></button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 pb-44 pt-5 lg:pb-14">
+      <main className="mx-auto w-full min-w-0 max-w-6xl px-4 pb-44 pt-5 lg:pb-14">
         <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><Link to="/" className="hover:text-primary">Home</Link><span>›</span><span>{shopCategory}</span><span>›</span><span className="font-semibold text-slate-800">{med.name}</span></nav>
 
-        <section className="overflow-hidden rounded-[2rem] border border-white/80 bg-white/70 p-4 shadow-[0_24px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-6 lg:p-8">
-          <div className="grid gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
-            <motion.div initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} className="lg:sticky lg:top-24 lg:self-start">
-              <div className="rounded-3xl border border-white bg-white/85 p-3 shadow-sm"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt={med.name} className="rounded-2xl"/></div>
+        <section className="w-full min-w-0 overflow-hidden rounded-[2rem] border border-white/80 bg-white/70 p-4 shadow-[0_24px_70px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-6 lg:p-8">
+          <div className="grid w-full min-w-0 gap-7 lg:grid-cols-2 lg:gap-10">
+            <motion.div className="min-w-0" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} className="lg:sticky lg:top-24 lg:self-start">
+              <div className="w-full min-w-0 rounded-3xl border border-white bg-white/85 p-3 shadow-sm"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt={med.name} className="rounded-2xl"/></div>
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[[ 'Genuine Product',ShieldCheck ],[ 'Easy to Buy',ShoppingBag ],[ 'Pharma Assist',CheckCircle2 ],[ 'Secure Checkout',Lock ]].map(([label,Icon])=><div key={String(label)} className="rounded-2xl border border-white bg-white/75 px-2 py-3 text-center shadow-sm"><Icon className="mx-auto size-4 text-brand-teal"/><span className="mt-1 block text-[10px] font-bold leading-tight text-slate-600">{String(label)}</span></div>)}
               </div>
             </motion.div>
 
-            <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:.05}}>
+            <motion.div className="min-w-0" initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:.05}}>
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-primary"><span className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-xs font-black">{brand.slice(0,2).toUpperCase()}</span>{brand}</div>
               <h1 className="mt-3 text-2xl font-black leading-tight sm:text-3xl">{med.name}</h1>
               <p className="mt-1.5 text-sm text-slate-500">{med.category} · {shopCategory}</p>
@@ -209,8 +209,8 @@ function MedicinePage() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-5 lg:grid-cols-[1.35fr_.65fr]">
-          <div className="space-y-5">
+        <section className="mt-6 grid w-full min-w-0 gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,.65fr)]">
+          <div className="min-w-0 space-y-5">
             <article className="rounded-3xl border border-primary/10 bg-white/80 p-4 shadow-md backdrop-blur-xl sm:p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
@@ -249,7 +249,7 @@ function MedicinePage() {
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
               <SectionHeading title="Same Salt Alternatives" subtitle={sameSalt.length ? 'Other products with the same composition' : 'Related options from the same medicine category'} />
               {alternatives.length ? (
-                <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+                <div className="mt-4 flex min-w-0 gap-3 overflow-x-auto pb-2">
                   {alternatives.map((r) => (
                     <div key={r._id} className="w-52 shrink-0">
                       <ProductCard med={r} onAdd={addRelated} variant="carousel" />
@@ -262,7 +262,7 @@ function MedicinePage() {
             </article>
           </div>
 
-          <aside className="space-y-5">
+          <aside className="min-w-0 space-y-5">
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
               <SectionHeading title="Ratings & Reviews" subtitle={reviewCount ? `${reviewCount} customer reviews` : 'Customer feedback will appear here'} />
               <div className="mt-4 flex items-center gap-4 rounded-2xl bg-white/75 p-4">
@@ -306,7 +306,7 @@ function MedicinePage() {
         </section>
 
         {related.length > 0 && (
-          <section className="mt-6 rounded-3xl border border-white/80 bg-white/65 p-5 shadow-sm backdrop-blur-xl sm:p-6">
+          <section className="mt-6 w-full min-w-0 rounded-3xl border border-white/80 bg-white/65 p-5 shadow-sm backdrop-blur-xl sm:p-6">
             <SectionHeading title="You may also like" subtitle={`More from ${shopCategory}`} />
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {related.map((r) => <ProductCard key={r._id} med={r} onAdd={addRelated} />)}
