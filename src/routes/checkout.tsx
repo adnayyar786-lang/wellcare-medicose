@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Store, Truck, Smartphone, CreditCard, Banknote, Wallet, Lock, CheckCircle2, MessageCircle, MapPinned, Check, Clock3, UserRound, Phone, FileText, ChevronRight } from 'lucide-react'
+import { Store, Truck, Smartphone, CreditCard, Banknote, Wallet, Lock, CheckCircle2, MessageCircle, MapPinned, Check, Clock3, UserRound, Phone, FileText, ChevronRight, PackageCheck, Sparkles, ArrowRight, ShoppingBag } from 'lucide-react'
 import { api } from '../../convex/_generated/api'
 import { useCart, type CartLine } from '@/hooks/use-cart'
 import { saveLastPhone } from '@/hooks/use-recently-viewed'
@@ -96,6 +96,39 @@ function CheckoutPage() {
     </main>
     <div className="fixed inset-x-0 bottom-16 z-10 lg:bottom-0 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
-    <Dialog open={!!confirmed} onOpenChange={(o) => !o && navigate({ to: '/' })}><DialogContent className="max-w-sm rounded-3xl"><DialogHeader><div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-full bg-primary/10"><CheckCircle2 className="size-8 text-primary" /></div><DialogTitle className="text-center text-xl">आपका ऑर्डर मिल गया है</DialogTitle></DialogHeader>{confirmed && <div className="space-y-4 text-center"><p className="text-sm text-muted-foreground">Order Number: <span className="font-semibold text-foreground">#{shortOrderId(confirmed.orderId)}</span></p><p className="text-lg font-bold text-primary">{formatINR(confirmed.total)}</p><div className="rounded-xl bg-secondary p-3 text-left text-xs"><p className="font-semibold text-secondary-foreground">{confirmed.fulfillment === 'delivery' ? 'Home Delivery' : 'Store Pickup'}</p><p className="mt-0.5 text-muted-foreground">{confirmed.fulfillment === 'delivery' ? (confirmed.deliveryAddress ?? 'Delivery address saved with your order') : `Collect from ${STORE_LOCATION.label}`}</p></div><a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"><MessageCircle className="size-4" />Send order on WhatsApp</a><Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="block text-sm font-medium text-primary underline">View / track your order</Link><Button variant="outline" className="w-full rounded-xl" onClick={() => navigate({ to: '/' })}>Continue shopping</Button></div>}</DialogContent></Dialog>
+    <Dialog open={!!confirmed} onOpenChange={(o) => !o && navigate({ to: '/' })}>
+      <DialogContent className="max-w-md overflow-hidden rounded-[2rem] border border-white/70 bg-transparent p-0 shadow-2xl">
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-white via-slate-50 to-white">
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-br from-emerald-100/80 via-cyan-50 to-blue-50" />
+          <div className="absolute -right-10 -top-10 size-32 rounded-full bg-emerald-200/30 blur-2xl" />
+          <div className="absolute -left-10 top-14 size-28 rounded-full bg-blue-200/25 blur-2xl" />
+          <DialogHeader className="relative px-6 pb-2 pt-7 text-center">
+            <div className="relative mx-auto mb-4 flex size-20 items-center justify-center rounded-[1.6rem] bg-white shadow-lg ring-8 ring-white/50">
+              <div className="absolute inset-2 rounded-[1.2rem] bg-gradient-to-br from-emerald-500 to-teal-600" />
+              <PackageCheck className="relative size-10 text-white" strokeWidth={1.8} />
+              <span className="absolute -right-1 -top-1 flex size-7 items-center justify-center rounded-full bg-white shadow-md"><CheckCircle2 className="size-5 text-emerald-500" /></span>
+            </div>
+            <div className="mx-auto inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700 shadow-sm"><Sparkles className="size-3" /> Order confirmed</div>
+            <DialogTitle className="mt-3 text-[1.55rem] font-extrabold tracking-tight text-slate-900">आपका ऑर्डर मिल गया है 🎉</DialogTitle>
+            <p className="mt-1 text-sm text-slate-500">Thank you, {confirmed?.customerName || 'for shopping with us'}.</p>
+          </DialogHeader>
+          {confirmed && <div className="relative space-y-4 px-5 pb-5 pt-3 sm:px-6">
+            <div className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 p-4 text-left shadow-sm">
+              <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order number</p><p className="mt-1 truncate font-bold tracking-wide text-slate-800">#{shortOrderId(confirmed.orderId)}</p></div>
+              <div className="rounded-xl bg-blue-50 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Total</p><p className="mt-0.5 text-lg font-extrabold text-primary">{formatINR(confirmed.total)}</p></div>
+            </div>
+            <div className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 text-left">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">{confirmed.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</span>
+              <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">{confirmed.fulfillment === 'delivery' ? 'Home delivery' : 'Store pickup'}</p><p className="mt-1 text-sm font-semibold leading-5 text-slate-800">{confirmed.fulfillment === 'delivery' ? (confirmed.deliveryAddress ?? 'Delivery address saved with your order') : <>Collect from {STORE_LOCATION.label}</>}</p></div>
+            </div>
+            <div className="grid gap-2">
+              <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-blue-900/15 transition-all hover:-translate-y-0.5 hover:shadow-xl"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
+              <a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 text-sm font-bold text-emerald-700 transition-colors hover:bg-emerald-100"><MessageCircle className="size-4" /> Send order on WhatsApp</a>
+              <Button variant="ghost" className="min-h-10 w-full rounded-2xl text-slate-500 hover:bg-slate-100 hover:text-slate-900" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
+            </div>
+          </div>}
+        </div>
+      </DialogContent>
+    </Dialog>
   </div>
 }
