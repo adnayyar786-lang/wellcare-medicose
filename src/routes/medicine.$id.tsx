@@ -196,12 +196,23 @@ function MedicinePage() {
 
               <div className="mt-5 flex items-center gap-2 rounded-2xl border border-primary/10 bg-primary/5 px-4 py-3 text-xs font-semibold text-slate-700"><Truck className="size-4 text-primary"/>Pickup ready today · Delivery by {estimatedDelivery('delivery')}</div>
               {!out&&<div className="mt-5 flex items-center gap-3"><span className="text-sm font-bold">Quantity</span><div className="inline-flex items-center rounded-xl border border-slate-200 bg-white"><button type="button" aria-label="Decrease quantity" className="flex size-10 items-center justify-center disabled:opacity-40" disabled={qty<=1} onClick={()=>setQty(q=>Math.max(1,q-1))}><Minus className="size-4"/></button><span className="w-8 text-center text-sm font-bold">{qty}</span><button type="button" aria-label="Increase quantity" className="flex size-10 items-center justify-center disabled:opacity-40" disabled={qty>=maxQty} onClick={()=>setQty(q=>Math.min(maxQty,q+1))}><Plus className="size-4"/></button></div></div>}
-              <div className="mt-5 hidden gap-3 lg:flex">{purchaseButtons}</div>
             </motion.div>
           </div>
         </section>
 
         <section className="mt-6 grid gap-5 lg:grid-cols-[1.35fr_.65fr]">
+          <div className="space-y-5">
+            <article className="rounded-3xl border border-primary/10 bg-white/80 p-4 shadow-md backdrop-blur-xl sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-primary">Ready to order?</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-700">Add this medicine to your cart or buy it now.</p>
+                </div>
+                <div className="flex w-full gap-2 sm:w-auto sm:min-w-[360px]">{purchaseButtons}</div>
+              </div>
+            </article>
+
+            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
           <div className="space-y-5">
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
               <div className="flex items-center gap-2"><Info className="size-5 text-primary"/><h2 className="text-lg font-black">Medicine Information</h2></div>
