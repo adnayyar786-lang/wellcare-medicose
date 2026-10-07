@@ -74,5 +74,12 @@ jobs:
           node -e "const fs=require('fs'); const files=['scripts/catalog-batch-001.json','scripts/catalog-batch-002.json','scripts/catalog-batch-003a.json','scripts/catalog-batch-004-images.json']; const all=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
           npx convex run medicines:verifyCatalogue "$(cat /tmp/catalog-verify.json)" --prod
 
+      - name: Verify exact catalogue image mappings
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          node -e "const fs=require('fs'); const items=JSON.parse(fs.readFileSync('scripts/catalog-batch-004-images.json','utf8')).items; fs.writeFileSync('/tmp/catalog-image-verify.json', JSON.stringify({items:items.map(x=>({name:x.name,imageUrl:x.imageUrl}))})); console.log('Expected exact image mappings:', items.length)"
+          npx convex run medicines:verifyCatalogueImages "$(cat /tmp/catalog-image-verify.json)" --prod
+
       - name: Production catalogue gate
         run: echo "Catalogue deployment completed only after validation, seed and production verification."
