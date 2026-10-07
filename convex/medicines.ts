@@ -25,6 +25,7 @@ const medicineValidator = v.object({
   featured: v.optional(v.boolean()),
   updatedAt: v.optional(v.number()),
   barcode: v.optional(v.string()),
+  batchNumber: v.optional(v.string()),
 })
 
 export const list = query({
@@ -248,6 +249,7 @@ export const seedManyV2 = mutation({
         requiresPrescription: v.boolean(),
         manufacturer: v.optional(v.string()),
         imageUrl: v.optional(v.string()),
+        batchNumber: v.optional(v.string()),
       }),
     ),
   },
@@ -272,6 +274,7 @@ export const seedManyV2 = mutation({
         requiresPrescription: item.requiresPrescription,
         manufacturer: item.manufacturer,
         imageUrl: item.imageUrl,
+        batchNumber: item.batchNumber,
         active: true,
         updatedAt: Date.now(),
       })
