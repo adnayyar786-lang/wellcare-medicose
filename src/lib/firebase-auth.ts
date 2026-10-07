@@ -108,22 +108,73 @@ export async function signInWithGoogleFirebase(): Promise<FirebaseUserLike> {
 }
 
 export async function signInWithEmailFirebase(email:string,password:string):Promise<FirebaseUserLike>{
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!normalizedEmail || !password) throw new Error('Enter your email address and password.')
   try {
-    const result = await getFirebaseAuth().signInWithEmailAndPassword(email.trim().toLowerCase(),password)
+    const result = await getFirebaseAuth().signInWithEmailAndPassword(normalizedEmail,password)
     return await confirmFirebaseSession(result.user)
   } catch (error:any) {
     const code = error?.code || ''
-    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
-      throw new Error('Email or password is incorrect. If you are sure both are correct, verify that Email/Password is enabled in the wellcare-medicose Firebase project.')
-    }
-    if (code === 'auth/user-not-found') {
-      throw new Error('No Wellcare account was found for this email. Use Create Account first.')
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+      throw new Error('Email sign-in failed. If you originally created this Wellcare account with Google, use Google Sign-In first and then set an email password from My Account. Otherwise use Forgot password to create a new password.')
     }
     if (code === 'auth/too-many-requests') {
       throw new Error('Too many sign-in attempts. Please wait a little and try again.')
     }
     if (code === 'auth/user-disabled') {
       throw new Error('This Wellcare account is disabled. Please contact support.')
+    }
+    if (code === 'auth/operation-not-allowed') {
+      throw new Error('Email/password sign-in is currently disabled in Firebase. Please contact Wellcare support.')
+    }
+    throw error
+  }
+}
+
+export async function setEmailPasswordFirebase(
+  email:string,
+  password:string,
+  confirmPassword:string,
+):Promise<FirebaseUserLike>{
+  const auth = getFirebaseAuth()
+  const currentUser = auth.currentUser
+  if (!currentUser) throw new Error('Please sign in to your Wellcare account first.')
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!normalizedEmail) throw new Error('Enter your account email address.')
+  if (currentUser.email?.trim().toLowerCase() !== normalizedEmail) {
+    throw new Error('Use the same email address as your signed-in Wellcare account.')
+  }
+  if (password.length < 6) throw new Error('Password must be at least 6 characters.')
+  if (password !== confirmPassword) throw new Error('Passwords do not match.')
+
+  const firebase = (window as any).firebase
+  const credential = firebase.auth.EmailAuthProvider.credential(normalizedEmail,password)
+  try {
+    const providers = currentUser.providerData || []
+    const passwordLinked = providers.some((item:any) => item?.providerId === 'password')
+    let updatedUser:any
+    if (passwordLinked) {
+      await currentUser.updatePassword(password)
+      updatedUser = currentUser
+    } else {
+      const result = await currentUser.linkWithCredential(credential)
+      updatedUser = result.user
+    }
+    return await confirmFirebaseSession(updatedUser)
+  } catch (error:any) {
+    const code = error?.code || ''
+    if (code === 'auth/provider-already-linked') {
+      await currentUser.updatePassword(password)
+      return await confirmFirebaseSession(currentUser)
+    }
+    if (code === 'auth/credential-already-in-use' || code === 'auth/email-already-in-use') {
+      throw new Error('This email/password credential is already attached to another Wellcare account. Sign in to that account instead.')
+    }
+    if (code === 'auth/requires-recent-login') {
+      throw new Error('For security, please sign in again and then set the email password.')
+    }
+    if (code === 'auth/weak-password') {
+      throw new Error('Choose a stronger password with at least 6 characters.')
     }
     throw error
   }
@@ -136,7 +187,16 @@ export async function createAccountWithEmailFirebase(email:string,password:strin
 }
 
 export async function sendPasswordResetFirebase(email:string){
-  await getFirebaseAuth().sendPasswordResetEmail(email.trim().toLowerCase())
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!normalizedEmail) throw new Error('Enter your email address first.')
+  try {
+    await getFirebaseAuth().sendPasswordResetEmail(normalizedEmail)
+  } catch (error:any) {
+    const code = error?.code || ''
+    if (code === 'auth/invalid-email') throw new Error('Enter a valid email address.')
+    if (code === 'auth/too-many-requests') throw new Error('Too many reset requests. Please wait a little and try again.')
+    throw error
+  }
 }
 
 export async function sendFirebasePhoneCode(phoneNumber:string,buttonId:string):Promise<any>{
