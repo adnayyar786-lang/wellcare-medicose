@@ -81,5 +81,18 @@ jobs:
           node -e "const fs=require('fs'); const items=JSON.parse(fs.readFileSync('scripts/catalog-batch-004-images.json','utf8')).items; fs.writeFileSync('/tmp/catalog-image-verify.json', JSON.stringify({items:items.map(x=>({name:x.name,imageUrl:x.imageUrl}))})); console.log('Expected exact image mappings:', items.length)"
           npx convex run medicines:verifyCatalogueImages "$(cat /tmp/catalog-image-verify.json)" --prod
 
+
+      - name: Register verified image records
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          node -e "const fs=require('fs'); const items=JSON.parse(fs.readFileSync('scripts/catalog-batch-004-images.json','utf8')).items; fs.writeFileSync('/tmp/catalog-image-registry.json', JSON.stringify({items:items.map(x=>({name:x.name,imageUrl:x.imageUrl,source:'catalog-batch-004-verified'}))})); console.log('Registering verified image records:', items.length)"
+          npx convex run medicines:registerVerifiedCatalogueImages "$(cat /tmp/catalog-image-registry.json)" --prod
+
+      - name: Verify image registry integrity
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          npx convex run medicines:verifyVerifiedImageRegistry "$(cat /tmp/catalog-image-verify.json)" --prod
       - name: Production catalogue gate
         run: echo "Catalogue deployment completed only after validation, seed and production verification."
