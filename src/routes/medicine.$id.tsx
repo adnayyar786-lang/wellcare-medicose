@@ -220,27 +220,98 @@ function MedicinePage() {
               </div>
             </article>
 
-          <div className="space-y-5">
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-              <div className="flex items-center gap-2"><Info className="size-5 text-primary"/><h2 className="text-lg font-black">Medicine Information</h2></div>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2"><div><h3 className="text-sm font-extrabold">Description</h3><p className="mt-1.5 text-sm leading-7 text-slate-600">{med.description||'Product information will be updated by the pharmacy team.'}</p></div><div><h3 className="text-sm font-extrabold">Key Information</h3><ul className="mt-1.5 space-y-2 text-sm leading-6 text-slate-600"><li>• Category: {med.category}</li><li>• Brand: {brand}</li><li>• Prescription: {med.requiresPrescription?'Required':'Not required'}</li><li>• Stock: {out?'Currently unavailable':'Available'}</li></ul></div></div>
-              <div className="mt-5 rounded-2xl bg-slate-50/80 p-4 text-sm leading-6 text-slate-600"><span className="font-bold text-slate-800">Uses & guidance:</span> Use only as directed on the label or by your doctor/pharmacist. For dosage, interactions or condition-specific advice, consult a qualified healthcare professional.</div>
+              <div className="flex items-center gap-2">
+                <Info className="size-5 text-primary" />
+                <h2 className="text-lg font-black">Medicine Information</h2>
+              </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <h3 className="text-sm font-extrabold">Description</h3>
+                  <p className="mt-1.5 text-sm leading-7 text-slate-600">{med.description || 'Product information will be updated by the pharmacy team.'}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold">Key Information</h3>
+                  <ul className="mt-1.5 space-y-2 text-sm leading-6 text-slate-600">
+                    <li>• Category: {med.category}</li>
+                    <li>• Brand: {brand}</li>
+                    <li>• Prescription: {med.requiresPrescription ? 'Required' : 'Not required'}</li>
+                    <li>• Stock: {out ? 'Currently unavailable' : 'Available'}</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-5 rounded-2xl bg-slate-50/80 p-4 text-sm leading-6 text-slate-600">
+                <span className="font-bold text-slate-800">Uses & guidance:</span> Use only as directed on the label or by your doctor/pharmacist. For dosage, interactions or condition-specific advice, consult a qualified healthcare professional.
+              </div>
             </article>
 
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-              <SectionHeading title="Same Salt Alternatives" subtitle={sameSalt.length?'Other products with the same composition':'Related options from the same medicine category'}/>
-              {alternatives.length?<div className="mt-4 flex gap-3 overflow-x-auto pb-2">{alternatives.map(r=><div key={r._id} className="w-52 shrink-0"><ProductCard med={r} onAdd={addRelated} variant="carousel"/></div>)}</div>:<p className="mt-3 text-sm text-slate-500">No alternatives are listed yet.</p>}
+              <SectionHeading title="Same Salt Alternatives" subtitle={sameSalt.length ? 'Other products with the same composition' : 'Related options from the same medicine category'} />
+              {alternatives.length ? (
+                <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
+                  {alternatives.map((r) => (
+                    <div key={r._id} className="w-52 shrink-0">
+                      <ProductCard med={r} onAdd={addRelated} variant="carousel" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-500">No alternatives are listed yet.</p>
+              )}
             </article>
           </div>
 
           <aside className="space-y-5">
-            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl"><SectionHeading title="Ratings & Reviews" subtitle={reviewCount?`${reviewCount} customer reviews`:'Customer feedback will appear here'}/><div className="mt-4 flex items-center gap-4 rounded-2xl bg-white/75 p-4"><div className="text-3xl font-black">{rating!==null?rating.toFixed(1):'—'}</div><div><div className="flex gap-0.5">{[1,2,3,4,5].map(n=><Star key={n} className={cn('size-4',rating!==null&&n<=Math.round(rating)?'fill-amber-400 text-amber-400':'text-slate-300')}/>)}</div><p className="mt-1 text-xs text-slate-500">{reviewCount?`${reviewCount} verified reviews`:'No reviews yet'}</p></div></div><div className="mt-3 rounded-2xl border border-dashed border-slate-200 p-4 text-xs leading-5 text-slate-500">Reviews will be linked to completed customer orders so feedback stays product-specific.</div></article>
+            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+              <SectionHeading title="Ratings & Reviews" subtitle={reviewCount ? `${reviewCount} customer reviews` : 'Customer feedback will appear here'} />
+              <div className="mt-4 flex items-center gap-4 rounded-2xl bg-white/75 p-4">
+                <div className="text-3xl font-black">{rating !== null ? rating.toFixed(1) : '—'}</div>
+                <div>
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star key={n} className={cn('size-4', rating !== null && n <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-300')} />
+                    ))}
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">{reviewCount ? `${reviewCount} verified reviews` : 'No reviews yet'}</p>
+                </div>
+              </div>
+              <div className="mt-3 rounded-2xl border border-dashed border-slate-200 p-4 text-xs leading-5 text-slate-500">
+                Reviews will be linked to completed customer orders so feedback stays product-specific.
+              </div>
+            </article>
 
-            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl"><SectionHeading title="Frequently Bought Together" subtitle={pairingLabel}/>{frequentlyBought.length?<div className="mt-4 space-y-3">{frequentlyBought.map(r=><div key={r._id} className="flex items-center gap-3 rounded-2xl bg-white/75 p-2"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-slate-50"><ProductImage category={r.category} shopCategory={r.shopCategory} imageUrl={r.imageUrl} alt=""/></div><div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-bold">{r.name}</p><p className="mt-1 text-xs font-black text-primary">{formatINR(r.price)}</p></div><Button size="sm" className="rounded-xl" disabled={r.stock<=0} onClick={()=>addRelated(r)}>Add</Button></div>)}</div>:<p className="mt-3 text-sm text-slate-500">Pairing suggestions will appear as the catalogue grows.</p>}</article>
+            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl">
+              <SectionHeading title="Frequently Bought Together" subtitle={pairingLabel} />
+              {frequentlyBought.length ? (
+                <div className="mt-4 space-y-3">
+                  {frequentlyBought.map((r) => (
+                    <div key={r._id} className="flex items-center gap-3 rounded-2xl bg-white/75 p-2">
+                      <div className="size-16 shrink-0 overflow-hidden rounded-xl bg-slate-50">
+                        <ProductImage category={r.category} shopCategory={r.shopCategory} imageUrl={r.imageUrl} alt="" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-xs font-bold">{r.name}</p>
+                        <p className="mt-1 text-xs font-black text-primary">{formatINR(r.price)}</p>
+                      </div>
+                      <Button size="sm" className="rounded-xl" disabled={r.stock <= 0} onClick={() => addRelated(r)}>Add</Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-500">Pairing suggestions will appear as the catalogue grows.</p>
+              )}
+            </article>
           </aside>
         </section>
 
-        {related.length>0&&<section className="mt-6 rounded-3xl border border-white/80 bg-white/65 p-5 shadow-sm backdrop-blur-xl sm:p-6"><SectionHeading title="You may also like" subtitle={`More from ${shopCategory}`}/><div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">{related.map(r=><ProductCard key={r._id} med={r} onAdd={addRelated}/>)}</div></section>}
+        {related.length > 0 && (
+          <section className="mt-6 rounded-3xl border border-white/80 bg-white/65 p-5 shadow-sm backdrop-blur-xl sm:p-6">
+            <SectionHeading title="You may also like" subtitle={`More from ${shopCategory}`} />
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {related.map((r) => <ProductCard key={r._id} med={r} onAdd={addRelated} />)}
+            </div>
+          </section>
+        )}
       </main>
 
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.5)] backdrop-blur-xl lg:hidden"><div className="mx-auto flex max-w-6xl gap-3">{purchaseButtons}</div></div>
