@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 export const Route = createFileRoute('/checkout')({ head: () => ({ meta: [{ title: 'Checkout — Wellcare Medicose' }] }), component: CheckoutPage })
 const STORE_WHATSAPP = '917088252556'
@@ -96,39 +95,80 @@ function CheckoutPage() {
     </main>
     <div className="fixed inset-x-0 bottom-16 z-10 lg:bottom-0 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
-    <Dialog open={!!confirmed} onOpenChange={(o) => !o && navigate({ to: '/' })}>
-      <DialogContent className="max-w-md overflow-hidden rounded-[2rem] border border-white/70 bg-transparent p-0 shadow-2xl">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-white via-slate-50 to-white">
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-br from-emerald-100/80 via-cyan-50 to-blue-50" />
-          <div className="absolute -right-10 -top-10 size-32 rounded-full bg-emerald-200/30 blur-2xl" />
-          <div className="absolute -left-10 top-14 size-28 rounded-full bg-blue-200/25 blur-2xl" />
-          <DialogHeader className="relative px-6 pb-2 pt-7 text-center">
-            <div className="relative mx-auto mb-4 flex size-20 items-center justify-center rounded-[1.6rem] bg-white shadow-lg ring-8 ring-white/50">
-              <div className="absolute inset-2 rounded-[1.2rem] bg-gradient-to-br from-emerald-500 to-teal-600" />
-              <PackageCheck className="relative size-10 text-white" strokeWidth={1.8} />
-              <span className="absolute -right-1 -top-1 flex size-7 items-center justify-center rounded-full bg-white shadow-md"><CheckCircle2 className="size-5 text-emerald-500" /></span>
+    {confirmed && (
+      <div className="fixed inset-0 z-[100] overflow-y-auto bg-gradient-to-b from-[#eef9f7] via-white to-[#f4f8ff] text-slate-900">
+        <div className="mx-auto flex min-h-full w-full max-w-2xl flex-col">
+          <header className="flex items-center justify-between px-5 pb-3 pt-7 sm:px-8 sm:pt-10">
+            <BrandLogo />
+            <span className="rounded-full border border-emerald-200 bg-white/80 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700 shadow-sm">Order confirmed</span>
+          </header>
+
+          <main className="flex flex-1 flex-col px-5 pb-8 sm:px-8">
+            <section className="relative overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_20px_70px_rgba(15,23,42,0.10)]">
+              <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-br from-emerald-100 via-cyan-50 to-blue-100" />
+              <div className="absolute -right-16 top-8 size-40 rounded-full bg-white/50 blur-3xl" />
+              <div className="absolute -left-20 top-24 size-44 rounded-full bg-emerald-200/30 blur-3xl" />
+
+              <div className="relative px-5 pb-6 pt-8 text-center sm:px-8 sm:pt-10">
+                <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-white shadow-xl ring-8 ring-white/50">
+                  <div className="flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-inner">
+                    <CheckCircle2 className="size-10 text-white" strokeWidth={2.2} />
+                  </div>
+                </div>
+                <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.22em] text-emerald-700">Payment & order successful</p>
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Order confirmed 🎉</h1>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Your order has been placed successfully. We’re getting it ready for you.</p>
+
+                <div className="relative mx-auto mt-7 h-36 max-w-lg overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-b from-sky-50 to-white">
+                  <div className="absolute inset-x-0 bottom-8 border-t-2 border-dashed border-slate-200" />
+                  <div className="absolute bottom-4 left-5 flex size-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"><Store className="size-4" /></div>
+                  <div className="absolute bottom-4 right-5 flex size-8 items-center justify-center rounded-xl bg-blue-100 text-blue-700"><MapPinned className="size-4" /></div>
+                  <div className="absolute left-1/2 top-5 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-[10px] font-bold text-emerald-700 shadow-sm">
+                    <span className="size-2 animate-pulse rounded-full bg-emerald-500" /> Preparing your order
+                  </div>
+                  <div className="absolute bottom-6 left-[18%] animate-[bounce_2.4s_ease-in-out_infinite]">
+                    <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-cyan-600 text-white shadow-lg shadow-blue-900/20">
+                      <Truck className="size-8" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-3 left-[28%] h-1 w-[44%] overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-emerald-400 to-cyan-500" />
+                  </div>
+                </div>
+
+                <div className="mt-5 grid grid-cols-3 gap-2">
+                  <div className="rounded-2xl bg-emerald-50 px-3 py-3 text-center"><CheckCircle2 className="mx-auto size-5 text-emerald-600" /><p className="mt-1 text-[10px] font-bold text-emerald-800">Order placed</p></div>
+                  <div className="rounded-2xl bg-blue-50 px-3 py-3 text-center"><PackageCheck className="mx-auto size-5 text-blue-600" /><p className="mt-1 text-[10px] font-bold text-blue-800">Preparing</p></div>
+                  <div className="rounded-2xl bg-slate-50 px-3 py-3 text-center"><Truck className="mx-auto size-5 text-slate-400" /><p className="mt-1 text-[10px] font-bold text-slate-500">On the way</p></div>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-8">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4 text-left">
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Order number</p>
+                    <p className="mt-1 font-extrabold tracking-wide text-slate-900">#{shortOrderId(confirmed.orderId)}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4 text-left">
+                    <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Order total</p>
+                    <p className="mt-1 text-lg font-black text-primary">{formatINR(confirmed.total)}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-left">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">{confirmed.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</span>
+                  <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">{confirmed.fulfillment === 'delivery' ? 'Delivering to' : 'Pickup from'}</p><p className="mt-1 text-sm font-semibold leading-5 text-slate-800">{confirmed.fulfillment === 'delivery' ? (confirmed.deliveryAddress ?? 'Delivery address saved with your order') : STORE_LOCATION.label}</p></div>
+                </div>
+              </div>
+            </section>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="group inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-blue-900/15 transition-transform hover:-translate-y-0.5"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
+              <a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white text-sm font-bold text-emerald-700 shadow-sm hover:bg-emerald-50"><MessageCircle className="size-5" /> Send on WhatsApp</a>
             </div>
-            <div className="mx-auto inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700 shadow-sm"><Sparkles className="size-3" /> Order confirmed</div>
-            <DialogTitle className="mt-3 text-[1.55rem] font-extrabold tracking-tight text-slate-900">आपका ऑर्डर मिल गया है 🎉</DialogTitle>
-            <p className="mt-1 text-sm text-slate-500">Thank you, {confirmed?.customerName || 'for shopping with us'}.</p>
-          </DialogHeader>
-          {confirmed && <div className="relative space-y-4 px-5 pb-5 pt-3 sm:px-6">
-            <div className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 p-4 text-left shadow-sm">
-              <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order number</p><p className="mt-1 truncate font-bold tracking-wide text-slate-800">#{shortOrderId(confirmed.orderId)}</p></div>
-              <div className="rounded-xl bg-blue-50 px-4 py-2 text-right"><p className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Total</p><p className="mt-0.5 text-lg font-extrabold text-primary">{formatINR(confirmed.total)}</p></div>
-            </div>
-            <div className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 text-left">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">{confirmed.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</span>
-              <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">{confirmed.fulfillment === 'delivery' ? 'Home delivery' : 'Store pickup'}</p><p className="mt-1 text-sm font-semibold leading-5 text-slate-800">{confirmed.fulfillment === 'delivery' ? (confirmed.deliveryAddress ?? 'Delivery address saved with your order') : <>Collect from {STORE_LOCATION.label}</>}</p></div>
-            </div>
-            <div className="grid gap-2">
-              <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-blue-900/15 transition-all hover:-translate-y-0.5 hover:shadow-xl"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
-              <a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 text-sm font-bold text-emerald-700 transition-colors hover:bg-emerald-100"><MessageCircle className="size-4" /> Send order on WhatsApp</a>
-              <Button variant="ghost" className="min-h-10 w-full rounded-2xl text-slate-500 hover:bg-slate-100 hover:text-slate-900" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
-            </div>
-          </div>}
+            <Button variant="ghost" className="mt-2 min-h-11 rounded-2xl text-slate-500" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
+          </main>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    )}
   </div>
 }
