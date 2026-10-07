@@ -142,6 +142,6 @@ function CheckoutPage() {
           </main>
         </div>
       </div>
-    )}    )}
+    )}
   </div>
 }
