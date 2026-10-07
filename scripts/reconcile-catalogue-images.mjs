@@ -39,10 +39,10 @@ for (const item of imageBatch) {
   if (!item.manufacturer || /^generic$/i.test(item.manufacturer.trim())) {
     issues.push(`UNVERIFIED_MANUFACTURER: ${item.name}`);
   }
-  if (!/\b\d+(?:\.\d+)?\s*(?:mg|mcg|g|kg|ml|l)\b/i.test(item.description)) {
+  if (!/\b\d+(?:\.\d+)?\s*(?:mg|mcg|g|gm|kg|ml|l|tablets?|capsules?|lozenges?|pearls?)\b/i.test(item.description)) {
     issues.push(`MISSING_STRENGTH_OR_SIZE_IN_DESCRIPTION: ${item.name}`);
   }
-  if (!/\bpack of\b|\bstrip of\b|\b\d+\s*(?:tablets?|capsules?|g|ml|sachets?)\b/i.test(item.description)) {
+  if (!/\bpack of\b|\bstrip of\b|\b\d+\s*(?:tablets?|capsules?|lozenges?|pearls?|g|gm|ml|sachets?)\b/i.test(item.description)) {
     issues.push(`MISSING_PACK_REFERENCE: ${item.name}`);
   }
 }
