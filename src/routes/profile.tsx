@@ -5,11 +5,13 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { api } from '../../convex/_generated/api'
 import {
   ArrowRight, ChevronRight, ClipboardList, FileText, Heart, HelpCircle, Loader2,
-  LockKeyhole, MapPin, MessageCircle, Navigation, PackageCheck, Phone, Save,
+  LockKeyhole, Mail, MapPin, MessageCircle, Navigation, PackageCheck, Phone, Save,
   Settings, Shield, Sparkles, Store, UserRound
 } from 'lucide-react'
 import { STORE_LOCATION } from '@/config/store-location'
 import { BrandLogo, SiteFooter } from '@/components/brand'
+import { setEmailPasswordFirebase } from '@/lib/firebase-auth'
+import { useFirebaseAuthState } from '@/components/convex-client-provider'
 
 export const Route = createFileRoute('/profile')({
   head: () => ({ meta: [{ title: 'My Account — Wellcare Medicose' }] }),
@@ -28,11 +30,16 @@ const quickActions = [
 
 function ProfilePage() {
   const { isAuthenticated, isLoading } = useConvexAuth()
+  const { user: firebaseUser } = useFirebaseAuthState()
   const profile = useQuery(api.profile.getMine, isAuthenticated ? {} : 'skip')
   const save = useMutation(api.profile.updateMine)
   const [form, setForm] = useState<Fields>(empty)
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordBusy, setPasswordBusy] = useState(false)
+  const [passwordNotice, setPasswordNotice] = useState('')
 
   useEffect(() => {
     if (profile) setForm({
