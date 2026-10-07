@@ -295,6 +295,78 @@ export const verifyCatalogue = query({
   },
 })
 
+
+export const verifyCatalogueImages = query({
+  args: {
+    items: v.array(
+      v.object({
+        name: v.string(),
+        imageUrl: v.string(),
+      }),
+    ),
+  },
+  returns: v.object({
+    expected: v.number(),
+    matched: v.number(),
+    missing: v.array(v.string()),
+    missingImage: v.array(v.string()),
+    mismatchedImage: v.array(v.string()),
+    inactive: v.array(v.string()),
+    duplicates: v.array(v.string()),
+  }),
+  handler: async (ctx, { items }) => {
+    const expected = new Map<string, string>()
+    const duplicates: string[] = []
+    for (const item of items) {
+      const name = item.name.trim()
+      if (!name) continue
+      if (expected.has(name)) duplicates.push(name)
+      expected.set(name, item.imageUrl.trim())
+    }
+
+    const missing: string[] = []
+    const missingImage: string[] = []
+    const mismatchedImage: string[] = []
+    const inactive: string[] = []
+    let matched = 0
+
+    for (const [name, imageUrl] of expected) {
+      const rows = await ctx.db
+        .query('medicines')
+        .withIndex('by_name', (q) => q.eq('name', name))
+        .collect()
+
+      if (rows.length === 0) {
+        missing.push(name)
+        continue
+      }
+      if (rows.length > 1) duplicates.push(name)
+      if (rows.every((row) => !row.active)) inactive.push(name)
+
+      const row = rows.find((entry) => entry.active) ?? rows[0]
+      if (!row.imageUrl) {
+        missingImage.push(name)
+        continue
+      }
+      if (row.imageUrl !== imageUrl) {
+        mismatchedImage.push(name)
+        continue
+      }
+      matched += 1
+    }
+
+    return {
+      expected: expected.size,
+      matched,
+      missing,
+      missingImage,
+      mismatchedImage,
+      inactive,
+      duplicates: [...new Set(duplicates)],
+    }
+  },
+})
+
 export const backfillShopFields = mutation({
   args: { cursor: v.optional(v.string()) },
   returns: v.object({ processed: v.number(), continueCursor: v.union(v.string(), v.null()), isDone: v.boolean() }),
