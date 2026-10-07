@@ -1,0 +1,136 @@
+{
+  "items": [
+    {
+      "name": "Paracip 500 Tablet - 10 Tablets",
+      "category": "Pain Relief & Fever",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Paracetamol 500mg tablet. Cipla Ltd. Pack of 10 tablets.",
+      "price": 12,
+      "mrpPrice": 15,
+      "stock": 20,
+      "requiresPrescription": false,
+      "manufacturer": "Cipla Ltd",
+      "imageUrl": "https://cpimg.tistatic.com/10590319/b/4/Paracetamol-Tablets-IP-500-mg-Paracip-500.jpg"
+    },
+    {
+      "name": "Lece-5 Tablet - 10 Tablets",
+      "category": "Allergy & Cold",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Levocetirizine 5mg tablet. Metrix Healthcare Ltd. Pack of 10 tablets.",
+      "price": 18,
+      "mrpPrice": 24,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Metrix Healthcare Ltd",
+      "imageUrl": "https://cpimg.tistatic.com/4933058/b/4/lece-5-5mg-levocetirizine-tablets-i-p-.jpg"
+    },
+    {
+      "name": "Omez 20 Capsule - 10 Capsules",
+      "category": "Gastrointestinal",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Omeprazole 20mg capsule. Dr. Reddy's Laboratories Ltd. Pack of 10 capsules.",
+      "price": 20,
+      "mrpPrice": 26,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Dr. Reddy's Laboratories Ltd",
+      "imageUrl": "https://medwiki.co.in/cdn-cgi/image/fit%3Dcover%2Cformat%3Dwebp/https%3A/storage.googleapis.com/dawaadost.appspot.com/blogs/d4426017-e597-4e7c-8399-e6ab90e08814.jpg"
+    },
+    {
+      "name": "ORSL Orange Flavour Sachet - 21g",
+      "category": "Hydration & Electrolytes",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Oral rehydration salts, orange flavour. ORSL/FDC product image verified.",
+      "price": 18,
+      "mrpPrice": 20,
+      "stock": 20,
+      "requiresPrescription": false,
+      "manufacturer": "FDC Limited",
+      "imageUrl": "https://asset.sastasundar.com/incom/images/product/ORS-Orange-Flavour-Sachet-1771928186-10162673-a.jpg"
+    },
+    {
+      "name": "Azee-500 Tablet - 5 Tablets",
+      "category": "Anti-infectives",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Azithromycin 500mg tablet. Cipla Ltd. Pack of 5 tablets.",
+      "price": 25,
+      "mrpPrice": 35,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Cipla Ltd",
+      "imageUrl": "https://aajpharmacy.com/uploads/214.jpg"
+    },
+    {
+      "name": "Atmoxid-500 Capsule - 10 Capsules",
+      "category": "Anti-infectives",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Amoxycillin 500mg capsule. Atmoxid-500 pack image verified; dispense only against a valid prescription.",
+      "price": 45,
+      "mrpPrice": 55,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Atmoxid",
+      "imageUrl": "https://tiimg.tistatic.com/fp/1/007/502/atmoxid-500-amoxycillin-trihydrate-capsules-ip-for-bacterial-infections-500mg-10x10-blister-pack-595.jpg"
+    },
+    {
+      "name": "Gluformin 500 Tablet - 10 Tablets",
+      "category": "Diabetes",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Metformin 500mg tablet. Abbott Healthcare Pvt. Ltd. Pack image verified.",
+      "price": 12,
+      "mrpPrice": 18,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Abbott Healthcare Pvt. Ltd.",
+      "imageUrl": "https://www.nepmeds.com.np/public/files/8938585BEA30414-91zJsek8TeL.jpg"
+    },
+    {
+      "name": "Amlip-5 Tablet - 10 Tablets",
+      "category": "Cardiovascular",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Amlodipine 5mg tablet. Cipla Ltd. Pack of 10 tablets.",
+      "price": 17.2,
+      "mrpPrice": 26.5,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Cipla Ltd",
+      "imageUrl": "https://ik.imagekit.io/wlfr/wellness/images/products/219494-1.jpg"
+    },
+    {
+      "name": "Losartas-50 Tablet - 10 Tablets",
+      "category": "Cardiovascular",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Losartan potassium 50mg tablet. Intas Pharmaceuticals Ltd. Pack image verified.",
+      "price": 22,
+      "mrpPrice": 30,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Intas Pharmaceuticals Ltd",
+      "imageUrl": "https://cpimg.tistatic.com/8454280/b/4/50-mg-losartan-potassium-tablets-ip.jpg"
+    },
+    {
+      "name": "Teliva 40 Tablet - 10 Tablets",
+      "category": "Cardiovascular",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Telmisartan 40mg tablet. Biocore Pharmaceuticals. Strip of 10 tablets.",
+      "price": 58.1,
+      "mrpPrice": 66.74,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Biocore Pharmaceuticals",
+      "imageUrl": "https://assets.pharmahopers.com/assets/images/products/4c618140-82a0-421e-a18f-3d255ca05d50-TELIVA-40.jpg"
+    },
+    {
+      "name": "Montel 10 Tablet - 10 Tablets",
+      "category": "Allergy & Respiratory",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Montelukast 10mg tablet. Johnlee Pharmaceuticals Pvt Ltd. Pack of 10 tablets.",
+      "price": 45,
+      "mrpPrice": 60,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Johnlee Pharmaceuticals Pvt Ltd",
+      "imageUrl": "https://tiimg.tistatic.com/fp/2/010/042/montelukast-10-mg-tablet-333.jpg"
+    }
+  ]
+}
