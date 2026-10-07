@@ -96,14 +96,14 @@ function CheckoutPage() {
     <div className="fixed inset-x-0 bottom-16 z-10 lg:bottom-0 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
     {confirmed && (
-      <div className="fixed inset-0 z-[100] overflow-y-auto bg-gradient-to-b from-[#eef9f7] via-white to-[#f4f8ff] text-slate-900">
-        <div className="mx-auto flex min-h-screen w-full max-w-2xl flex-col">
+      <div className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-gradient-to-b from-[#eef9f7] via-white to-[#f4f8ff] text-slate-900">
+        <div className="mx-auto flex h-full w-full max-w-2xl flex-col overflow-hidden">
           <header className="flex items-center justify-between px-5 pb-2 pt-5 sm:px-8 sm:pt-6">
             <BrandLogo />
             <span className="rounded-full border border-emerald-200 bg-white/80 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700 shadow-sm">Order confirmed</span>
           </header>
 
-          <main className="flex flex-1 flex-col px-5 pb-4 sm:px-8">
+          <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-4 sm:px-8">
             <section className="relative overflow-hidden rounded-[1.75rem] border border-white bg-white shadow-[0_16px_50px_rgba(15,23,42,0.10)]">
               <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-br from-emerald-100 via-cyan-50 to-blue-100" />
               <div className="absolute -right-16 top-8 size-40 rounded-full bg-white/50 blur-3xl" />
