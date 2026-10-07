@@ -1,3 +1,4 @@
+// Production Batch 004 verification trigger: keep this reconciliation gate deterministic.
 import fs from 'node:fs';
 
 const productionFiles = [
