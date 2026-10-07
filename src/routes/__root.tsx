@@ -74,7 +74,7 @@ function CustomerChrome({ children }: { children: React.ReactNode }) {
 // which has its own sidebar layout instead.
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   const isAdmin = useIsAdminRoute()
-  return <div className={isAdmin ? '' : 'pb-16 lg:pb-0'}>{children}</div>
+  return <div className={`w-full min-w-0 ${isAdmin ? '' : 'pb-16 lg:pb-0'}`}>{children}</div>
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
