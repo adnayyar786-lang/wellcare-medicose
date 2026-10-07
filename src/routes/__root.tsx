@@ -74,7 +74,7 @@ function CustomerChrome({ children }: { children: React.ReactNode }) {
 // which has its own sidebar layout instead.
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   const isAdmin = useIsAdminRoute()
-  return <div className={isAdmin ? '' : 'pb-16'}>{children}</div>
+  return <div className={isAdmin ? '' : 'pb-16 lg:pb-0'}>{children}</div>
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -100,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Chat with us on WhatsApp"
-                      className="fixed bottom-20 right-4 z-20 flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105"
+                      className="fixed bottom-20 right-4 z-20 lg:bottom-6" flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105"
                     >
                       <MessageCircle className="size-6" />
                     </a>
