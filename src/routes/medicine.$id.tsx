@@ -318,4 +318,5 @@ function MedicinePage() {
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-white/70 bg-white/90 px-4 py-3 shadow-[0_-12px_30px_-20px_rgba(15,23,42,0.5)] backdrop-blur-xl lg:hidden"><div className="mx-auto flex max-w-6xl gap-3">{purchaseButtons}</div></div>
       <div className="bg-navy pb-20 lg:pb-0"><SiteFooter/></div>
     </div>
+    </>
   )}
