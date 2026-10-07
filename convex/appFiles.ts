@@ -80,9 +80,10 @@ export const finalizeMedicineImage = action({
   returns: v.null(),
   handler: async (ctx, args) => {
     const uploaded = await completeAppFile(ctx, args.fileId)
-    await ctx.runMutation(internal.medicines.setImageUrl, {
+    await ctx.runMutation(internal.medicines.setImageUrlAndRegister, {
       id: args.medicineId,
       imageUrl: uploaded.url ?? undefined,
+      source: 'admin-upload',
     })
     return null
   },
