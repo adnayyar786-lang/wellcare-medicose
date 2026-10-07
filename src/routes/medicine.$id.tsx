@@ -146,7 +146,6 @@ function MedicinePage() {
       <Button size="lg" className="flex-1" disabled={out} onClick={handleBuyNow}>
         Buy Now
       </Button>
-    </>
   )
 
   const info = med as typeof med & { brand?: string; saltComposition?: string; salt?: string; composition?: string; strength?: string; packSize?: string; rating?: number; reviewCount?: number }
