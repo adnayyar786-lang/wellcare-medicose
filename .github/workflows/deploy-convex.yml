@@ -94,5 +94,16 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
           npx convex run medicines:verifyVerifiedImageRegistry "$(cat /tmp/catalog-image-verify.json)" --prod
+      - name: Final production image gate
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          npx convex run medicines:assertVerifiedImageRegistry "$(cat /tmp/catalog-image-verify.json)" --prod
+          if grep -R "MEDICINE_IMAGE_FALLBACKS\|fallbackMedicineImage\|fallbackImageUrl" src/components/product-card.tsx; then
+            echo "Unverified product image fallback detected in ProductCard."
+            exit 1
+          fi
+          echo "Final production image gate passed."
+
       - name: Production catalogue gate
-        run: echo "Catalogue deployment completed only after validation, seed and production verification."
+        run: echo "Catalogue deployment completed only after validation, seed and final image verification."
