@@ -220,9 +220,7 @@ function MedicinePage() {
               </div>
             </article>
 
-            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
           <div className="space-y-5">
-            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl sm:p-6">
               <div className="flex items-center gap-2"><Info className="size-5 text-primary"/><h2 className="text-lg font-black">Medicine Information</h2></div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2"><div><h3 className="text-sm font-extrabold">Description</h3><p className="mt-1.5 text-sm leading-7 text-slate-600">{med.description||'Product information will be updated by the pharmacy team.'}</p></div><div><h3 className="text-sm font-extrabold">Key Information</h3><ul className="mt-1.5 space-y-2 text-sm leading-6 text-slate-600"><li>• Category: {med.category}</li><li>• Brand: {brand}</li><li>• Prescription: {med.requiresPrescription?'Required':'Not required'}</li><li>• Stock: {out?'Currently unavailable':'Available'}</li></ul></div></div>
               <div className="mt-5 rounded-2xl bg-slate-50/80 p-4 text-sm leading-6 text-slate-600"><span className="font-bold text-slate-800">Uses & guidance:</span> Use only as directed on the label or by your doctor/pharmacist. For dosage, interactions or condition-specific advice, consult a qualified healthcare professional.</div>
