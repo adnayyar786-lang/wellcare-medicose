@@ -156,9 +156,17 @@ function MedicinePage() {
   const packSize = info.packSize?.trim() || (med.tabletsPerPack ? `${med.tabletsPerPack} units` : 'Not listed')
   const rating = typeof info.rating === 'number' ? info.rating : null
   const reviewCount = typeof info.reviewCount === 'number' ? info.reviewCount : 0
-  const sameSalt = salt !== 'Not listed' ? allMedicines.filter((m: any) => m._id !== med._id && m.active && String(m.saltComposition ?? m.salt ?? m.composition ?? '').trim().toLowerCase() === salt.toLowerCase()).slice(0, 6) : []
+  const sameSalt = salt !== 'Not listed'
+    ? allMedicines.filter((m: any) => m._id !== med._id && m.active && String(m.saltComposition ?? m.salt ?? m.composition ?? '').trim().toLowerCase() === salt.toLowerCase()).slice(0, 6)
+    : []
   const alternatives = sameSalt.length ? sameSalt : related.slice(0, 6)
-  const frequentlyBought = related.slice(0, 3)
+  const frequentlyBought = [
+    ...sameSalt,
+    ...related.filter((r) => !sameSalt.some((s) => s._id === r._id)),
+  ].slice(0, 3)
+  const pairingLabel = sameSalt.length
+    ? 'Same salt / composition options for the same treatment category'
+    : 'Related options from the same treatment category'
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900" style={{ backgroundImage: `linear-gradient(rgba(248,250,252,0.91),rgba(248,250,252,0.97)),url(${HERO_BACKGROUND_IMAGE})`, backgroundAttachment: 'fixed', backgroundSize: 'cover', backgroundPosition: 'center top' }}>
@@ -229,7 +237,7 @@ function MedicinePage() {
           <aside className="space-y-5">
             <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl"><SectionHeading title="Ratings & Reviews" subtitle={reviewCount?`${reviewCount} customer reviews`:'Customer feedback will appear here'}/><div className="mt-4 flex items-center gap-4 rounded-2xl bg-white/75 p-4"><div className="text-3xl font-black">{rating!==null?rating.toFixed(1):'—'}</div><div><div className="flex gap-0.5">{[1,2,3,4,5].map(n=><Star key={n} className={cn('size-4',rating!==null&&n<=Math.round(rating)?'fill-amber-400 text-amber-400':'text-slate-300')}/>)}</div><p className="mt-1 text-xs text-slate-500">{reviewCount?`${reviewCount} verified reviews`:'No reviews yet'}</p></div></div><div className="mt-3 rounded-2xl border border-dashed border-slate-200 p-4 text-xs leading-5 text-slate-500">Reviews will be linked to completed customer orders so feedback stays product-specific.</div></article>
 
-            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl"><SectionHeading title="Frequently Bought Together" subtitle="Commonly paired products"/>{frequentlyBought.length?<div className="mt-4 space-y-3">{frequentlyBought.map(r=><div key={r._id} className="flex items-center gap-3 rounded-2xl bg-white/75 p-2"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-slate-50"><ProductImage category={r.category} shopCategory={r.shopCategory} imageUrl={r.imageUrl} alt=""/></div><div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-bold">{r.name}</p><p className="mt-1 text-xs font-black text-primary">{formatINR(r.price)}</p></div><Button size="sm" className="rounded-xl" disabled={r.stock<=0} onClick={()=>addRelated(r)}>Add</Button></div>)}</div>:<p className="mt-3 text-sm text-slate-500">Pairing suggestions will appear as the catalogue grows.</p>}</article>
+            <article className="rounded-3xl border border-white/80 bg-white/70 p-5 shadow-sm backdrop-blur-xl"><SectionHeading title="Frequently Bought Together" subtitle={pairingLabel}/>{frequentlyBought.length?<div className="mt-4 space-y-3">{frequentlyBought.map(r=><div key={r._id} className="flex items-center gap-3 rounded-2xl bg-white/75 p-2"><div className="size-16 shrink-0 overflow-hidden rounded-xl bg-slate-50"><ProductImage category={r.category} shopCategory={r.shopCategory} imageUrl={r.imageUrl} alt=""/></div><div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-bold">{r.name}</p><p className="mt-1 text-xs font-black text-primary">{formatINR(r.price)}</p></div><Button size="sm" className="rounded-xl" disabled={r.stock<=0} onClick={()=>addRelated(r)}>Add</Button></div>)}</div>:<p className="mt-3 text-sm text-slate-500">Pairing suggestions will appear as the catalogue grows.</p>}</article>
           </aside>
         </section>
 
