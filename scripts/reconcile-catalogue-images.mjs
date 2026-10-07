@@ -7,11 +7,11 @@ const productionFiles = [
   'scripts/catalog-batch-002.json',
   'scripts/catalog-batch-003a.json',
 ];
-const imageBatchFile = 'scripts/catalog-batch-004-images.json';
+const imageBatchFiles = ['scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json'];
 
 const load = (file) => JSON.parse(fs.readFileSync(file, 'utf8')).items;
 const production = productionFiles.flatMap(load);
-const imageBatch = load(imageBatchFile);
+const imageBatch = imageBatchFiles.flatMap(load);
 
 const normalize = (value) => value.trim().toLowerCase().replace(/\s+/g, ' ');
 const productionNames = new Map();
