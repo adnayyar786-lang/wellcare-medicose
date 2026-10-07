@@ -17,7 +17,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
           ease: [0.22, 1, 0.36, 1],
           filter: { duration: 0.32 },
         }}
-        className="min-h-[60vh]"
+        className="min-h-[60vh] w-full min-w-0"
       >
         {children}
       </motion.main>
