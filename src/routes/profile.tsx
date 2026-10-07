@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { useConvexAuth } from 'convex/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { api } from '../../convex/_generated/api'
 import {
   ArrowRight, ChevronRight, ClipboardList, FileText, Heart, HelpCircle, Loader2,
@@ -44,7 +44,7 @@ function ProfilePage() {
   }, [profile])
 
   const change = (key: keyof Fields, value: string) => setForm(old => ({ ...old, [key]: value }))
-  async function submit(e: React.FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault(); setBusy(true); setNotice('')
     try {
       const result = await save(form)
