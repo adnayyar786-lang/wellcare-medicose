@@ -74,7 +74,7 @@ function CheckoutPage() {
         <div className="mt-4 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Order fulfillment">
           {([{ value: 'delivery', title: 'Home Delivery', desc: 'Delivered to your doorstep', icon: Truck }, { value: 'pickup', title: 'Store Pickup', desc: 'Collect from our store', icon: Store }] as const).map(({ value, title, desc, icon: Icon }) => {
             const selected = fulfillment === value
-            return <button key={value} type="button" role="radio" aria-checked={selected} onClick={() => { setFulfillment(value); if (value === 'delivery' && !address) setMapOpen(true) }} className={cn('relative flex min-h-32 flex-col items-start gap-2 rounded-2xl border-2 p-4 text-left transition-all', selected ? 'border-primary bg-emerald-50/70 shadow-sm' : 'border-slate-200 bg-white hover:border-primary/40')}>
+            return <button key={value} type="button" role="radio" aria-checked={selected} onClick={() => { setFulfillment(value); if (value === 'delivery' && !address) setMapOpen(true) }} className={cn('relative flex min-h-32 flex-col items-start gap-2 rounded-2xl border-2 p-3 text-left transition-all', selected ? 'border-primary bg-emerald-50/70 shadow-sm' : 'border-slate-200 bg-white hover:border-primary/40')}>
               <span className={cn('flex size-11 items-center justify-center rounded-2xl', selected ? 'bg-primary text-white' : 'bg-slate-100 text-primary')}><Icon className="size-5" /></span><span className="text-sm font-bold text-slate-900">{title}</span><span className="text-xs leading-relaxed text-slate-500">{desc}</span>{selected && <span className="absolute right-3 top-3 flex size-5 items-center justify-center rounded-full bg-primary text-white"><Check className="size-3" /></span>}
             </button>
           })}
@@ -97,75 +97,80 @@ function CheckoutPage() {
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
     {confirmed && (
       <div className="fixed inset-0 z-[100] overflow-y-auto bg-gradient-to-b from-[#eef9f7] via-white to-[#f4f8ff] text-slate-900">
-        <div className="mx-auto flex min-h-full w-full max-w-2xl flex-col">
-          <header className="flex items-center justify-between px-5 pb-3 pt-7 sm:px-8 sm:pt-10">
+        <div className="mx-auto flex min-h-screen w-full max-w-2xl flex-col">
+          <header className="flex items-center justify-between px-5 pb-2 pt-5 sm:px-8 sm:pt-6">
             <BrandLogo />
             <span className="rounded-full border border-emerald-200 bg-white/80 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700 shadow-sm">Order confirmed</span>
           </header>
 
-          <main className="flex flex-1 flex-col px-5 pb-8 sm:px-8">
-            <section className="relative overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_20px_70px_rgba(15,23,42,0.10)]">
-              <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-br from-emerald-100 via-cyan-50 to-blue-100" />
+          <main className="flex flex-1 flex-col px-5 pb-4 sm:px-8">
+            <section className="relative overflow-hidden rounded-[1.75rem] border border-white bg-white shadow-[0_16px_50px_rgba(15,23,42,0.10)]">
+              <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-br from-emerald-100 via-cyan-50 to-blue-100" />
               <div className="absolute -right-16 top-8 size-40 rounded-full bg-white/50 blur-3xl" />
               <div className="absolute -left-20 top-24 size-44 rounded-full bg-emerald-200/30 blur-3xl" />
 
-              <div className="relative px-5 pb-6 pt-8 text-center sm:px-8 sm:pt-10">
-                <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-white shadow-xl ring-8 ring-white/50">
-                  <div className="flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-inner">
-                    <CheckCircle2 className="size-10 text-white" strokeWidth={2.2} />
+              <div className="relative px-5 pb-4 pt-5 text-center sm:px-8 sm:pt-6">
+                <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-white shadow-xl ring-8 ring-white/50">
+                  <div className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-inner">
+                    <CheckCircle2 className="size-6 text-white" strokeWidth={2.2} />
                   </div>
                 </div>
-                <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.22em] text-emerald-700">Payment & order successful</p>
-                <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Order confirmed 🎉</h1>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Your order has been placed successfully. We’re getting it ready for you.</p>
+                <p className="mt-3 text-[11px] font-extrabold uppercase tracking-[0.22em] text-emerald-700">Payment & order successful</p>
+                <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-950 sm:text-4xl">Order confirmed 🎉</h1>
+                <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500">Your order has been placed successfully. We’re getting it ready for you.</p>
 
-                <div className="relative mx-auto mt-7 h-36 max-w-lg overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-b from-sky-50 to-white">
-                  <div className="absolute inset-x-0 bottom-8 border-t-2 border-dashed border-slate-200" />
-                  <div className="absolute bottom-4 left-5 flex size-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"><Store className="size-4" /></div>
-                  <div className="absolute bottom-4 right-5 flex size-8 items-center justify-center rounded-xl bg-blue-100 text-blue-700"><MapPinned className="size-4" /></div>
-                  <div className="absolute left-1/2 top-5 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-[10px] font-bold text-emerald-700 shadow-sm">
+                <div className="relative mx-auto mt-4 h-24 max-w-lg overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-b from-sky-50 to-white">
+                  <div className="absolute inset-x-0 bottom-6 border-t-2 border-dashed border-slate-200" />
+                  <div className="absolute bottom-3 left-4 flex size-6 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"><Store className="size-4" /></div>
+                  <div className="absolute bottom-3 right-4 flex size-6 items-center justify-center rounded-xl bg-blue-100 text-blue-700"><MapPinned className="size-4" /></div>
+                  <div className="absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-2 rounded-full border border-emerald-100 bg-white px-3 py-1.5 text-[10px] font-bold text-emerald-700 shadow-sm">
                     <span className="size-2 animate-pulse rounded-full bg-emerald-500" /> Preparing your order
                   </div>
-                  <div className="absolute bottom-6 left-[18%] animate-[bounce_2.4s_ease-in-out_infinite]">
-                    <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-cyan-600 text-white shadow-lg shadow-blue-900/20">
-                      <Truck className="size-8" />
+                  <div className="absolute bottom-4 left-[18%] animate-[bounce_2.4s_ease-in-out_infinite]">
+                    <div className="flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-cyan-600 text-white shadow-lg shadow-blue-900/20">
+                      <Truck className="size-6" />
                     </div>
                   </div>
-                  <div className="absolute bottom-3 left-[28%] h-1 w-[44%] overflow-hidden rounded-full bg-slate-100">
+                  <div className="absolute bottom-2 left-[28%] h-1 w-[44%] overflow-hidden rounded-full bg-slate-100">
                     <div className="h-full w-1/2 animate-pulse rounded-full bg-gradient-to-r from-emerald-400 to-cyan-500" />
                   </div>
                 </div>
 
-                <div className="mt-5 grid grid-cols-3 gap-2">
-                  <div className="rounded-2xl bg-emerald-50 px-3 py-3 text-center"><CheckCircle2 className="mx-auto size-5 text-emerald-600" /><p className="mt-1 text-[10px] font-bold text-emerald-800">Order placed</p></div>
-                  <div className="rounded-2xl bg-blue-50 px-3 py-3 text-center"><PackageCheck className="mx-auto size-5 text-blue-600" /><p className="mt-1 text-[10px] font-bold text-blue-800">Preparing</p></div>
-                  <div className="rounded-2xl bg-slate-50 px-3 py-3 text-center"><Truck className="mx-auto size-5 text-slate-400" /><p className="mt-1 text-[10px] font-bold text-slate-500">On the way</p></div>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <div className="rounded-2xl bg-emerald-50 px-2 py-2 text-center"><CheckCircle2 className="mx-auto size-5 text-emerald-600" /><p className="mt-0.5 text-[9px] font-bold text-emerald-800">Order placed</p></div>
+                  <div className="rounded-2xl bg-blue-50 px-2 py-2 text-center"><PackageCheck className="mx-auto size-5 text-blue-600" /><p className="mt-0.5 text-[9px] font-bold text-blue-800">Preparing</p></div>
+                  <div className="rounded-2xl bg-slate-50 px-2 py-2 text-center"><Truck className="mx-auto size-5 text-slate-400" /><p className="mt-0.5 text-[9px] font-bold text-slate-500">On the way</p></div>
                 </div>
               </div>
 
-              <div className="border-t border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-8">
+              <div className="border-t border-slate-100 bg-slate-50/70 px-4 py-3 sm:px-6">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4 text-left">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-3 text-left">
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Order number</p>
                     <p className="mt-1 font-extrabold tracking-wide text-slate-900">#{shortOrderId(confirmed.orderId)}</p>
                   </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4 text-left">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-3 text-left">
                     <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Order total</p>
                     <p className="mt-1 text-lg font-black text-primary">{formatINR(confirmed.total)}</p>
                   </div>
                 </div>
-                <div className="mt-3 flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-left">
+                <div className="mt-2 flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-3 text-left">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">{confirmed.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</span>
                   <div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700">{confirmed.fulfillment === 'delivery' ? 'Delivering to' : 'Pickup from'}</p><p className="mt-1 text-sm font-semibold leading-5 text-slate-800">{confirmed.fulfillment === 'delivery' ? (confirmed.deliveryAddress ?? 'Delivery address saved with your order') : STORE_LOCATION.label}</p></div>
                 </div>
               </div>
             </section>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="group inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-blue-900/15 transition-transform hover:-translate-y-0.5"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
-              <a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white text-sm font-bold text-emerald-700 shadow-sm hover:bg-emerald-50"><MessageCircle className="size-5" /> Send on WhatsApp</a>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-blue-900/15 transition-transform hover:-translate-y-0.5"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></Link>
+              <a href={`https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(buildWhatsAppMessage(confirmed))}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white text-sm font-bold text-emerald-700 shadow-sm hover:bg-emerald-50"><MessageCircle className="size-5" /> Send on WhatsApp</a>
             </div>
-            <Button variant="ghost" className="mt-2 min-h-11 rounded-2xl text-slate-500" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
+            <Button variant="ghost" className="mt-1 min-h-9 rounded-2xl text-slate-500" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
+            <div className="mt-1 grid grid-cols-3 gap-2 rounded-2xl border border-slate-200 bg-white/70 p-2 text-[10px] font-bold text-slate-600 shadow-sm">
+              <Link to="/orders" className="rounded-xl bg-slate-50 px-2 py-2 text-center hover:bg-slate-100">My Orders</Link>
+              <Link to="/" className="rounded-xl bg-slate-50 px-2 py-2 text-center hover:bg-slate-100">Shop Medicines</Link>
+              <a href={`tel:+${STORE_WHATSAPP}`} className="rounded-xl bg-slate-50 px-2 py-2 text-center hover:bg-slate-100">Need Help?</a>
+            </div>
           </main>
         </div>
       </div>
