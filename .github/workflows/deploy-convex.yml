@@ -11,6 +11,7 @@ on:
       - "scripts/catalog-batch-001.json"
       - "scripts/catalog-batch-002.json"
       - "scripts/catalog-batch-003a.json"
+      - "scripts/catalog-batch-004-images.json"
       - "scripts/validate-catalogue.mjs"
   workflow_dispatch:
 
@@ -57,11 +58,16 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-003a.json)" --prod
 
+      - name: Seed verified image batch 004
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-004-images.json)" --prod
+
       - name: Verify production catalogue count and records
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
-          node -e "const fs=require('fs'); const all=[1,2,3].flatMap(n=>JSON.parse(fs.readFileSync('scripts/catalog-batch-00'+n+(n===3?'a':'')+'.json','utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
+          node -e "const fs=require('fs'); const files=['scripts/catalog-batch-001.json','scripts/catalog-batch-002.json','scripts/catalog-batch-003a.json','scripts/catalog-batch-004-images.json']; const all=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
           npx convex run medicines:verifyCatalogue "$(cat /tmp/catalog-verify.json)" --prod
 
       - name: Production catalogue gate
