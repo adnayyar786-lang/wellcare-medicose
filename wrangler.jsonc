@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "wellcare-medicose-2-0",
+  "name": "wellcare-medicose",
   "compatibility_date": "2026-09-28",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
@@ -8,4 +8,4 @@
     "enabled": true
   }
 }
-// Cloudflare production deployment trigger: remove nested profile scrolling.
+// Cloudflare production deployment trigger.
