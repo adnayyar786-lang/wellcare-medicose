@@ -8,4 +8,4 @@
     "enabled": true
   }
 }
-// Cloudflare production deployment trigger.
+// Cloudflare production deployment trigger: auth cross-check + email password linking.
