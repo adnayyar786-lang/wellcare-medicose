@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from 'convex/react'
+import { useConvexAuth, useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { AdminApp } from '@/components/admin/admin-app'
 import { GoogleAuthButton } from '@/components/google-auth-button'
@@ -58,6 +58,10 @@ function AdminGate() {
         </div>
       </AdminAccessCard>
     )
+  }
+
+  if (convexAuthLoading || (user && !convexAuthenticated)) {
+    return <AdminStatus message="Connecting to the Wellcare admin service…" />
   }
 
   if (admin === undefined) {
