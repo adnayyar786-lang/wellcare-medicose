@@ -13,6 +13,7 @@ on:
       - "scripts/catalog-batch-003a.json"
       - "scripts/catalog-batch-004-images.json"
       - "scripts/validate-catalogue.mjs"
+      - "scripts/reconcile-catalogue-images.mjs"
   workflow_dispatch:
 
 concurrency:
@@ -34,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Reconcile image catalogue against existing production catalogue
+        run: node scripts/reconcile-catalogue-images.mjs
 
       - name: Validate complete catalogue before production changes
         run: node scripts/validate-catalogue.mjs
