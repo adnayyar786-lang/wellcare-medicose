@@ -351,7 +351,7 @@ function MedicinePage() {
                 </div>
               )}
 
-              <div className="mt-4 hidden gap-3 sm:flex">{purchaseButtons}</div>
+              <div className="mt-4 hidden gap-3 sm:flex" aria-hidden="true">{purchaseButtons}</div>
             </motion.div>
           </div>
         </section>
@@ -511,8 +511,10 @@ function MedicinePage() {
         )}
       </main>
 
-      <div className="fixed inset-x-0 bottom-16 z-50 border-t border-white/80 bg-white/75 px-4 py-3 shadow-[0_-18px_45px_-28px_rgba(15,23,42,.55)] backdrop-blur-2xl sm:hidden">
-        <div className="mx-auto flex max-w-7xl gap-2">{purchaseButtons}</div>
+      <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-white/80 bg-white/80 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-18px_45px_-28px_rgba(15,23,42,.6)] backdrop-blur-2xl lg:bottom-0">
+        <div className="mx-auto flex w-full max-w-7xl gap-2 sm:gap-3">
+          {purchaseButtons}
+        </div>
       </div>
     </div>
   )
