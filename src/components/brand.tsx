@@ -5,6 +5,7 @@ import { STORE_LOCATION } from '@/config/store-location'
 import { cn } from '@/lib/utils'
 
 // Wellcare Medicose brand pieces shared by every customer page.
+// confirmation-dashboard-ready
 
 const STORE_WHATSAPP = '917088252556'
 
