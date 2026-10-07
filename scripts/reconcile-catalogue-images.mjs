@@ -60,3 +60,5 @@ console.log(JSON.stringify({
   exactDuplicateNames: 0,
   note: 'Image batch contains distinct branded/pack variants; shared active ingredients are not treated as duplicate products.',
 }, null, 2));
+
+// Keep production workflow triggers aligned with verified image-registry changes.
