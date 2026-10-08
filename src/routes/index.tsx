@@ -357,6 +357,7 @@ function Home() {
   const { t, lang, toggle: toggleLang } = useLanguage()
   // Strictly separate user input from explicit suggestion selection.
   const [searchQuery, setSearchQuery] = useState('')
+  const [submittedSearchQuery, setSubmittedSearchQuery] = useState('')
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null)
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false)
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
@@ -560,7 +561,7 @@ function Home() {
   }, [medicines, searchedMedicines])
 
   const filteredMedicines = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
+    const q = submittedSearchQuery.trim().toLowerCase()
     const source = searchSource
     const terms = normalizeSearchText(q).split(/\s+/).filter(Boolean)
     const items = source.filter((m) => {
@@ -573,10 +574,10 @@ function Home() {
       return matchesCategory && matchesShop && fuzzyMatch
     })
     return rankSearchResults(items, q)
-  }, [medicines, searchedMedicines, searchQuery, activeCategory, activeShopCategory, searchSource])
+  }, [medicines, searchedMedicines, submittedSearchQuery, activeCategory, activeShopCategory, searchSource])
 
   const sameComposition = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
+    const q = submittedSearchQuery.trim().toLowerCase()
     if (!q || filteredMedicines.length === 0) return []
     const best = filteredMedicines[0]
     const key = compositionKey(best)
@@ -591,7 +592,7 @@ function Home() {
         return other === key || keyWords.every((word) => other.includes(word))
       })
       .slice(0, 6)
-  }, [medicines, searchedMedicines, searchQuery, filteredMedicines, searchSource])
+  }, [medicines, searchedMedicines, submittedSearchQuery, filteredMedicines, searchSource])
 
   const searchSuggestions = useMemo(() => {
     const q = searchQuery.trim()
@@ -622,7 +623,7 @@ function Home() {
   }, [searchSource, searchQuery, filteredMedicines])
 
   const filteredSearchMedicines = useMemo(() => {
-    if (!searchQuery.trim()) return filteredMedicines
+    if (!submittedSearchQuery.trim()) return filteredMedicines
     return filteredMedicines.filter((m) => {
       const brandOk = searchBrandFilter === 'All' || (m.manufacturer ?? '') === searchBrandFilter
       const stockOk = searchAvailabilityFilter === 'all' || (searchAvailabilityFilter === 'in' ? m.stock > 0 : m.stock <= 0)
@@ -630,7 +631,7 @@ function Home() {
       const priceOk = searchPriceFilter === 'all' || (searchPriceFilter === 'under500' ? m.price < 500 : searchPriceFilter === '500to1000' ? m.price >= 500 && m.price <= 1000 : m.price > 1000)
       return brandOk && stockOk && rxOk && priceOk
     })
-  }, [filteredMedicines, searchQuery, searchBrandFilter, searchAvailabilityFilter, searchRxFilter, searchPriceFilter])
+  }, [filteredMedicines, submittedSearchQuery, searchBrandFilter, searchAvailabilityFilter, searchRxFilter, searchPriceFilter])
 
   const recentlyViewed = useMemo(() => recentIds.map((id) => medicines.find((m) => m._id === id)).filter(Boolean) as typeof medicines, [recentIds, medicines])
   const shopCounts = useMemo(() => {
@@ -669,7 +670,7 @@ function Home() {
   const AMAZON_NAV_ITEMS = ['Pharmacy', 'Latest', 'Petcare', 'Consult', 'Adult', 'Health', 'Health Plan'] as const
   const [activeAmazonNav, setActiveAmazonNav] = useState<(typeof AMAZON_NAV_ITEMS)[number]>('Pharmacy')
 
-  useEffect(() => { setVisible(24) }, [searchQuery, activeCategory, activeShopCategory])
+  useEffect(() => { setVisible(24) }, [submittedSearchQuery, activeCategory, activeShopCategory])
 
   useEffect(() => {
     if (manufacturers.length < 2 || companyAutoPaused) return
@@ -690,7 +691,7 @@ function Home() {
     frame = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(frame)
   }, [manufacturers.length, companyAutoPaused])
-  const browsing = searchQuery.trim() !== '' || activeShopCategory !== null || activeCategory !== 'All'
+  const browsing = submittedSearchQuery.trim() !== '' || activeShopCategory !== null || activeCategory !== 'All'
 
   function selectShopCategory(name: string) {
     setActiveShopCategory((prev) => (prev === name ? null : name))
@@ -699,6 +700,7 @@ function Home() {
   }
   function clearFilters() {
     setSearchQuery('')
+    setSubmittedSearchQuery('')
     setSelectedSuggestionId(null)
     setDebouncedSearchQuery('')
     setShowSearchSuggestions(false)
@@ -713,6 +715,7 @@ function Home() {
     const value = term.trim()
     setSelectedSuggestionId(selectedId)
     setSearchQuery(value)
+    setSubmittedSearchQuery(value)
     if (value) saveSearchHistory(value)
     setShowSearchSuggestions(false)
     setActiveCategory('All')
@@ -761,7 +764,7 @@ function Home() {
     recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
     recognition.onstart = () => setListening(true)
     recognition.onend = () => setListening(false)
-    recognition.onresult = (e: any) => { const text = e.results?.[0]?.[0]?.transcript; if (text) { setSelectedSuggestionId(null); setSearchQuery(text) } }
+    recognition.onresult = (e: any) => { const text = e.results?.[0]?.[0]?.transcript; if (text) { setSelectedSuggestionId(null); setSearchQuery(text); setSubmittedSearchQuery(text) } }
     recognition.onerror = () => setListening(false)
     recognition.start()
   }
@@ -792,6 +795,7 @@ function Home() {
             const value = searchQuery.trim()
             if (!value) return
             setSelectedSuggestionId(null)
+            setSubmittedSearchQuery(value)
             saveSearchHistory(value)
             setShowSearchSuggestions(false)
             requestAnimationFrame(scrollToProducts)
@@ -837,10 +841,10 @@ function Home() {
                 </section>
               )}
               {hasQuery && searchBrands.length > 0 && (
-                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Brand suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><Tag className="size-4 text-primary" /> Brands</div><div className="flex flex-wrap gap-2">{searchBrands.map((brand) => <button key={brand} type="button" onClick={() => { setSearchBrandFilter(brand); setSearchQuery(brand); saveSearchHistory(brand); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{brand}</button>)}</div></section>
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Brand suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><Tag className="size-4 text-primary" /> Brands</div><div className="flex flex-wrap gap-2">{searchBrands.map((brand) => <button key={brand} type="button" onClick={() => { setSearchBrandFilter(brand); setSearchQuery(brand); setSubmittedSearchQuery(brand); saveSearchHistory(brand); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{brand}</button>)}</div></section>
               )}
               {hasQuery && searchCategories.length > 0 && (
-                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Category suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><PackageSearch className="size-4 text-primary" /> Categories</div><div className="flex flex-wrap gap-2">{searchCategories.map((category) => <button key={category} type="button" onClick={() => { setSearchQuery(category); setSearchHistory((prev) => prev); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{category}</button>)}</div></section>
+                <section className="border-t border-border px-2 pb-2 pt-3" aria-label="Category suggestions"><div className="mb-2 flex items-center gap-2 text-xs font-bold"><PackageSearch className="size-4 text-primary" /> Categories</div><div className="flex flex-wrap gap-2">{searchCategories.map((category) => <button key={category} type="button" onClick={() => { setSearchQuery(category); setSubmittedSearchQuery(category); setSearchHistory((prev) => prev); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="rounded-full border border-border bg-background px-3 py-2 text-xs font-medium hover:border-primary/40 hover:bg-primary/5">{category}</button>)}</div></section>
               )}
               {hasQuery && searchHealthProducts.length > 0 && (
                 <section className="border-t border-border px-2 pb-1 pt-3" aria-label="Health products"><div className="mb-2 text-xs font-bold">Health products</div><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{searchHealthProducts.map((med) => <button key={med._id} type="button" onClick={() => selectSearchSuggestion(med)} className="min-w-0 rounded-xl border border-border bg-background p-2 text-left hover:border-primary/40"><ProductImage category={med.category} shopCategory={med.shopCategory} imageUrl={med.imageUrl} alt="" className="rounded-lg ring-0" /><p className="mt-1 line-clamp-2 text-[11px] font-semibold">{med.name}</p><p className="text-xs font-bold text-primary">{formatINR(med.price)}</p></button>)}</div></section>
@@ -884,11 +888,11 @@ function Home() {
       {!browsing && <div className="mx-auto max-w-[1600px] px-3 md:hidden">
         <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
           if (item.routeKey === 'Latest') { clearFilters(); requestAnimationFrame(() => gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })); return }
-          if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
+          if (item.routeKey === 'OTC & Wellness' || item.routeKey === 'Sexual Wellness') { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(item.routeKey); setSubmittedSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts); return }
           selectShopCategory(item.routeKey)
         }} />
         <div className="px-0.5 py-3">{renderSearch('site-searchQuery')}</div>
-        <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
+        <CategoryRail title="MEDICINE TYPES" subtitle="Find by form or category" items={MEDICINE_FORM_SLIDER} onSelect={(item) => { setSelectedSuggestionId(null); setSearchQuery(item.routeKey); setSubmittedSearchQuery(item.routeKey); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} />
               </div>}
       {!browsing && <div className="hidden border-b border-border/70 bg-background md:block">
         <CategoryRail title="SHOP & CARE" subtitle="Quick access" items={SHOP_AND_CARE} onSelect={(item) => {
@@ -909,7 +913,7 @@ function Home() {
             <div className="pointer-events-none absolute inset-y-0 left-0 z-[2] w-7 rounded-l-2xl bg-gradient-to-r from-card to-transparent sm:w-10" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-[2] w-7 rounded-r-2xl bg-gradient-to-l from-card to-transparent sm:w-10" />
             <div ref={companyRailRef} className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" onMouseEnter={() => setCompanyAutoPaused(true)} onMouseLeave={() => setCompanyAutoPaused(false)} onPointerDown={() => setCompanyAutoPaused(true)} onPointerUp={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onPointerCancel={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} onTouchStart={() => setCompanyAutoPaused(true)} onTouchEnd={() => window.setTimeout(() => setCompanyAutoPaused(false), 900)} aria-label="Top brands and company slider">
-              {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-top-brand-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " brand"}>
+              {[...manufacturers, ...manufacturers].map((company, index) => <button key={company + "-top-brand-" + index} type="button" onClick={() => { setActiveShopCategory(null); setActiveCategory('All'); setSearchQuery(company); setSubmittedSearchQuery(company); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group flex h-[104px] w-[136px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-background p-2.5 text-center transition hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/[0.03] hover:shadow-md sm:h-[112px] sm:w-[150px]" aria-label={"Open " + company + " brand"}>
                 <span className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white shadow-sm transition group-hover:scale-105 sm:size-12" aria-hidden="true">
                   <span className={cn('absolute inset-0 flex items-center justify-center rounded-xl', monogramTone('company-' + company))}>
                     <span className="text-[11px] font-black tracking-tight text-white sm:text-xs">{companyMonogram(company)}</span>
@@ -931,7 +935,7 @@ function Home() {
         <SectionHeading title="Top Categories" subtitle="Explore the essentials customers shop most." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {careCollections.map((item) => (
-            <button key={item.id} type="button" onClick={() => { setActiveCategory('All'); setSearchQuery(item.query); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group relative min-h-[132px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 p-4 text-left text-white shadow-[0_10px_28px_-18px_rgba(15,23,42,0.7)] ring-1 ring-white/5 transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-16px_rgba(15,23,42,0.75)]">
+            <button key={item.id} type="button" onClick={() => { setActiveCategory('All'); setSearchQuery(item.query); setSubmittedSearchQuery(item.query); setShowSearchSuggestions(false); requestAnimationFrame(scrollToProducts) }} className="group relative min-h-[132px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 p-4 text-left text-white shadow-[0_10px_28px_-18px_rgba(15,23,42,0.7)] ring-1 ring-white/5 transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-16px_rgba(15,23,42,0.75)]">
               <div className={cn('absolute inset-0 bg-gradient-to-br opacity-95', item.tone)} />
               <div className="relative z-10"><span className="inline-flex size-9 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-[9px] font-black tracking-wider backdrop-blur-sm">{item.mark}</span><h3 className="mt-3 text-sm font-extrabold sm:text-base">{item.title}</h3><p className="mt-0.5 text-[10px] text-white/65">{item.subtitle}</p><span className="mt-3 inline-flex rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[9px] font-bold">Explore →</span></div>
               <span className="absolute -bottom-8 -right-6 size-28 rounded-full border border-white/10 bg-white/5" />
