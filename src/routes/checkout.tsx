@@ -27,7 +27,7 @@ function buildWhatsAppMessage(args: { orderId: string; total: number; customerNa
   return [`New order — ${shortOrderId(args.orderId)}`, '', `Name: ${args.customerName}`, args.fulfillment === 'delivery' ? `Delivery address: ${args.deliveryAddress ?? ''}` : 'Fulfillment: Store pickup', '', 'Items:', ...args.items.map((l) => `${l.quantity} x ${l.name} — ${formatINR(l.price * l.quantity)}`), '', `Total: ${formatINR(args.total)}`].join('\n')
 }
 function CheckoutPage() {
-  const { lines, total, mrpTotal } = useCart()
+  const { lines, total, mrpTotal, clearCart } = useCart()
   const navigate = useNavigate()
   const placeOrder = useMutation(api.orders.placeV2)
   const [fulfillment, setFulfillment] = useState<'pickup' | 'delivery'>('pickup')
@@ -69,7 +69,8 @@ function CheckoutPage() {
     if (!confirmed) return
     const root = document.getElementById('wellcare-order-confirmation')
     if (root) root.scrollTop = 0
-  }, [confirmed])
+    clearCart()
+  }, [confirmed, clearCart])
   if (lines.length === 0 && !confirmed) return <div className="mx-auto max-w-lg px-4 py-16 text-center"><p className="text-sm text-muted-foreground">Your cart is empty.</p><Link to="/" className="mt-4 inline-block text-sm text-primary underline">Continue shopping</Link></div>
   const methods = [{ key: 'upi', label: 'UPI', icon: Smartphone }, { key: 'card', label: 'Card', icon: CreditCard }, { key: 'wallet', label: 'Wallet', icon: Wallet }, { key: 'cod', label: 'Cash on Delivery', icon: Banknote }] as const
   return <div className="relative min-h-screen overflow-x-hidden bg-[#edf7f6] pb-40 text-slate-900">
