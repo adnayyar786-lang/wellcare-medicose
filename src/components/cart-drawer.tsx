@@ -37,7 +37,7 @@ export function CartDrawer() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="!z-[100] flex w-full flex-col gap-0 overflow-hidden border-l border-white/70 bg-slate-50/95 p-0 shadow-[-24px_0_70px_-30px_rgba(15,118,110,0.55)] backdrop-blur-2xl sm:max-w-3xl">
+      <SheetContent className="!z-[9999] flex w-full flex-col gap-0 overflow-hidden border-l border-white/70 bg-white p-0 shadow-[-24px_0_70px_-30px_rgba(15,118,110,0.55)] sm:max-w-3xl">
         <SheetHeader className="relative z-10 overflow-hidden border-b border-white/50 bg-gradient-to-r from-[#063b42] via-[#087f7b] to-[#0b5ea8] px-5 py-4 text-left text-white shadow-lg sm:px-6">
           <div className="absolute -right-16 -top-20 size-48 rounded-full bg-cyan-300/20 blur-3xl" /><div className="absolute -left-10 -bottom-16 size-40 rounded-full bg-emerald-300/15 blur-3xl" />
           <div className="relative flex items-center justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-inner backdrop-blur-md"><ShoppingCart className="size-5" /></span><div className="min-w-0"><SheetTitle className="text-xl font-black tracking-tight text-white">Add to Cart</SheetTitle><p className="mt-0.5 truncate text-xs text-cyan-50/85">{lines.length ? lines.length + ' items ready · Review before checkout' : 'Your Wellcare healthcare basket'}</p></div></div>{lines.length > 0 && <div className="hidden items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold backdrop-blur-md sm:flex"><Sparkles className="size-3.5 text-emerald-200" /> Smart cart</div>}</div>
