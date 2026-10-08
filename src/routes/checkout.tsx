@@ -106,140 +106,72 @@ function CheckoutPage() {
     <div className="fixed inset-x-0 bottom-16 z-30 lg:bottom-0 border-t border-white/80 bg-white/80 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
     {confirmed && createPortal(
-      <div id="wellcare-order-confirmation" className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[radial-gradient(circle_at_top_left,_#dff8ef,_transparent_32%),radial-gradient(circle_at_top_right,_#dceeff,_transparent_34%),linear-gradient(180deg,#f5fbfa_0%,#eef7fb_48%,#f7fbff_100%)] text-slate-900">
-        <div className="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden">
-          <header className="shrink-0 border-b border-white/80 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-2xl sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between gap-4">
-              <BrandLogo />
-              <div className="hidden items-center gap-5 lg:flex">
-                {['Medicines','Diagnostics','Consultation','Home Care','Store Pickup'].map((item) => <span key={item} className="text-[11px] font-bold text-slate-500">{item}</span>)}
+      <div id="wellcare-order-confirmation" className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[#f5fbfa] text-slate-900">
+        <div className="flex h-full min-h-0 flex-col">
+          <header className="shrink-0 border-b border-[#b8e5df] bg-white px-3 py-2.5 shadow-sm sm:px-5">
+            <div className="mx-auto flex max-w-[1500px] items-center gap-4">
+              <BrandLogo className="shrink-0" />
+              <div className="hidden min-w-0 flex-1 items-center gap-4 md:flex">
+                <div className="h-9 w-px bg-[#cde9e5]" />
+                <div><p className="text-[10px] font-black uppercase tracking-[0.12em] text-blue-800">Hybrid Healthcare Platform</p><p className="mt-1 text-[9px] font-semibold text-slate-500">Medicines <span className="mx-1 text-emerald-500">|</span> Diagnostics <span className="mx-1 text-emerald-500">|</span> Consultation <span className="mx-1 text-emerald-500">|</span> Home Care <span className="mx-1 text-emerald-500">|</span> Store Pickup</p></div>
               </div>
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-emerald-700">Order confirmed</span>
+              <div className="hidden items-center gap-2 lg:flex"><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-bold text-emerald-700">✓ Genuine Medicines</span><span className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-bold text-blue-700">♙ Licensed Pharmacy</span><span className="rounded-full bg-slate-50 px-2.5 py-1 text-[9px] font-bold text-slate-600">🔒 Secure</span></div>
+              <span className="ml-auto rounded-full bg-emerald-600 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-white">Order confirmed</span>
             </div>
           </header>
 
-          <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 sm:px-5 sm:py-4 lg:px-7">
-            <div className="grid gap-3 lg:grid-cols-12">
-              <section className="relative overflow-hidden rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-[0_18px_60px_-35px_rgba(15,118,110,.35)] backdrop-blur-2xl lg:col-span-4">
-                <div className="absolute -right-16 -top-16 size-40 rounded-full bg-emerald-200/50 blur-3xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-14 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/60"><div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600"><CheckCircle2 className="size-6 text-white" /></div></div>
-                    <div><p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">1 · Order confirmed</p><h1 className="mt-0.5 text-2xl font-black tracking-tight">Healthcare journey started</h1><p className="text-xs text-slate-500">Your order has been successfully placed.</p></div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-[9px] font-bold uppercase text-slate-400">Order ID</p><p className="mt-1 text-sm font-black">#{shortOrderId(confirmed.orderId)}</p></div>
-                    <div className="rounded-xl bg-slate-50 p-2.5"><p className="text-[9px] font-bold uppercase text-slate-400">Total paid</p><p className="mt-1 text-sm font-black text-primary">{formatINR(confirmed.total)}</p></div>
-                  </div>
-                  <div className="mt-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 p-3 text-white shadow-lg">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">{confirmed.fulfillment === 'delivery' ? 'Estimated delivery' : 'Pickup ready'}</p>
-                    <p className="mt-1 text-xl font-black">{confirmed.fulfillment === 'delivery' ? 'Today · 30–90 min*' : 'We’ll notify you when ready'}</p>
-                    <p className="mt-1 text-[10px] text-white/80">*Final timing depends on preparation and coverage.</p>
-                  </div>
-                  <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-sm font-extrabold text-white shadow-lg"><PackageCheck className="size-5" /> Track your order <ArrowRight className="size-4" /></Link>
-                </div>
+          <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2 sm:px-3 sm:py-3 lg:px-4">
+            <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-2.5 lg:grid-cols-12">
+              <section className="card lg:col-span-4">
+                <div className="flex items-start gap-3"><div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-emerald-100"><CheckCircle2 className="size-7 text-emerald-600"/></div><div className="min-w-0"><p className="eyebrow">1 · Order Confirmed — Your Healthcare Journey</p><h1 className="mt-1 text-xl font-black sm:text-2xl">Order Confirmed!</h1><p className="text-[10px] text-slate-500">Your order has been successfully placed.</p></div></div>
+                <div className="mt-3 grid grid-cols-2 gap-2"><div className="mini"><b>Order ID</b><strong>WC{shortOrderId(confirmed.orderId)}</strong></div><div className="mini"><b>Placed</b><strong>Just now</strong></div></div>
+                <div className="mt-2 grid grid-cols-4 gap-1.5">{[['💊','Medicine'],['🧪','Lab Test'],['👨‍⚕️','Consult'],['🛒','Pickup']].map(([i,t])=><div className="rounded-xl bg-slate-50 p-2 text-center" key={t}><span className="text-lg">{i}</span><p className="mt-1 text-[8px] font-bold">{t}</p></div>)}</div>
+                <div className="mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 p-2.5 text-white"><p className="text-[8px] font-bold uppercase tracking-wider text-white/75">{confirmed.fulfillment==='delivery'?'Estimated Delivery':'Store Pickup'}</p><p className="mt-0.5 text-base font-black">{confirmed.fulfillment==='delivery'?'Today · 30–90 min':'We’ll notify you when ready'}</p></div>
               </section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-widest text-primary">2 · Your healthcare journey</p><h2 className="mt-1 text-lg font-black">Live order progress</h2></div><span className="rounded-full bg-emerald-50 px-2 py-1 text-[9px] font-black text-emerald-700">● LIVE</span></div>
-                <div className="mt-3 space-y-2.5">
-                  {['Order confirmed','Pharmacy preparing','Packed','Out for delivery','Delivered'].map((step,i)=><div key={step} className="flex items-center gap-3"><span className={cn('flex size-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black', i<2 ? 'border-emerald-500 bg-emerald-500 text-white' : i===2 ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white text-slate-400')}>{i<2 ? <Check className="size-3.5" /> : i+1}</span><div className={cn('h-9 flex-1 rounded-xl px-3 py-2 text-xs font-bold', i===1 ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-50 text-slate-600')}>{step}{i===1 && <span className="float-right text-[9px] font-black text-emerald-600">CURRENT</span>}</div></div>)}
-                </div>
-                <div className="mt-3 rounded-2xl border border-slate-100 bg-gradient-to-br from-sky-50 to-white p-3">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-500"><span>Live tracking</span><span className="text-emerald-600">● Live</span></div>
-                  <div className="relative mt-2 h-24 overflow-hidden rounded-xl bg-[linear-gradient(135deg,#dff4e8_25%,#e8f2ff_25%,#e8f2ff_50%,#dff4e8_50%,#dff4e8_75%,#e8f2ff_75%)] bg-[length:42px_42px]">
-                    <div className="absolute left-[18%] top-[58%] size-4 rounded-full bg-blue-600 ring-4 ring-white/80" /><div className="absolute right-[18%] top-[25%] size-5 rounded-full bg-emerald-500 ring-4 ring-white/80" />
-                    <div className="absolute left-[20%] top-[58%] h-1 w-[62%] rotate-[-22deg] rounded-full bg-blue-600/80" /><Truck className="absolute right-[30%] top-[35%] size-6 text-blue-700" />
-                  </div>
-                </div>
-              </section>
+              <section className="card lg:col-span-3"><div className="flex items-center justify-between"><div><p className="eyebrow">2 · Your Healthcare Journey</p><h2 className="card-title">Live progress</h2></div><span className="pill">● LIVE</span></div><div className="mt-2.5 space-y-1.5">{['Order Confirmed','Pharmacy Preparing','Packed','Out for Delivery','Delivered'].map((s,i)=><div key={s} className={cn('flex items-center gap-2 rounded-lg px-2 py-1.5 text-[9px] font-bold',i===1?'bg-emerald-100 text-emerald-800':'bg-slate-50 text-slate-600')}><span className={cn('flex size-5 shrink-0 items-center justify-center rounded-full text-[8px]',i<2?'bg-emerald-600 text-white':'border border-slate-300 bg-white')}>{i<2?'✓':i+1}</span><span className="flex-1">{s}</span>{i===1&&<span className="text-[7px] font-black text-emerald-600">CURRENT</span>}</div>)}</div><Link to="/track/$orderId" params={{orderId:confirmed.orderId}} className="mt-2 block rounded-lg bg-emerald-600 py-2 text-center text-[9px] font-black text-white">Track Your Order</Link></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">3 · Order details</p><h2 className="mt-1 text-lg font-black">Fulfilment & payment</h2>
-                <div className="mt-3 space-y-2">
-                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-3"><p className="text-[9px] font-bold uppercase text-slate-400">Fulfilment method</p><p className="mt-1 flex items-center gap-2 text-sm font-bold">{confirmed.fulfillment === 'delivery' ? <Truck className="size-4 text-emerald-600" /> : <Store className="size-4 text-emerald-600" />}{confirmed.fulfillment === 'delivery' ? 'Express Home Delivery' : 'Store Pickup'}</p></div>
-                  <div className="rounded-xl border border-slate-100 bg-white p-3"><p className="text-[9px] font-bold uppercase text-slate-400">Delivery / pickup point</p><p className="mt-1 text-xs font-semibold leading-5">{confirmed.fulfillment === 'delivery' ? confirmed.deliveryAddress : STORE_LOCATION.label}</p></div>
-                  <div className="rounded-xl border border-slate-100 bg-white p-3"><p className="text-[9px] font-bold uppercase text-slate-400">Payment status</p><p className="mt-1 flex items-center gap-2 text-sm font-bold text-emerald-700"><CheckCircle2 className="size-4" /> Successful & secure</p></div>
-                  <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-3"><p className="text-[9px] font-bold uppercase text-emerald-700">Prescription status</p><p className="mt-1 text-sm font-black text-emerald-800">✓ Verified / not required</p></div>
-                </div>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">3 · Order Details</p><h2 className="card-title">Order information</h2><div className="mt-2 space-y-1.5"><div className="mini"><b>Fulfilment Method</b><strong>{confirmed.fulfillment==='delivery'?'🚚 Express Delivery':'🏪 Store Pickup'}</strong></div><div className="mini"><b>{confirmed.fulfillment==='delivery'?'Delivery Address':'Store'}</b><strong className="line-clamp-2">{confirmed.fulfillment==='delivery'?confirmed.deliveryAddress:STORE_LOCATION.label}</strong></div><div className="mini"><b>Payment</b><strong className="text-emerald-700">✓ Successful</strong></div><div className="mini"><b>Prescription</b><strong className="text-emerald-700">✓ Verified / N/A</strong></div></div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-7">
-                <div className="flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-widest text-primary">4 · Items in your order</p><h2 className="mt-1 text-lg font-black">{confirmed.items.length} {confirmed.items.length === 1 ? 'item' : 'items'}</h2></div><Link to="/orders" className="text-[10px] font-black text-primary">View all orders</Link></div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {confirmed.items.slice(0,6).map((item)=><div key={item.medicineId} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-2.5 shadow-sm"><div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"><ShoppingBag className="size-5" /></div><div className="min-w-0 flex-1"><p className="truncate text-xs font-bold">{item.name}</p><p className="mt-0.5 text-[10px] text-slate-500">Qty: {item.quantity}</p></div><p className="text-sm font-black">{formatINR(item.price * item.quantity)}</p></div>)}
-                </div>
-              </section>
+              <section className="card lg:col-span-2"><div className="flex items-center justify-between"><div><p className="eyebrow">4 · Items</p><h2 className="card-title">{confirmed.items.length} Items</h2></div><Link to="/orders" className="text-[8px] font-black text-primary">View All</Link></div><div className="mt-2 space-y-1.5">{confirmed.items.slice(0,4).map(x=><div className="flex items-center gap-1.5 rounded-lg border bg-white p-1.5" key={x.medicineId}><span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm">💊</span><span className="min-w-0 flex-1 truncate text-[8px] font-bold">{x.name}<small className="block text-[7px] font-normal text-slate-400">Qty: {x.quantity}</small></span><b className="text-[8px]">{formatINR(x.price*x.quantity)}</b></div>)}</div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-5">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">5 · Price breakdown</p><h2 className="mt-1 text-lg font-black">Order total</h2>
-                <div className="mt-3 space-y-2 text-xs"><div className="flex justify-between text-slate-500"><span>Items total</span><span>{formatINR(confirmed.total)}</span></div><div className="flex justify-between text-slate-500"><span>Delivery fee</span><span className="text-emerald-700">FREE / included</span></div><div className="flex justify-between text-slate-500"><span>Discounts</span><span className="text-emerald-700">Applied at checkout</span></div><div className="flex justify-between rounded-xl bg-emerald-50 p-3 text-base font-black text-emerald-800"><span>Total paid</span><span>{formatINR(confirmed.total)}</span></div></div>
-              </section>
+              <section className="card lg:col-span-2"><p className="eyebrow">5 · Price Breakdown</p><h2 className="card-title">Payment summary</h2><div className="mt-3 space-y-2 text-[9px]"><Row label="Items Total" value={formatINR(confirmed.total)}/><Row label="Delivery Fee" value="₹0"/><Row label="Discount" value="Applied"/><div className="flex justify-between rounded-lg bg-emerald-100 p-2 font-black text-emerald-800"><span>Total Paid</span><span>{formatINR(confirmed.total)}</span></div></div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">6 · Prescription & consultation</p><h2 className="mt-1 text-lg font-black">Care support</h2>
-                <div className="mt-3 grid grid-cols-2 gap-2"><button className="rounded-xl bg-emerald-50 p-3 text-left"><CheckCircle2 className="size-5 text-emerald-600" /><p className="mt-2 text-xs font-black">Prescription</p><p className="text-[9px] text-slate-500">View status</p></button><button className="rounded-xl bg-blue-50 p-3 text-left"><MessageCircle className="size-5 text-blue-600" /><p className="mt-2 text-xs font-black">Consultation</p><p className="text-[9px] text-slate-500">Get pharmacist help</p></button></div>
-              </section>
+              <section className="card lg:col-span-2"><p className="eyebrow">6 · Prescription & Consultation</p><div className="mt-2 rounded-xl bg-blue-700 p-3 text-white"><CheckCircle2 className="size-5"/><p className="mt-1 text-[10px] font-black">Prescription Verified</p><p className="text-[8px] text-white/75">Your order is cleared.</p></div><button className="mt-2 w-full rounded-lg border py-2 text-[8px] font-black text-primary">Consult Pharmacist</button></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">7 · Lab tests & home collection</p><h2 className="mt-1 text-lg font-black">Diagnostics</h2>
-                <div className="mt-3 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 p-3 text-white"><p className="text-[9px] font-bold uppercase tracking-wider text-white/80">Home sample collection</p><p className="mt-1 text-sm font-black">Book a lab test</p><p className="mt-1 text-[10px] text-white/80">CBC, diabetes, thyroid & more</p><button className="mt-3 w-full rounded-xl bg-white/95 py-2 text-[10px] font-black text-violet-700">Explore Diagnostics</button></div>
-              </section>
+              <section className="card lg:col-span-2"><p className="eyebrow">7 · Lab Test & Home Sample Collection</p><div className="mt-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 p-3 text-white"><p className="text-[8px] font-bold uppercase">Home Sample Collection</p><p className="mt-1 text-xs font-black">Book a Lab Test</p><p className="mt-1 text-[8px] text-white/80">CBC · Diabetes · Thyroid & more</p></div><button className="mt-2 w-full rounded-lg border py-2 text-[8px] font-black text-primary">Explore Diagnostics</button></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">8 · Store pickup information</p><h2 className="mt-1 text-lg font-black">Pickup ready flow</h2>
-                <div className="mt-3 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 p-4 text-white"><p className="text-[9px] font-bold uppercase text-white/75">Pickup location</p><p className="mt-1 font-black">{STORE_LOCATION.label}</p><p className="mt-2 text-[10px] text-white/80">We’ll notify you when your order is ready. Carry a valid ID.</p><button className="mt-3 w-full rounded-xl bg-white py-2 text-[10px] font-black text-emerald-700">View Store on Map</button></div>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">8 · Store Pickup Information</p><div className="mt-2 rounded-xl bg-emerald-600 p-3 text-white"><p className="text-[8px] font-bold uppercase text-white/75">{confirmed.fulfillment==='pickup'?'Ready for Pickup':'Store Support'}</p><p className="mt-1 text-xs font-black">{STORE_LOCATION.label}</p><p className="mt-1 text-[8px] text-white/80">{confirmed.fulfillment==='pickup'?'We’ll notify you when ready.':'Pickup is available as an alternate option.'}</p></div><button className="mt-2 w-full rounded-lg border py-2 text-[8px] font-black text-primary">View Store on Map</button></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">9 · Additional options</p><h2 className="mt-1 text-lg font-black">Make care easier</h2>
-                <div className="mt-3 grid grid-cols-2 gap-2">{[['♡','Add to Wishlist'],['↻','Set Refill Reminder'],['⟳','Buy Again'],['☏','Chat with Pharmacist']].map(([icon,label])=><button key={label} className="rounded-xl border border-slate-100 bg-white p-3 text-left shadow-sm"><span className="text-lg text-primary">{icon}</span><p className="mt-1 text-[10px] font-black">{label}</p></button>)}</div>
-              </section>
+              <section className="card lg:col-span-2"><p className="eyebrow">9 · Additional Options</p><div className="mt-2 grid grid-cols-2 gap-1.5">{[['♡','Wishlist'],['🔔','Refill'],['↻','Buy Again'],['💬','Pharmacist']].map(([i,t])=><button className="rounded-lg border bg-white p-2 text-left" key={t}><span className="text-base">{i}</span><p className="mt-0.5 text-[8px] font-black">{t}</p></button>)}</div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">10 · Notifications & updates</p><h2 className="mt-1 text-lg font-black">Stay updated</h2>
-                <div className="mt-3 space-y-2">{['Push Notifications','SMS','WhatsApp','Email'].map((label)=><div key={label} className="flex items-center justify-between rounded-xl bg-slate-50 p-2.5"><span className="flex items-center gap-2 text-xs font-bold"><Bell className="size-4 text-primary" />{label}</span><span className="h-5 w-9 rounded-full bg-emerald-500 p-0.5"><span className="block size-4 translate-x-4 rounded-full bg-white shadow-sm" /></span></div>)}</div>
-                <a href="https://wa.me/917088252556" target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-[10px] font-black text-primary">Manage notifications</a>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">10 · Notifications & Updates</p><div className="mt-2 space-y-1.5">{['Push Notifications','SMS','WhatsApp','Email'].map((x,i)=><div className="flex items-center justify-between rounded-lg bg-slate-50 px-2 py-1.5 text-[8px] font-bold" key={x}><span>{x}</span><span className={cn('rounded-full px-1.5 py-0.5 text-[7px]',i<3?'bg-emerald-100 text-emerald-700':'bg-slate-200 text-slate-500')}>{i<3?'ON':'OFF'}</span></div>)}</div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-5">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">11 · Live order tracking</p><h2 className="mt-1 text-lg font-black">Delivery journey</h2>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2"><div className="relative h-32 overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#dff4e8_25%,#e8f2ff_25%,#e8f2ff_50%,#dff4e8_50%,#dff4e8_75%,#e8f2ff_75%)] bg-[length:44px_44px]"><div className="absolute left-5 top-20 size-4 rounded-full bg-blue-600 ring-4 ring-white/80" /><div className="absolute right-6 top-7 size-5 rounded-full bg-emerald-500 ring-4 ring-white/80" /><div className="absolute left-8 top-20 h-1 w-[65%] rotate-[-25deg] bg-blue-600/80" /><Truck className="absolute left-1/2 top-12 size-6 text-blue-700" /></div><div className="space-y-2">{['Pharmacy preparing','Packed','Out for delivery','Delivered'].map((s,i)=><div key={s} className="flex items-center gap-2 text-[10px] font-bold"><span className={cn('size-3 rounded-full',i<2?'bg-emerald-500':'bg-slate-200')} />{s}{i===0&&<span className="ml-auto text-emerald-600">Current</span>}</div>)}</div></div>
-                <Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="mt-3 flex min-h-10 items-center justify-center rounded-xl bg-primary text-xs font-black text-white">Open live tracking</Link>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">11 · Live Order Tracking</p><div className="mt-2 grid gap-2 sm:grid-cols-2"><div className="relative h-24 overflow-hidden rounded-xl bg-[#e8f3ec]"><span className="absolute left-4 top-14 size-3 rounded-full bg-blue-600 ring-4 ring-white"/><span className="absolute right-4 top-4 size-4 rounded-full bg-emerald-600 ring-4 ring-white"/><div className="absolute left-6 top-14 h-1 w-[70%] rotate-[-22deg] bg-blue-600"/><Truck className="absolute right-1/2 top-8 size-5 text-blue-700"/></div><div className="space-y-1.5 text-[8px] font-bold"><p>🟢 Pharmacy preparing</p><p>🟢 Packed</p><p>🔵 Out for delivery</p><p>⚪ Delivered</p></div></div><Link to="/track/$orderId" params={{orderId:confirmed.orderId}} className="mt-2 block rounded-lg bg-primary py-2 text-center text-[8px] font-black text-white">Open Live Tracking</Link></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">12 · My care journey</p><h2 className="mt-1 text-lg font-black">All services in one place</h2>
-                <div className="mt-3 space-y-2">{['Consultation · Completed','Prescription · Verified','Medicines · Out for delivery','Lab test · Available','Reports · View when ready'].map((s,i)=><div key={s} className="flex items-center gap-2 rounded-xl bg-slate-50 p-2 text-[10px] font-bold"><span className={cn('flex size-5 items-center justify-center rounded-full',i<2?'bg-emerald-500 text-white':'bg-blue-50 text-blue-600')}>{i<2?'✓':'•'}</span>{s}<ChevronRight className="ml-auto size-3 text-slate-400" /></div>)}</div>
-                <button className="mt-3 w-full rounded-xl bg-slate-900 py-2.5 text-[10px] font-black text-white">View full care journey</button>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">12 · My Care Journey</p><div className="mt-2 space-y-1.5">{['Consultation · Completed','Prescription · Verified','Medicines · In Progress','Lab Test · Available','Report · Awaiting Sample'].map((x,i)=><div className="flex items-center gap-2 rounded-lg bg-slate-50 p-1.5 text-[8px] font-bold" key={x}><span className={cn('size-2 rounded-full',i<2?'bg-emerald-500':'bg-blue-400')}/><span className="flex-1">{x}</span><ChevronRight className="size-3 text-slate-400"/></div>)}</div><button className="mt-2 w-full rounded-lg bg-blue-800 py-2 text-[8px] font-black text-white">View Full Journey</button></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">13 · Health plan</p><h2 className="mt-1 text-lg font-black">Wellcare benefits</h2>
-                <div className="mt-3 rounded-2xl bg-gradient-to-br from-blue-800 to-cyan-700 p-3 text-white"><p className="text-xs font-black">Wellcare Health Plan</p><p className="mt-1 text-[9px] text-white/70">Your benefits</p><div className="mt-3 space-y-1.5 text-[9px]"><p>✓ Consultation credits</p><p>✓ Diagnostic discounts</p><p>✓ Free delivery on eligible orders</p><p>✓ Exclusive member offers</p></div><button className="mt-3 w-full rounded-xl bg-white py-2 text-[10px] font-black text-blue-800">View plans & upgrade</button></div>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">13 · Health Plan & Membership</p><div className="mt-2 rounded-xl bg-gradient-to-br from-blue-800 to-cyan-700 p-3 text-white"><p className="text-[10px] font-black">♛ Wellcare Health Plan</p><p className="mt-2 text-[8px]">✓ Consultation Credits</p><p className="text-[8px]">✓ Diagnostic Discounts</p><p className="text-[8px]">✓ Free Delivery Benefits</p><button className="mt-2 w-full rounded-lg bg-white py-2 text-[8px] font-black text-blue-800">View Plans & Upgrade</button></div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">14 · Documents & invoice</p><h2 className="mt-1 text-lg font-black">Your records</h2>
-                <div className="mt-3 space-y-2">{['Invoice','Prescription','Lab Report','Consultation Summary','Payment Receipt'].map((label)=><button key={label} className="flex w-full items-center gap-3 rounded-xl border border-slate-100 bg-white p-2.5 text-left"><FileText className="size-4 text-primary" /><span className="flex-1"><span className="block text-xs font-bold">{label}</span><span className="text-[9px] text-slate-400">View / Download</span></span><ChevronRight className="size-4 text-slate-400" /></button>)}</div>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">14 · Documents & Invoice</p><div className="mt-2 space-y-1.5">{['Invoice','Prescription','Lab Report','Consultation Summary','Payment Receipt'].map(x=><button className="flex w-full items-center gap-2 rounded-lg border bg-white p-2 text-left" key={x}><FileText className="size-4 text-primary"/><span className="flex-1 text-[8px] font-black">{x}<small className="block text-[7px] font-normal text-slate-400">View / Download</small></span><ChevronRight className="size-3 text-slate-400"/></button>)}</div></section>
 
-              <section className="rounded-[1.5rem] border border-white/90 bg-white/78 p-4 shadow-sm backdrop-blur-2xl lg:col-span-5">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary">15 · Next steps & quick actions</p><h2 className="mt-1 text-lg font-black">We’ve got you covered</h2>
-                <div className="mt-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-cyan-50 p-3"><p className="text-sm font-black">Your order is on the way to being ready.</p><p className="mt-1 text-[10px] text-slate-500">Track delivery, manage reminders, or get help whenever you need it.</p></div>
-                <div className="mt-3 grid grid-cols-2 gap-2"><Link to="/track/$orderId" params={{ orderId: confirmed.orderId }} className="rounded-xl bg-primary py-2.5 text-center text-[10px] font-black text-white">Track Order</Link><a href="https://wa.me/917088252556" target="_blank" rel="noopener noreferrer" className="rounded-xl border border-emerald-200 bg-white py-2.5 text-center text-[10px] font-black text-emerald-700">Need Help?</a><Link to="/orders" className="rounded-xl border border-slate-100 bg-white py-2.5 text-center text-[10px] font-black">My Orders</Link><button onClick={() => navigate({ to: '/' })} className="rounded-xl border border-slate-100 bg-white py-2.5 text-[10px] font-black">Shop Again</button></div>
-              </section>
+              <section className="card lg:col-span-3"><p className="eyebrow">15 · Next Steps & Quick Actions</p><div className="mt-2 rounded-xl bg-emerald-50 p-3"><p className="text-[10px] font-black text-emerald-800">Your order is on the way!</p><p className="mt-1 text-[8px] text-slate-500">Sit back and relax — we’ll keep you updated.</p></div><Link to="/track/$orderId" params={{orderId:confirmed.orderId}} className="mt-2 flex items-center justify-center gap-1 rounded-lg bg-primary py-2.5 text-[9px] font-black text-white">Track Order <ArrowRight className="size-3"/></Link><div className="mt-1.5 grid grid-cols-2 gap-1.5"><Link to="/orders" className="rounded-lg border bg-white py-2 text-center text-[8px] font-bold">My Orders</Link><button onClick={()=>navigate({to:'/'})} className="rounded-lg border bg-white py-2 text-[8px] font-bold">Shop Again</button></div></section>
             </div>
-
-            <div className="mt-4 flex flex-col items-center justify-between gap-3 rounded-[1.5rem] border border-white/90 bg-white/70 px-4 py-3 text-center shadow-sm backdrop-blur-2xl sm:flex-row sm:text-left">
-              <div><p className="text-sm font-black">Wellcare Medicose · Your Health, Our Priority</p><p className="text-[10px] text-slate-500">Genuine medicines · Licensed pharmacy · Secure payments · 24/7 support</p></div>
-              <Button variant="outline" className="rounded-xl" onClick={() => navigate({ to: '/' })}><ShoppingBag className="mr-2 size-4" /> Continue shopping</Button>
-            </div>
+            <div className="mx-auto mt-2 max-w-[1500px] rounded-xl border border-[#b8e5df] bg-white px-3 py-2 text-center text-[8px] font-semibold text-slate-500">Wellcare Medicose · Your Health, Our Priority · Genuine Medicines · Licensed Pharmacy · Secure Payments · 24/7 Support</div>
           </main>
         </div>
+        <style>{`
+          #wellcare-order-confirmation .card{border:1px solid #d8ebe8;background:rgba(255,255,255,.94);border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(15,118,110,.07)}
+          #wellcare-order-confirmation .eyebrow{font-size:8px;line-height:1.2;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#0b7890}
+          #wellcare-order-confirmation .card-title{margin-top:3px;font-size:13px;line-height:1.2;font-weight:900}
+          #wellcare-order-confirmation .mini{border-radius:9px;background:#f7faf9;padding:7px}
+          #wellcare-order-confirmation .mini b{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.04em;color:#94a3b8}
+          #wellcare-order-confirmation .mini strong{display:block;margin-top:3px;font-size:9px;line-height:1.25}
+          #wellcare-order-confirmation .pill{border-radius:999px;background:#e8f8ef;padding:4px 7px;font-size:7px;font-weight:900;color:#07814f}
+          #wellcare-order-confirmation button,#wellcare-order-confirmation a{transition:none}
+        `}</style>
       </div>
     , document.body)
-
 
   </div>
 }
