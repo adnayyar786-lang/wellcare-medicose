@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation } from 'convex/react'
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 import { Store, Truck, Smartphone, CreditCard, Banknote, Wallet, Lock, CheckCircle2, MessageCircle, MapPinned, Check, Clock3, UserRound, Phone, FileText, ChevronRight, PackageCheck, Sparkles, ArrowRight, ShoppingBag, Bell } from 'lucide-react'
 import { api } from '../../convex/_generated/api'
@@ -58,10 +59,15 @@ function CheckoutPage() {
       saveLastPhone(customerPhone.trim())
       try { window.localStorage.removeItem(COUPON_KEY) } catch { /* ignore */ }
       setConfirmed({ orderId: result.orderId, total: result.total, customerName, fulfillment, deliveryAddress: fulfillment === 'delivery' ? address : undefined, items: lines })
-      clearCart()
+      // Keep the cart mounted while the confirmation portal takes over the viewport.
     } catch (err) { toast.error(err instanceof Error ? err.message : 'Could not place order') }
     finally { setPlacing(false) }
   }
+  useEffect(() => {
+    if (!confirmed) return
+    const root = document.getElementById('wellcare-order-confirmation')
+    if (root) root.scrollTop = 0
+  }, [confirmed])
   if (lines.length === 0 && !confirmed) return <div className="mx-auto max-w-lg px-4 py-16 text-center"><p className="text-sm text-muted-foreground">Your cart is empty.</p><Link to="/" className="mt-4 inline-block text-sm text-primary underline">Continue shopping</Link></div>
   const methods = [{ key: 'upi', label: 'UPI', icon: Smartphone }, { key: 'card', label: 'Card', icon: CreditCard }, { key: 'wallet', label: 'Wallet', icon: Wallet }, { key: 'cod', label: 'Cash on Delivery', icon: Banknote }] as const
   return <div className="relative min-h-screen overflow-x-hidden bg-[#edf7f6] pb-40 text-slate-900">
@@ -99,8 +105,8 @@ function CheckoutPage() {
     </main>
     <div className="fixed inset-x-0 bottom-16 z-30 lg:bottom-0 border-t border-white/80 bg-white/80 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
-    {confirmed && (
-      <div className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[radial-gradient(circle_at_top_left,_#dff8ef,_transparent_32%),radial-gradient(circle_at_top_right,_#dceeff,_transparent_34%),linear-gradient(180deg,#f5fbfa_0%,#eef7fb_48%,#f7fbff_100%)] text-slate-900">
+    {confirmed && createPortal(
+      <div id="wellcare-order-confirmation" className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[radial-gradient(circle_at_top_left,_#dff8ef,_transparent_32%),radial-gradient(circle_at_top_right,_#dceeff,_transparent_34%),linear-gradient(180deg,#f5fbfa_0%,#eef7fb_48%,#f7fbff_100%)] text-slate-900">
         <div className="mx-auto flex h-full w-full max-w-7xl flex-col overflow-hidden">
           <header className="shrink-0 border-b border-white/80 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-2xl sm:px-6 lg:px-8">
             <div className="flex items-center justify-between gap-4">
@@ -232,7 +238,8 @@ function CheckoutPage() {
           </main>
         </div>
       </div>
-    )}
+    , document.body)
+
 
   </div>
 }
