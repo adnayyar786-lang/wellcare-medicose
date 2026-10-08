@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { ClipboardList, Search, Store, Truck, X, Package, ChevronRight, CheckCircle2, MapPin, CreditCard, Headphones, RefreshCw, Clock3, ShoppingBag, FileText, Phone, MessageCircle } from 'lucide-react'
 
@@ -33,6 +33,7 @@ function OrdersPage() {
   const [phone, setPhone] = useState('')
   const [searchedPhone, setSearchedPhone] = useState('')
   const [selectedId, setSelectedId] = useState<Id<'orders'> | null>(null)
+  const [orderScope, setOrderScope] = useState<'all' | 'active' | 'past'>('all')
   const { addToCart } = useCart()
   const orders = useQuery(api.orders.findByPhone, searchedPhone ? { phone: searchedPhone } : 'skip')
 
@@ -54,11 +55,13 @@ function OrdersPage() {
   const active = orders?.filter((o) => ['placed', 'preparing', 'ready_or_out'].includes(o.status)) ?? []
   const past = orders?.filter((o) => ['completed', 'cancelled'].includes(o.status)) ?? []
   const all = orders ?? []
-  const selected = all.find((o) => o._id === selectedId) ?? all[0] ?? null
+  const visibleOrders = useMemo(() => orderScope === 'active' ? active : orderScope === 'past' ? past : all, [orderScope, active, past, all])
+  const selected = visibleOrders.find((o) => o._id === selectedId) ?? visibleOrders[0] ?? null
 
   useEffect(() => {
-    if (all.length && (!selectedId || !all.some((o) => o._id === selectedId))) setSelectedId(all[0]._id)
-  }, [all, selectedId])
+    if (visibleOrders.length && (!selectedId || !visibleOrders.some((o) => o._id === selectedId))) setSelectedId(visibleOrders[0]._id)
+    if (!visibleOrders.length) setSelectedId(null)
+  }, [visibleOrders, selectedId])
 
   return <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.10),transparent_28%),linear-gradient(135deg,#f7fbfc_0%,#edf7fb_52%,#f8fafc_100%)]">
     <header className="sticky top-0 z-30 border-b border-white/70 bg-white/80 shadow-sm backdrop-blur-xl">
@@ -81,10 +84,10 @@ function OrdersPage() {
           <div className="border-b border-slate-100 px-4 py-4 sm:px-5"><div className="flex items-center justify-between"><div><h2 className="font-black text-slate-900">Order history</h2><p className="mt-0.5 text-xs text-slate-500">{all.length} orders found</p></div><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">{active.length} active</span></div>
           </div>
           <div className="flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3 sm:px-5">
-            {[['All', all.length], ['Active', active.length], ['Past', past.length]].map(([label, count]) => <span key={String(label)} className={cn('shrink-0 rounded-full px-3 py-1.5 text-xs font-bold', label === 'All' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500')}>{label} <span className="ml-1 opacity-80">{count}</span></span>)}
+            {([['All', all.length, 'all'], ['Active', active.length, 'active'], ['Past', past.length, 'past'] ] as const).map(([label, count, scope]) => <button key={label} type="button" onClick={() => setOrderScope(scope)} className={cn('shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition-colors', orderScope === scope ? 'bg-primary text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:bg-slate-200')}>{label} <span className="ml-1 opacity-80">{count}</span></button>)}
           </div>
           <div className="max-h-[720px] space-y-2.5 overflow-y-auto p-3 sm:p-4">
-            {all.map((order) => <OrderListCard key={order._id} order={order} selected={selected?._id === order._id} onSelect={() => setSelectedId(order._id)} onReorder={() => handleReorder(order)} />)}
+            {visibleOrders.map((order) => <OrderListCard key={order._id} order={order} selected={selected?._id === order._id} onSelect={() => setSelectedId(order._id)} onReorder={() => handleReorder(order)} />)}
           </div>
         </section>
         <OrderDetail order={selected} onReorder={selected ? () => handleReorder(selected) : undefined} />
@@ -102,12 +105,13 @@ function NoOrders() {
 
 function OrderListCard({ order, selected, onSelect, onReorder }: { order: Order; selected: boolean; onSelect: () => void; onReorder: () => void }) {
   const canCancel = order.status === 'placed' || order.status === 'preparing'
-  return <button type="button" onClick={onSelect} className={cn('w-full rounded-2xl border bg-white/80 p-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-4', selected ? 'border-primary/50 bg-emerald-50/70 ring-2 ring-primary/10' : 'border-slate-100')}>
-    <div className="flex items-start gap-3"><div className={cn('flex size-11 shrink-0 items-center justify-center rounded-xl', selected ? 'bg-gradient-to-br from-primary to-brand-blue text-white' : 'bg-slate-100 text-primary')}>{order.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm font-black text-slate-900">#{order._id.slice(-8).toUpperCase()}</span><span className={cn('rounded-full px-2.5 py-1 text-[10px] font-bold', ORDER_STATUS_BADGE[order.status] ?? 'bg-slate-100 text-slate-600')}>{orderStatusLabel(order.status, order.fulfillment)}</span></div><p className="mt-1 text-[11px] text-slate-400">{order._creationTime ? new Date(order._creationTime).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'Recent order'}</p><div className="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500"><span>{order.items.length} items</span><span>•</span><span className="font-black text-slate-800">{formatINR(order.total)}</span></div><div className="mt-3 flex gap-1.5 overflow-hidden">{order.items.slice(0,3).map((it,i)=><span key={i} className="truncate rounded-lg bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-500">{it.name}</span>)}{order.items.length>3&&<span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500">+{order.items.length-3}</span>}</div></div><ChevronRight className={cn('mt-1 size-4 shrink-0', selected ? 'text-primary' : 'text-slate-300')} /></div>
-    <div className="mt-3 flex gap-2 border-t border-slate-100 pt-3"><Link onClick={(e)=>e.stopPropagation()} to="/track/$orderId" params={{orderId:order._id}} className="inline-flex min-h-9 flex-1 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-brand-blue text-[11px] font-bold text-white">Track Order</Link>{order.status === 'completed' && <Button type="button" size="sm" variant="outline" className="h-9 rounded-lg text-[11px]" onClick={(e)=>{e.stopPropagation();onReorder()}}>Reorder</Button>}{canCancel && <span className="inline-flex items-center rounded-lg bg-rose-50 px-2.5 text-[10px] font-bold text-rose-600">Cancel available</span>}</div>
-  </button>
+  return <article className={cn('w-full rounded-2xl border bg-white/80 p-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-4', selected ? 'border-primary/50 bg-emerald-50/70 ring-2 ring-primary/10' : 'border-slate-100')}>
+    <button type="button" onClick={onSelect} className="w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-xl">
+      <div className="flex items-start gap-3"><div className={cn('flex size-11 shrink-0 items-center justify-center rounded-xl', selected ? 'bg-gradient-to-br from-primary to-brand-blue text-white' : 'bg-slate-100 text-primary')}>{order.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm font-black text-slate-900">#{order._id.slice(-8).toUpperCase()}</span><span className={cn('rounded-full px-2.5 py-1 text-[10px] font-bold', ORDER_STATUS_BADGE[order.status] ?? 'bg-slate-100 text-slate-600')}>{orderStatusLabel(order.status, order.fulfillment)}</span></div><p className="mt-1 text-[11px] text-slate-400">{order._creationTime ? new Date(order._creationTime).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'Recent order'}</p><div className="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500"><span>{order.items.length} items</span><span>•</span><span className="font-black text-slate-800">{formatINR(order.total)}</span></div><div className="mt-3 flex gap-1.5 overflow-hidden">{order.items.slice(0,3).map((it,i)=><span key={i} className="truncate rounded-lg bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-500">{it.name}</span>)}{order.items.length>3&&<span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500">+{order.items.length-3}</span>}</div></div><ChevronRight className={cn('mt-1 size-4 shrink-0', selected ? 'text-primary' : 'text-slate-300')} /></div>
+    </button>
+    <div className="mt-3 flex gap-2 border-t border-slate-100 pt-3"><Link to="/track/$orderId" params={{orderId:order._id}} className="inline-flex min-h-9 flex-1 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-brand-blue text-[11px] font-bold text-white">Track Order</Link>{order.status === 'completed' && <Button type="button" size="sm" variant="outline" className="h-9 rounded-lg text-[11px]" onClick={onReorder}>Reorder</Button>}{canCancel && <span className="inline-flex items-center rounded-lg bg-rose-50 px-2.5 text-[10px] font-bold text-rose-600">Cancel available</span>}</div>
+  </article>
 }
-
 function OrderDetail({ order, onReorder }: { order: Order | null; onReorder?: () => void }) {
   const [cancelOpen, setCancelOpen] = useState(false)
   const [selected, setSelected] = useState<Set<Id<'medicines'>>>(new Set())
