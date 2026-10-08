@@ -16,6 +16,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
+function Row({ label, value }: { label: string; value: string }) { return <div className="flex justify-between gap-2"><span>{label}</span><b>{value}</b></div> }
+
 export const Route = createFileRoute('/checkout')({ head: () => ({ meta: [{ title: 'Checkout — Wellcare Medicose' }] }), component: CheckoutPage })
 const STORE_WHATSAPP = '917088252556'
 const COUPON_KEY = 'wellcare-coupon'
@@ -25,7 +27,7 @@ function buildWhatsAppMessage(args: { orderId: string; total: number; customerNa
   return [`New order — ${shortOrderId(args.orderId)}`, '', `Name: ${args.customerName}`, args.fulfillment === 'delivery' ? `Delivery address: ${args.deliveryAddress ?? ''}` : 'Fulfillment: Store pickup', '', 'Items:', ...args.items.map((l) => `${l.quantity} x ${l.name} — ${formatINR(l.price * l.quantity)}`), '', `Total: ${formatINR(args.total)}`].join('\n')
 }
 function CheckoutPage() {
-  const { lines, total, mrpTotal, clearCart } = useCart()
+  const { lines, total, mrpTotal } = useCart()
   const navigate = useNavigate()
   const placeOrder = useMutation(api.orders.placeV2)
   const [fulfillment, setFulfillment] = useState<'pickup' | 'delivery'>('pickup')
