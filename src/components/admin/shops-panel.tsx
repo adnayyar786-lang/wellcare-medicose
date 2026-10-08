@@ -8,6 +8,9 @@ import { formatINR } from './format'
 export function ShopsPanel() {
  const shops = useQuery(api.shops.list, {})
  const [shopId,setShopId] = useState<string>('')
+ const [staffEmail,setStaffEmail]=useState('')
+ const [staffName,setStaffName]=useState('')
+ const [staffRole,setStaffRole]=useState<'staff'|'manager'|'billing'|'inventory'>('staff')
  const [name,setName] = useState('')
  const [address,setAddress] = useState('')
  const [staff,setStaff] = useState('Rao Sahab, Shahnawaz')
