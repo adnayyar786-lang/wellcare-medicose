@@ -69,7 +69,7 @@ function PurchaseActionBar({ children }: { children: React.ReactNode }) {
 function MedicinePage() {
   const { id } = useParams({ from: '/medicine/$id' })
   const med = useQuery(api.medicines.getById, { id: id as Id<'medicines'> })
-  const { results: allMedicines } = usePaginatedQuery(api.medicines.list, {}, { initialNumItems: 250 })
+  const { results: allMedicines } = usePaginatedQuery(api.medicines.list, {}, { initialNumItems: 80 })
   const { addToCart } = useCart()
   const { isSaved, toggle } = useWishlist()
   const navigate = useNavigate()
