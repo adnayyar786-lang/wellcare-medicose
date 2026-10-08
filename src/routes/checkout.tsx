@@ -18,6 +18,14 @@ import { Textarea } from '@/components/ui/textarea'
 
 function Row({ label, value }: { label: string; value: string }) { return <div className="flex justify-between gap-2"><span>{label}</span><b>{value}</b></div> }
 
+function ConfirmationPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
+  return createPortal(children, document.body)
+}
+
+
 export const Route = createFileRoute('/checkout')({ head: () => ({ meta: [{ title: 'Checkout — Wellcare Medicose' }] }), component: CheckoutPage })
 const STORE_WHATSAPP = '917088252556'
 const COUPON_KEY = 'wellcare-coupon'
@@ -108,7 +116,8 @@ function CheckoutPage() {
     </main>
     <div className="fixed inset-x-0 bottom-16 z-30 lg:bottom-0 border-t border-white/80 bg-white/80 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
     <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
-    {confirmed && createPortal(
+    <ConfirmationPortal>
+      {confirmed && (
       <div id="wellcare-order-confirmation" className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[#f5fbfa] text-slate-900">
         <div className="flex h-full min-h-0 flex-col">
           <header className="shrink-0 border-b border-[#b8e5df] bg-white px-3 py-2.5 shadow-sm sm:px-5">
@@ -174,7 +183,8 @@ function CheckoutPage() {
           #wellcare-order-confirmation button,#wellcare-order-confirmation a{transition:none}
         `}</style>
       </div>
-    , document.body)
+      )}
+    </ConfirmationPortal>
 
   </div>
 }
