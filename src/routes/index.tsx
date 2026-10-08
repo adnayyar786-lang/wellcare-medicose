@@ -761,14 +761,14 @@ function Home() {
 
   function handleMicClick() {
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition
-    if (!SpeechRecognition) { toast.error('Voice searchQuery is not supported on this device/browser'); return }
+    if (!SpeechRecognition) { toast.error('Voice search is not supported on this device/browser'); return }
     const recognition = new SpeechRecognition()
     recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN'
     recognition.onstart = () => setListening(true)
     recognition.onend = () => setListening(false)
     recognition.onresult = (e: any) => { const text = e.results?.[0]?.[0]?.transcript; if (text) { setSelectedSuggestionId(null); setSearchQuery(text); setSubmittedSearchQuery(text) } }
     recognition.onerror = () => setListening(false)
-    recognition.start()
+    try { recognition.start() } catch { setListening(false); toast.error('Voice search could not be started. Please try again.') }
   }
   function renderSearch(id: string) {
     const hasQuery = searchQuery.trim().length >= 2
