@@ -6,6 +6,7 @@ const files = [
   'scripts/catalog-batch-003a.json',
   'scripts/catalog-batch-004-images.json',
   'scripts/catalog-batch-005-images.json',
+  'scripts/catalog-batch-006-veterinary.json',
 ];
 
 const seen = new Map();

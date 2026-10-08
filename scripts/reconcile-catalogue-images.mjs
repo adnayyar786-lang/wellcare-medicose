@@ -7,7 +7,7 @@ const productionFiles = [
   'scripts/catalog-batch-002.json',
   'scripts/catalog-batch-003a.json',
 ];
-const imageBatchFiles = ['scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json'];
+const imageBatchFiles = ['scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json','scripts/catalog-batch-006-veterinary.json'];
 
 const load = (file) => JSON.parse(fs.readFileSync(file, 'utf8')).items;
 const production = productionFiles.flatMap(load);
