@@ -1,4 +1,5 @@
 // Production catalogue gate includes verified veterinary batch 006.
+// Registry registration fix retrigger.
 import fs from 'node:fs';
 
 const files = [
