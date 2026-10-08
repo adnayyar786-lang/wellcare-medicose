@@ -152,9 +152,18 @@ function isChildActive(child: NavChild, item: NavItem, nav: NavState) {
 function SidebarContent({ nav, onGo }: { nav: NavState; onGo: (t: NavTarget) => void }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-border px-5 py-4">
-        <p className="text-base font-semibold tracking-tight text-primary">Wellcare Medicose</p>
-        <p className="text-xs text-muted-foreground">Pharmacy Command Center</p>
+      <div className="border-b border-white/10 px-5 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-400 text-lg font-black text-slate-950 shadow-lg shadow-emerald-500/20">W</div>
+          <div className="min-w-0">
+            <p className="truncate text-base font-black tracking-tight text-white">Wellcare</p>
+            <p className="text-[11px] font-bold tracking-[0.22em] text-emerald-300">MEDICOSE</p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">Admin Control Center</p>
+          <p className="mt-0.5 text-xs text-slate-200">Healthcare operations</p>
+        </div>
       </div>
       <nav aria-label="Admin" className="flex-1 min-h-0 space-y-0.5 overflow-y-auto overscroll-contain touch-pan-y p-3">
         {NAV.map((item) => {
@@ -167,10 +176,10 @@ function SidebarContent({ nav, onGo }: { nav: NavState; onGo: (t: NavTarget) => 
                 onClick={() => onGo({ section: item.id })}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors motion-reduce:transition-none',
+                  'group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all motion-reduce:transition-none',
                   active
-                    ? 'bg-primary/10 font-medium text-primary'
-                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                    ? 'bg-gradient-to-r from-emerald-500/25 to-cyan-500/10 font-bold text-white shadow-sm ring-1 ring-emerald-400/20'
+                    : 'text-slate-300 hover:bg-white/[0.07] hover:text-white',
                 )}
               >
                 <Icon className="size-4 shrink-0" />
@@ -187,11 +196,11 @@ function SidebarContent({ nav, onGo }: { nav: NavState; onGo: (t: NavTarget) => 
                           disabled={!child.target}
                           onClick={() => child.target && onGo(child.target)}
                           className={cn(
-                            'flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-xs transition-colors motion-reduce:transition-none',
+                            'flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left text-xs transition-colors motion-reduce:transition-none',
                             childActive
-                              ? 'font-medium text-primary'
-                              : 'text-muted-foreground hover:text-foreground',
-                            !child.target && 'cursor-not-allowed opacity-60 hover:text-muted-foreground',
+                              ? 'font-bold text-emerald-300'
+                              : 'text-slate-400 hover:text-white',
+                            !child.target && 'cursor-not-allowed opacity-50 hover:text-slate-400',
                           )}
                         >
                           {child.label}
@@ -217,7 +226,7 @@ const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? o
 function HeaderSearch({ onSearch }: { onSearch: (q: string) => void }) {
   const [value, setValue] = useState('')
   return (
-    <div className="relative ml-4 hidden w-full max-w-xs md:block">
+    <div className="relative ml-4 hidden w-full max-w-xl md:block">
       <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
@@ -228,9 +237,9 @@ function HeaderSearch({ onSearch }: { onSearch: (q: string) => void }) {
             setValue('')
           }
         }}
-        placeholder="Search orders — name, phone, ID"
+        placeholder="Search orders, customers, medicines, stores…"
         aria-label="Search orders"
-        className="h-9 pl-9"
+        className="h-10 rounded-xl border-slate-200 bg-slate-50/80 pl-9 shadow-inner focus-visible:ring-emerald-500/30"
       />
     </div>
   )
@@ -395,19 +404,23 @@ export function AdminApp({ adminEmail }: { adminEmail: string | null }) {
     <MotionConfig reducedMotion="user">
       <SectionBoundary label="the admin panel">
       <AdminDataProvider>
-      <div className="min-h-screen bg-background text-foreground lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
-        <aside className="dark sticky top-0 hidden h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:block">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.08),transparent_28%),linear-gradient(180deg,#f8fbff_0%,#f4f8fb_100%)] text-foreground lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
+        <aside className="dark sticky top-0 hidden h-screen border-r border-slate-800/80 bg-[linear-gradient(180deg,#06243a_0%,#041a2b_48%,#062333_100%)] text-slate-100 shadow-2xl shadow-slate-950/10 lg:block">
           <SidebarContent nav={nav} onGo={go} />
         </aside>
 
         <div className="min-w-0">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/90 px-4 backdrop-blur lg:px-8">
+          <header className="sticky top-0 z-30 flex h-[68px] items-center gap-3 border-b border-slate-200/80 bg-white/90 px-4 shadow-sm backdrop-blur-xl lg:px-8">
             <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
               <Menu className="size-5" />
             </Button>
-            <p className="truncate text-sm font-semibold">{PAGE_TITLE[nav.section]}</p>
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-600">Super Admin • Control Center</p>
+              <p className="truncate text-base font-black tracking-tight text-slate-900">{PAGE_TITLE[nav.section]}</p>
+            </div>
             <HeaderSearch onSearch={(q) => go({ section: 'orders', search: q })} />
-            <div className="ml-auto flex items-center gap-1">
+            <div className="ml-auto flex items-center gap-2">
+              <span className="hidden rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 xl:inline-flex">● Systems healthy</span>
               <SectionBoundary
                 label="notifications"
                 fallback={
@@ -449,7 +462,7 @@ export function AdminApp({ adminEmail }: { adminEmail: string | null }) {
             </SheetContent>
           </Sheet>
 
-          <main className="mx-auto w-full max-w-7xl px-4 py-6 lg:px-8">
+          <main className="mx-auto w-full max-w-[1500px] px-3 py-4 sm:px-5 lg:px-7 lg:py-6">
             <motion.div
               key={nav.section}
               initial={{ opacity: 0, y: 6 }}
