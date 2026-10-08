@@ -40,11 +40,11 @@ function Greeting() {
   const part = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening'
   return (
     <FadeIn>
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600">
         {now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
       </p>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Good {part}, Admin</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Here&apos;s what&apos;s happening with your pharmacy today.</p>
+      <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Good {part}, Admin 👋</h1>
+      <p className="mt-1 text-sm text-slate-500">Here&apos;s what&apos;s happening across your pharmacy today.</p>
     </FadeIn>
   )
 }
@@ -69,7 +69,7 @@ function OverviewBlocks({ onNavigate }: { onNavigate: (t: NavTarget) => void }) 
 
   if (data === undefined) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         <Skeleton className="h-24 w-full rounded-xl bg-muted" />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -161,7 +161,7 @@ function OverviewBlocks({ onNavigate }: { onNavigate: (t: NavTarget) => void }) 
   return (
     <div className="space-y-6">
       <FadeIn>
-        <Panel title="Needs attention now">
+        <Panel title="Needs attention now" className="border-emerald-100 bg-white/90 shadow-sm">
           {attention.length === 0 ? (
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
               <CheckCircle2 className="size-4 text-emerald-600" />
@@ -187,7 +187,7 @@ function OverviewBlocks({ onNavigate }: { onNavigate: (t: NavTarget) => void }) 
       </FadeIn>
 
       <FadeIn delay={0.04}>
-        <Panel title="Quick Actions">
+        <Panel title="Quick Actions" className="border-slate-200/80 bg-white/90 shadow-sm">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[
               { label: 'Add Medicine', icon: Plus, go: () => onNavigate({ section: 'medicines', scrollTo: 'add-medicine' }) },
