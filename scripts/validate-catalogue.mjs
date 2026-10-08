@@ -1,3 +1,4 @@
+// Production catalogue gate includes verified veterinary batch 006.
 import fs from 'node:fs';
 
 const files = [
