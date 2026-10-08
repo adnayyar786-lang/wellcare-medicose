@@ -44,10 +44,10 @@ function OrdersPage() {
   const past = orders?.filter((o) => ['completed','cancelled'].includes(o.status)) ?? []
 
   return <div className="min-h-screen bg-slate-50/70">
-    <header className="sticky top-0 z-20 border-b border-border bg-card/95 backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3"><BrandLogo /><Link to="/" className="rounded-lg px-3 py-2 text-sm font-medium text-primary hover:bg-secondary">Continue shopping</Link></div></header>
+    <header className="sticky top-0 z-20 border-b border-border bg-card/95"><div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3"><BrandLogo /><Link to="/" className="rounded-lg px-3 py-2 text-sm font-medium text-primary hover:bg-secondary">Continue shopping</Link></div></header>
     <main className="mx-auto max-w-3xl px-4 py-5 pb-10">
       <div><h1 className="text-2xl font-extrabold tracking-tight">My Orders</h1><p className="mt-1 text-sm text-muted-foreground">Track active deliveries, pickup orders and past purchases.</p></div>
-      <div className="mt-4 flex gap-2"><Input inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone number used while ordering" className="h-12 rounded-xl bg-card" onKeyDown={(e) => e.key === 'Enter' && handleSearch()} /><Button className="h-12 rounded-xl px-4" onClick={handleSearch} aria-label="Find orders"><Search className="size-4" /></Button></div>
+      <div className="mt-4 flex gap-2"><Input inputMode="tel" value={phone} onChange={(e) => { const value = e.target.value; setPhone(value); if (value.trim() !== searchedPhone.trim()) setSearchedPhone('') }} placeholder="Phone number used while ordering" className="h-12 rounded-xl bg-card" onKeyDown={(e) => e.key === 'Enter' && handleSearch()} /><Button className="h-12 rounded-xl px-4" onClick={handleSearch} aria-label="Find orders"><Search className="size-4" /></Button></div>
 
       {searchedPhone && <div className="mt-6 space-y-7">
         {orders === undefined ? <><Skeleton className="h-36 w-full rounded-3xl" /><Skeleton className="h-28 w-full rounded-3xl" /></> : orders.length === 0 ? <div className="rounded-3xl border border-dashed border-border bg-card px-4 py-12 text-center"><ClipboardList className="mx-auto size-8 text-muted-foreground" /><p className="mt-3 font-semibold">No orders found</p><p className="mt-1 text-xs text-muted-foreground">Check the phone number used while ordering.</p></div> : <>
