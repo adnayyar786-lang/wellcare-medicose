@@ -602,7 +602,7 @@ function Home() {
 
   const searchBrands = useMemo(() => {
     const q = normalizeSearchText(searchQuery)
-    if (!q) return []
+    if (q.length < 2) return []
     return Array.from(new Set(searchSource.map((m) => m.manufacturer).filter(Boolean) as string[]))
       .filter((brand) => normalizeSearchText(brand).includes(q) || normalizeSearchText(brand).split(/\s+/).some((part) => part.startsWith(q)))
       .slice(0, 4)
@@ -610,7 +610,7 @@ function Home() {
 
   const searchCategories = useMemo(() => {
     const q = normalizeSearchText(searchQuery)
-    if (!q) return []
+    if (q.length < 2) return []
     return Array.from(new Set(searchSource.flatMap((m) => [m.category, m.shopCategory].filter(Boolean) as string[])))
       .filter((category) => normalizeSearchText(category).includes(q))
       .slice(0, 5)
@@ -618,7 +618,7 @@ function Home() {
 
   const searchHealthProducts = useMemo(() => {
     const q = searchQuery.trim()
-    if (!q) return []
+    if (q.length < 2) return []
     return rankSearchResults(searchSource.filter((m) => m.shopCategory !== 'Pet Care' && !m.requiresPrescription), q).slice(0, 4)
   }, [searchSource, searchQuery, filteredMedicines])
 
@@ -769,7 +769,7 @@ function Home() {
     recognition.start()
   }
   function renderSearch(id: string) {
-    const hasQuery = searchQuery.trim().length > 0
+    const hasQuery = searchQuery.trim().length >= 2
     const showPanel = showSearchSuggestions
     return (
       <div className="relative z-[210] rounded-[1.35rem] border-2 border-primary/20 bg-gradient-to-r from-primary/[0.07] via-white to-brand-teal/[0.07] p-1.5 shadow-[0_10px_30px_-14px_rgba(15,23,42,0.55)]">
