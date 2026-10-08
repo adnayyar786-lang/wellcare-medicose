@@ -10,12 +10,19 @@ import { Tabs,TabsContent,TabsList,TabsTrigger } from '@/components/ui/tabs'
 import { LayoutDashboard,ReceiptText,Package,ShoppingCart,RotateCcw,ClipboardList,LogOut,WalletCards,Users,FileCheck,BarChart3 } from 'lucide-react'
 
 export function StaffApp(){
- const signOut=signOutFirebase,session=useQuery(api.staff.me),dash=useQuery(api.staff.dashboard),meds=useQuery(api.staff.medicines,{}),orders=useQuery(api.staff.orders,{}),tasks=useQuery(api.staff.tasks,{}),rxs=useQuery(api.staff.prescriptions,{}),reports=useQuery(api.staff.reports,{})
+ const signOut=signOutFirebase,session=useQuery(api.staff.me)
+ const dash=useQuery(api.staff.dashboard,session ? {} : 'skip')
+ const meds=useQuery(api.staff.medicines,session ? {} : 'skip')
+ const orders=useQuery(api.staff.orders,session ? {} : 'skip')
+ const tasks=useQuery(api.staff.tasks,session ? {} : 'skip')
+ const rxs=useQuery(api.staff.prescriptions,session ? {} : 'skip')
+ const reports=useQuery(api.staff.reports,session ? {} : 'skip')
  const start=useMutation(api.staff.startShift),close=useMutation(api.staff.closeShift),sale=useMutation(api.staff.createSale),adjust=useMutation(api.staff.adjustStock),ret=useMutation(api.staff.createReturn),orderStatus=useMutation(api.staff.updateOrderStatus),taskUpdate=useMutation(api.staff.updateTask),verifyRx=useMutation(api.staff.verifyPrescription),saveCustomer=useMutation(api.staff.saveCustomer)
  const [tab,setTab]=useState('dashboard'),[search,setSearch]=useState(''),[cart,setCart]=useState<any[]>([]),[customer,setCustomer]=useState(''),[phone,setPhone]=useState(''),[payment,setPayment]=useState<any>('cash'),[discount,setDiscount]=useState(''),[rxId,setRxId]=useState(''),[msg,setMsg]=useState(''),[orderFilter,setOrderFilter]=useState('all'),[selectedOrder,setSelectedOrder]=useState<any>(null),[lastOrderCount,setLastOrderCount]=useState(0),notifiedRef=useRef(false)
+ useEffect(()=>{const pending=(orders??[]).filter((o:any)=>o.status==='placed').length;if(!notifiedRef.current){setLastOrderCount(pending);notifiedRef.current=true;return}if(pending>lastOrderCount){setMsg('🔔 New customer order received — open Orders to process it.');setTab('orders')}setLastOrderCount(pending)},[orders,lastOrderCount]);
  if(session===undefined) return <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6"><p className="text-sm text-muted-foreground">Checking staff access…</p></main>
  if(!session) return <main className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white"><section className="max-w-md rounded-3xl border border-white/10 bg-white/[0.06] p-7 text-center"><h1 className="text-xl font-bold">Staff access denied</h1><p className="mt-2 text-sm text-slate-300">This Gmail is not an active admin-approved staff account.</p></section></main>
- useEffect(()=>{const pending=(orders??[]).filter((o:any)=>o.status==='placed').length;if(!notifiedRef.current){setLastOrderCount(pending);notifiedRef.current=true;return}if(pending>lastOrderCount){setMsg('🔔 New customer order received — open Orders to process it.');setTab('orders')}setLastOrderCount(pending)},[orders,lastOrderCount]);
+
  if(dash===undefined)return <div className="min-h-screen grid place-items-center bg-slate-50">Loading staff portal…</div>
  const filtered=(meds??[]).filter(m=>!search||m.name.toLowerCase().includes(search.toLowerCase())||(m.barcode??'').includes(search)).slice(0,30)
  const subtotal=cart.reduce((n,i)=>n+i.price*i.quantity,0),disc=Math.min(Number(discount)||0,subtotal),total=subtotal-disc
