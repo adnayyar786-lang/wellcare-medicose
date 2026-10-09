@@ -13,6 +13,7 @@ const files = [
   'scripts/catalog-batch-008-shelf-medicines.json',
   'scripts/catalog-batch-009-price-pending.json',
   'scripts/catalog-batch-010-photo-shelf-pending.json',
+  'scripts/catalog-batch-011-photo-unconfirmed.json',
 ];
 
 const seen = new Map();

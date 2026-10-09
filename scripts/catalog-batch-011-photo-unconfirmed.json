@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "name": "Lactulose Solution IP - exact brand and pack pending",
+      "category": "Digestive Care - Constipation",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] The shelf label reads Lactulose Solution IP; exact brand, concentration, pack size, manufacturer and product photo could not be verified from the supplied image. Fill details from the physical pack before sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Wormnil - exact product and pack pending",
+      "category": "Pet Care - Deworming",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] The label appears to read Wormnil, but the exact product, species indication, formulation, pack size and manufacturer could not be verified from the supplied image. Confirm physical pack before sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "CRUX - exact product and pack pending",
+      "category": "Medicines - Unconfirmed Label",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] The box label appears to read CRUX; exact medicine name, formulation, strength, pack size and manufacturer are not legible enough to confirm. Confirm the physical pack before sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Possible Neo Sight label - identity pending",
+      "category": "Unidentified Shelf Product",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] The label may read Neo Sight, but the product identity cannot be confirmed from the supplied photo. Do not sell until the physical label is checked and the exact item is identified.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    }
+  ]
+}
