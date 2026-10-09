@@ -1,0 +1,17 @@
+{
+  "items": [
+    {
+      "name": "Meftal-P Suspension Mango Flavour - 60 ml",
+      "category": "Pediatric Medicines - Fever & Pain",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Mefenamic Acid 100 mg/5 ml oral suspension, mango flavour. Bottle of 60 ml.",
+      "price": 27.22,
+      "mrpPrice": 34.9,
+      "stock": 20,
+      "requiresPrescription": true,
+      "manufacturer": "Blue Cross Laboratories Pvt Ltd",
+      "imageUrl": "https://cdn01.pharmeasy.in/dam/productsnowatermark/I34087/meftal-p-mango-flavour-bottle-of-60ml-suspension-front-2-1757409426-non-watermarked.jpg?dim=320x320&dpr=1&q=100",
+      "batchNumber": "PHYSICAL-BATCH-PENDING"
+    }
+  ]
+}
