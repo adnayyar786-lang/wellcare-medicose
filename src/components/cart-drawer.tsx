@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { ShoppingCart, Tag, Trash2, Plus, Minus, ArrowRight, ShieldCheck, PackageCheck, ClipboardList, Truck, CreditCard, MapPin, Sparkles, ChevronRight } from 'lucide-react'
 import { useCart } from '@/hooks/use-cart'
@@ -17,6 +17,7 @@ export function CartDrawer() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [couponCode, setCouponCode] = useState('')
+  const skipHomeOnClose = useRef(false)
   useEffect(() => {
     function onOpen() { setOpen(true) }
     window.addEventListener(OPEN_CART_EVENT, onOpen)
@@ -33,10 +34,24 @@ export function CartDrawer() {
     try { window.localStorage.setItem(COUPON_KEY, code) } catch { /* ignore */ }
     toast.success(`Coupon ${code} will be applied at checkout`)
   }
-  function handleContinue() { setOpen(false); navigate({ to: '/checkout' }) }
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen)
+    if (nextOpen) return
+    if (skipHomeOnClose.current) {
+      skipHomeOnClose.current = false
+      return
+    }
+    // Closing the cart with Back, Escape, or the backdrop returns customers home.
+    navigate({ to: '/' })
+  }
+  function handleContinue() {
+    skipHomeOnClose.current = true
+    setOpen(false)
+    navigate({ to: '/checkout' })
+  }
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="!z-[9999] flex w-full flex-col gap-0 overflow-hidden border-l border-white/70 bg-white p-0 shadow-[-24px_0_70px_-30px_rgba(15,118,110,0.55)] sm:max-w-3xl">
         <SheetHeader className="relative z-10 overflow-hidden border-b border-white/50 bg-gradient-to-r from-[#063b42] via-[#087f7b] to-[#0b5ea8] px-5 py-4 text-left text-white shadow-lg sm:px-6">
           <div className="absolute -right-16 -top-20 size-48 rounded-full bg-cyan-300/20 blur-3xl" /><div className="absolute -left-10 -bottom-16 size-40 rounded-full bg-emerald-300/15 blur-3xl" />
