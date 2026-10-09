@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "name": "Neeri Syrup - price and pack size pending",
+      "category": "Ayurveda & Herbal",
+      "shopCategory": "Ayurveda & Herbal",
+      "description": "[PRICE_PENDING] Neeri label is visible on the uploaded shelf photo; exact variant, pack size and composition need physical-label confirmation. Price to be updated.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Urodil Syrup - price and pack size pending",
+      "category": "Ayurveda & Herbal",
+      "shopCategory": "Ayurveda & Herbal",
+      "description": "[PRICE_PENDING] Urodil label is visible on the uploaded shelf photo; exact variant, pack size and composition need physical-label confirmation. Price to be updated.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "R2-Ton Syrup - price and pack size pending",
+      "category": "Ayurveda & Herbal",
+      "shopCategory": "Ayurveda & Herbal",
+      "description": "[PRICE_PENDING] R2-Ton label is visible on the uploaded shelf photo; exact variant, pack size and composition need physical-label confirmation. Price to be updated.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    }
+  ]
+}

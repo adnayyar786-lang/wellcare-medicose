@@ -145,7 +145,8 @@ function MedicinePage() {
 
   const { mrp, pct: discountPct } = discountOf(med.price, med.mrpPrice)
   const saved = isSaved(med._id)
-  const out = med.stock <= 0
+  const pricePending = med.price <= 0
+  const out = med.stock <= 0 || pricePending
   const maxQty = Math.max(1, Math.min(med.stock, 10))
   const shopCategory = med.shopCategory ?? DEFAULT_SHOP_CATEGORY
   const brand = info.brand?.trim() || med.manufacturer?.trim() || 'Wellcare Medicose'
@@ -197,10 +198,10 @@ function MedicinePage() {
 
   const purchaseButtons = (
     <>
-      <Button variant="outline" size="lg" className="h-12 flex-1 rounded-2xl border-primary/25 bg-white/80 font-bold shadow-sm" disabled={out} onClick={handleAddToCart}>
+      <Button variant="outline" size="lg" className="h-12 flex-1 rounded-2xl border-primary/25 bg-white/80 font-bold shadow-sm" disabled={out || pricePending} onClick={handleAddToCart}>
         <ShoppingBag className="mr-2 size-4" /> Add to Cart
       </Button>
-      <Button size="lg" className="h-12 flex-1 rounded-2xl bg-primary font-bold shadow-lg shadow-primary/20" disabled={out} onClick={handleBuyNow}>
+      <Button size="lg" className="h-12 flex-1 rounded-2xl bg-primary font-bold shadow-lg shadow-primary/20" disabled={out || pricePending} onClick={handleBuyNow}>
         Buy Now <ArrowRight className="ml-2 size-4" />
       </Button>
     </>
@@ -327,12 +328,12 @@ function MedicinePage() {
 
               <div className="mt-6 rounded-[1.75rem] border border-white/90 bg-white/65 p-5 shadow-sm backdrop-blur-xl">
                 <div className="flex flex-wrap items-end gap-3">
-                  <span className="text-4xl font-black tracking-tight text-primary">{formatINR(med.price)}</span>
+                  <span className="text-4xl font-black tracking-tight text-primary">{pricePending ? 'Price to be updated' : formatINR(med.price)}</span>
                   {mrp && <span className="pb-1 text-sm font-medium text-slate-400 line-through">MRP {formatINR(mrp)}</span>}
                   {discountPct !== null && <span className="mb-1 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-black text-white">{discountPct}% OFF</span>}
                 </div>
                 <p className={cn('mt-2 text-xs font-bold', out ? 'text-destructive' : 'text-emerald-700')}>
-                  {out ? 'Currently unavailable' : med.stock <= 5 ? `Only ${med.stock} left in stock` : 'Available for delivery and pickup'}
+                  {pricePending ? 'Price is being confirmed; ordering is disabled' : out ? 'Currently unavailable' : med.stock <= 5 ? `Only ${med.stock} left in stock` : 'Available for delivery and pickup'}
                 </p>
               </div>
 

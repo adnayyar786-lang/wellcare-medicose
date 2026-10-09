@@ -10,6 +10,8 @@ const files = [
   'scripts/catalog-batch-005-images.json',
   'scripts/catalog-batch-006-veterinary.json',
   'scripts/catalog-batch-007-syrups.json',
+  'scripts/catalog-batch-008-shelf-medicines.json',
+  'scripts/catalog-batch-009-price-pending.json',
 ];
 
 const seen = new Map();
@@ -27,7 +29,7 @@ for (const file of files) {
         throw new Error(`MISSING_${key.toUpperCase()}: ${where}`);
       }
     }
-    if (!Number.isFinite(item.price) || item.price <= 0) throw new Error(`INVALID_PRICE: ${where}`);
+    if (!Number.isFinite(item.price) || item.price < 0 || (item.price === 0 && !item.description.includes('[PRICE_PENDING]'))) throw new Error(`INVALID_PRICE: ${where}`);
     if (item.mrpPrice !== undefined && (!Number.isFinite(item.mrpPrice) || item.mrpPrice < item.price)) {
       throw new Error(`INVALID_MRP: ${where}`);
     }

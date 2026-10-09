@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "name": "Digene Mint Antacid Antigas Gel - 200 ml",
+      "category": "Digestive Care - Acidity & Gas",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Aluminium hydroxide 830 mg + magnesium hydroxide 185 mg + simethicone 50 mg + sodium carboxymethylcellulose 100 mg; mint flavour, 200 ml bottle.",
+      "price": 146.4,
+      "mrpPrice": 180.74,
+      "stock": 1,
+      "requiresPrescription": false,
+      "manufacturer": "Abbott India Ltd",
+      "imageUrl": "https://cdn01.pharmeasy.in/dam/products_otc/255390/digene-gel-acidity-gas-relief-200ml-mint-flavour-sugar-free-2.1-1706344149.jpg?dim=480x480&q=75"
+    },
+    {
+      "name": "Colicaid Oral Drops - 15 ml",
+      "category": "Pediatric Digestive Care",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Simethicone 40 mg/ml + dill oil + fennel oil oral drops. Bottle of 15 ml.",
+      "price": 56.88,
+      "mrpPrice": 72,
+      "stock": 1,
+      "requiresPrescription": false,
+      "manufacturer": "Meyer Organics Pvt Ltd",
+      "imageUrl": "https://cdn01.pharmeasy.in/dam/productsnowatermark/046335/colicaid-bottle-of-15ml-oral-drops-box-front-1-1756894296-non-watermarked.jpg?dim=320x320&dpr=1&q=100"
+    },
+    {
+      "name": "Cremaffin Plus Sugar-Free Emulsion - 225 ml",
+      "category": "Digestive Care - Constipation",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Magnesium hydroxide + liquid paraffin + sodium picosulfate emulsion, refreshing flavour, sugar-free. Bottle of 225 ml.",
+      "price": 253.35,
+      "mrpPrice": 337.8,
+      "stock": 1,
+      "requiresPrescription": false,
+      "manufacturer": "Abbott India Ltd",
+      "imageUrl": "https://cdn01.pharmeasy.in/dam/productsnowatermark/I34633/cremaffin-plus-refreshing-flavour-sugar-free-bottle-of-225ml-emulsion-front-2-1756952758-non-watermarked.jpg?dim=320x320&dpr=1&q=100"
+    },
+    {
+      "name": "Duphalac Fiber Oral Solution - 200 ml",
+      "category": "Digestive Care - Constipation",
+      "shopCategory": "Medicines (Branded)",
+      "description": "Lactulose 2.5 g/5 ml oral solution with prebiotic fiber; bottle of 200 ml.",
+      "price": 221.93,
+      "mrpPrice": 264.2,
+      "stock": 1,
+      "requiresPrescription": false,
+      "manufacturer": "Abbott India Ltd",
+      "imageUrl": "https://cdn01.pharmeasy.in/dam/productsnowatermark/254003/duphalac-fiber-solution-200ml-front-2-1756099805-non-watermarked.jpg?dim=320x320&dpr=1&q=100"
+    }
+  ]
+}
