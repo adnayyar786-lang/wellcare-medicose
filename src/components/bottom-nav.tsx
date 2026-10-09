@@ -1,13 +1,13 @@
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { Home, LayoutGrid, ClipboardList, ShoppingCart, User } from 'lucide-react'
 
 import { useCart } from '@/hooks/use-cart'
 import { useLanguage } from '@/hooks/use-language'
 import { Badge } from '@/components/ui/badge'
-import { OPEN_CART_EVENT } from '@/components/cart-drawer'
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const navigate = useNavigate()
   const { count } = useCart()
   const { t } = useLanguage()
 
@@ -31,7 +31,7 @@ export function BottomNav() {
           {t('categories')}
         </Link>
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent(OPEN_CART_EVENT))}
+          onClick={() => navigate({ to: '/cart' })
           className="relative flex flex-col items-center gap-0.5 py-2.5 text-xs text-muted-foreground"
         >
           <ShoppingCart className="size-5" />
