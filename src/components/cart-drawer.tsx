@@ -23,6 +23,20 @@ export function CartDrawer() {
     window.addEventListener(OPEN_CART_EVENT, onOpen)
     return () => window.removeEventListener(OPEN_CART_EVENT, onOpen)
   }, [])
+
+  // Android/browser Back can bypass the Sheet's close callback. Add a
+  // lightweight history entry while the cart is open so Back closes it first.
+  useEffect(() => {
+    if (!open) return
+    const marker = { wellcareCartDrawer: true }
+    window.history.pushState(marker, '', window.location.href)
+    const onPopState = () => {
+      setOpen(false)
+      navigate({ to: '/', replace: true })
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [open, navigate])
   useEffect(() => {
     try { const saved = window.localStorage.getItem(COUPON_KEY); if (saved) setCouponCode(saved) } catch { /* ignore */ }
   }, [open])
