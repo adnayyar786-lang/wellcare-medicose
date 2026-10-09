@@ -55,60 +55,27 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex deploy --typecheck=disable
 
-      - name: Seed catalogue batch 001
+      - name: Publish all catalogue batches in one step
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-001.json)" --prod
-
-      - name: Seed catalogue batch 002
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-002.json)" --prod
-
-      - name: Seed catalogue batch 003a
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-003a.json)" --prod
-
-      - name: Seed verified image batch 004
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-004-images.json)" --prod
-
-      - name: Seed verified image batch 005
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-005-images.json)" --prod
-
-      - name: Seed verified veterinary batch 006
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-006-veterinary.json)" --prod
-
-      - name: Seed verified syrup batch 007
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-007-syrups.json)" --prod
-
-      - name: Seed verified shelf medicine batch 008
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-008-shelf-medicines.json)" --prod
-
-      - name: Seed shelf price-pending batch 009
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-009-price-pending.json)" --prod
-
-      - name: Seed photo shelf products with pending fields
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-010-photo-shelf-pending.json)" --prod
-
-      - name: Seed readable shelf labels with price and image pending
-        env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-011-photo-unconfirmed.json)" --prod
+        run: |
+          set -euo pipefail
+          for file in \
+            scripts/catalog-batch-001.json \
+            scripts/catalog-batch-002.json \
+            scripts/catalog-batch-003a.json \
+            scripts/catalog-batch-004-images.json \
+            scripts/catalog-batch-005-images.json \
+            scripts/catalog-batch-006-veterinary.json \
+            scripts/catalog-batch-007-syrups.json \
+            scripts/catalog-batch-008-shelf-medicines.json \
+            scripts/catalog-batch-009-price-pending.json \
+            scripts/catalog-batch-010-photo-shelf-pending.json \
+            scripts/catalog-batch-011-photo-unconfirmed.json
+          do
+            echo "Publishing catalogue batch: $file"
+            npx convex run medicines:seedManyV2 "$(cat "$file")" --prod
+          done
 
       - name: Verify production catalogue count and records
         env:
