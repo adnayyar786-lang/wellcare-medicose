@@ -104,7 +104,7 @@ jobs:
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
-          node -e "const fs=require('fs'); const files=['scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json','scripts/catalog-batch-006-veterinary.json']; const items=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-image-registry.json', JSON.stringify({items:items.map(x=>({name:x.name,imageUrl:x.imageUrl,source:'catalog-batch-004-005-006-007-verified'}))})); console.log('Registering verified image records:', items.length)"
+          node -e "const fs=require('fs'); const files=['scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json','scripts/catalog-batch-006-veterinary.json','scripts/catalog-batch-007-syrups.json']; const items=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-image-registry.json', JSON.stringify({items:items.map(x=>({name:x.name,imageUrl:x.imageUrl,source:'catalog-batch-004-005-006-007-verified'}))})); console.log('Registering verified image records:', items.length)"
           npx convex run medicines:registerVerifiedCatalogueImages "$(cat /tmp/catalog-image-registry.json)" --prod
 
       - name: Verify image registry integrity
