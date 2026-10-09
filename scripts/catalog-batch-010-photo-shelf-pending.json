@@ -1,0 +1,238 @@
+{
+  "items": [
+    {
+      "name": "Drools Dog Food - variant and pack size pending",
+      "category": "Pet Food - Dogs",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Drools Cat Food - variant and pack size pending",
+      "category": "Pet Food - Cats",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Purepet Cat Food - variant and pack size pending",
+      "category": "Pet Food - Cats",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Me-O Cat Food - variant and pack size pending",
+      "category": "Pet Food - Cats",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Whiskas Cat Food - variant and pack size pending",
+      "category": "Pet Food - Cats",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "PetStar Cat Food - variant and pack size pending",
+      "category": "Pet Food - Cats",
+      "shopCategory": "Pet Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Red Onion Shampoo - variant and pack size pending",
+      "category": "Personal Care - Hair Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Dove Shampoo or Conditioner - exact variant pending",
+      "category": "Personal Care - Hair Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Nivea Personal Care - exact product pending",
+      "category": "Personal Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Vaseline Body Lotion - variant and pack size pending",
+      "category": "Personal Care - Skin Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Dettol Personal Care - exact product pending",
+      "category": "Personal Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Lifebuoy Personal Care - exact product pending",
+      "category": "Personal Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Pears Soap - variant and pack size pending",
+      "category": "Personal Care - Bath & Body",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Lux Soap - variant and pack size pending",
+      "category": "Personal Care - Bath & Body",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Santoor Soap - variant and pack size pending",
+      "category": "Personal Care - Bath & Body",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Clinic Plus Shampoo - variant and pack size pending",
+      "category": "Personal Care - Hair Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Head & Shoulders Shampoo - variant and pack size pending",
+      "category": "Personal Care - Hair Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Sunsilk Shampoo - variant and pack size pending",
+      "category": "Personal Care - Hair Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Joy Personal Care - exact product pending",
+      "category": "Personal Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Himalaya Personal Care - exact product pending",
+      "category": "Personal Care",
+      "shopCategory": "Personal Care",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Ojus Syrup - exact variant and pack size pending",
+      "category": "Ayurveda & Herbal",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Livtone Syrup - exact variant and pack size pending",
+      "category": "Ayurveda & Herbal",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "PAM Syrup - exact variant and pack size pending",
+      "category": "Medicines - Syrups",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Gudax Plus Syrup - exact variant and pack size pending",
+      "category": "Medicines - Syrups",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Trilaxa Syrup - exact variant and pack size pending",
+      "category": "Medicines - Syrups",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    },
+    {
+      "name": "Urogel Syrup - exact variant and pack size pending",
+      "category": "Medicines - Syrups",
+      "shopCategory": "Medicines (Branded)",
+      "description": "[PRICE_PENDING] [IMAGE_PENDING] [DETAILS_PENDING] Identified from the user's shelf photo; exact variant, pack size, composition/ingredients and product photo have not been confirmed. Add confirmed details and price before enabling sale.",
+      "price": 0,
+      "stock": 1,
+      "requiresPrescription": false
+    }
+  ]
+}

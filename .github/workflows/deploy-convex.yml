@@ -18,6 +18,7 @@ on:
       - "scripts/catalog-batch-007-syrups.json"
       - "scripts/catalog-batch-008-shelf-medicines.json"
       - "scripts/catalog-batch-009-price-pending.json"
+      - "scripts/catalog-batch-010-photo-shelf-pending.json"
       - "scripts/validate-catalogue.mjs"
       - "scripts/reconcile-catalogue-images.mjs"
   workflow_dispatch:
@@ -98,11 +99,16 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-009-price-pending.json)" --prod
 
+      - name: Seed photo shelf products with pending fields
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex run medicines:seedManyV2 "$(cat scripts/catalog-batch-010-photo-shelf-pending.json)" --prod
+
       - name: Verify production catalogue count and records
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
-          node -e "const fs=require('fs'); const files=['scripts/catalog-batch-001.json','scripts/catalog-batch-002.json','scripts/catalog-batch-003a.json','scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json','scripts/catalog-batch-006-veterinary.json','scripts/catalog-batch-007-syrups.json','scripts/catalog-batch-008-shelf-medicines.json','scripts/catalog-batch-009-price-pending.json']; const all=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
+          node -e "const fs=require('fs'); const files=['scripts/catalog-batch-001.json','scripts/catalog-batch-002.json','scripts/catalog-batch-003a.json','scripts/catalog-batch-004-images.json','scripts/catalog-batch-005-images.json','scripts/catalog-batch-006-veterinary.json','scripts/catalog-batch-007-syrups.json','scripts/catalog-batch-008-shelf-medicines.json','scripts/catalog-batch-009-price-pending.json','scripts/catalog-batch-010-photo-shelf-pending.json']; const all=files.flatMap(f=>JSON.parse(fs.readFileSync(f,'utf8')).items); fs.writeFileSync('/tmp/catalog-verify.json', JSON.stringify({names:all.map(x=>x.name)})); console.log('Expected unique production records:', all.length)"
           npx convex run medicines:verifyCatalogue "$(cat /tmp/catalog-verify.json)" --prod
 
       - name: Verify exact catalogue image mappings
