@@ -19,7 +19,7 @@ export function CartDrawer() {
   const [couponCode, setCouponCode] = useState('')
   const skipHomeOnClose = useRef(false)
   useEffect(() => {
-    function onOpen() { setOpen(true) }
+    function onOpen() { navigate({ to: '/cart' }) }
     window.addEventListener(OPEN_CART_EVENT, onOpen)
     return () => window.removeEventListener(OPEN_CART_EVENT, onOpen)
   }, [])
