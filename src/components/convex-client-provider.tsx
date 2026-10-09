@@ -1,4 +1,4 @@
-import { ConvexProviderWithAuth, ConvexReactClient, useMutation } from 'convex/react'
+import { ConvexProviderWithAuth, ConvexReactClient, useConvexAuth, useMutation } from 'convex/react'
 import { useCallback, useEffect, useMemo, useState, createContext, useContext } from 'react'
 import { getFirebaseAuth, type FirebaseUserLike } from '@/lib/firebase-auth'
 import { api } from '../../convex/_generated/api'
@@ -14,30 +14,50 @@ export function useFirebaseAuthState() { return useContext(FirebaseAuthStateCont
 
 function FirebaseSynchronizer({ children }: { children: React.ReactNode }) {
   const { user } = useFirebaseAuthState()
+  const { isAuthenticated, isLoading: isConvexAuthLoading } = useConvexAuth()
   const ensureUser = useMutation(api.firebaseAuth.ensureUser)
+
   useEffect(() => {
     let cancelled = false
-    if (!user) return
-    ;(async () => {
-      try {
-        await user.getIdToken(true)
+    if (!user || isConvexAuthLoading || !isAuthenticated) return
+
+    // Wait until Convex has accepted the Firebase ID token before creating the
+    // application user. A one-shot mutation during the auth handshake can fail
+    // with "Authentication required", leaving Firebase signed in but the
+    // Wellcare profile/order identity missing until the next page refresh.
+    const syncUser = async () => {
+      let lastError: unknown
+      for (let attempt = 0; attempt < 5; attempt += 1) {
         if (cancelled) return
-        await ensureUser({})
-        if (!cancelled) window.dispatchEvent(new CustomEvent('wellcare-convex-user-ready', { detail: user }))
-      } catch (error) {
-        if (!cancelled) {
-          console.error('Wellcare Firebase → Convex user sync failed', error)
-          window.dispatchEvent(new CustomEvent('wellcare-convex-user-sync-failed', {
-            detail: error instanceof Error ? error.message : 'Could not create the Wellcare account session.',
-          }))
+        try {
+          await user.getIdToken(true)
+          await ensureUser({})
+          if (!cancelled) {
+            window.dispatchEvent(new CustomEvent('wellcare-convex-user-ready', { detail: user }))
+          }
+          return
+        } catch (error) {
+          lastError = error
+          if (attempt < 4) {
+            await new Promise(resolve => window.setTimeout(resolve, 400 * (attempt + 1)))
+          }
         }
       }
-    })()
+
+      if (!cancelled) {
+        console.error('Wellcare Firebase → Convex user sync failed after retries', lastError)
+        window.dispatchEvent(new CustomEvent('wellcare-convex-user-sync-failed', {
+          detail: lastError instanceof Error ? lastError.message : 'Could not create the Wellcare account session.',
+        }))
+      }
+    }
+
+    void syncUser()
     return () => { cancelled = true }
-  }, [user, ensureUser])
+  }, [user, isAuthenticated, isConvexAuthLoading, ensureUser])
+
   return <>{children}</>
 }
-
 function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseUserLike | null>(null)
   const [isLoading, setIsLoading] = useState(true)
