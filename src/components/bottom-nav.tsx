@@ -31,7 +31,7 @@ export function BottomNav() {
           {t('categories')}
         </Link>
         <button
-          onClick={() => navigate({ to: '/cart' })
+          onClick={() => navigate({ to: '/cart' })}
           className="relative flex flex-col items-center gap-0.5 py-2.5 text-xs text-muted-foreground"
         >
           <ShoppingCart className="size-5" />
