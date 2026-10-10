@@ -20,6 +20,7 @@ const medicineValidator = v.object({
   stock: v.number(),
   requiresPrescription: v.boolean(),
   imageUrl: v.optional(v.string()),
+  additionalImages: v.optional(v.array(v.string())),
   active: v.boolean(),
   shopCategory: v.optional(v.string()),
   featured: v.optional(v.boolean()),
@@ -148,6 +149,26 @@ export const update = mutation({
       throw new Error('Stock cannot be negative')
     const normalizedPatch = { ...patch, barcode: patch.barcode?.trim() || undefined }
     await ctx.db.patch(id, { ...normalizedPatch, updatedAt: Date.now() })
+    return null
+  },
+})
+
+export const appendMedicineImage = internalMutation({
+  args: { id: v.id('medicines'), imageUrl: v.string() },
+  returns: v.null(),
+  handler: async (ctx, { id, imageUrl }) => {
+    const medicine = await ctx.db.get(id)
+    if (!medicine) throw new Error('Medicine not found')
+    const url = imageUrl.trim()
+    if (!url) throw new Error('Image URL is empty')
+    const current = medicine.additionalImages ?? []
+    if (medicine.imageUrl !== url && !current.includes(url)) {
+      if (!medicine.imageUrl) {
+        await ctx.db.patch(id, { imageUrl: url, updatedAt: Date.now() })
+      } else {
+        await ctx.db.patch(id, { additionalImages: [...current, url], updatedAt: Date.now() })
+      }
+    }
     return null
   },
 })
