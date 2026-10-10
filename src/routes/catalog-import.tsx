@@ -101,6 +101,23 @@ const HUMAN = [
   ["ORS Lemon Flavour Sachet 21g","Generic","Powder",18,20],
 ] as const
 
+// Transcribed only from the user's Jain Pharma invoice (01 Oct 2026).
+// Invoice MRP is used as the initial selling price; stock reflects invoice quantity.
+// No product images are attached until a matching image is verified.
+const INVOICE_VET = [
+  ["SELAMEC 0.05ML", "VIRBA", "Veterinary Medicine", 355, 50, true],
+  ["CILIFAT OSTOVET FORT LIQUID 1L", "VIRBA", "Veterinary Supplement", 305, 3, false],
+  ["VIMERAL FORTE 60 ML LIQUID", "VIRBA", "Veterinary Supplement", 140, 5, false],
+  ["ZOTEK-P EAR DROP", "EK-TE", "Veterinary Ear Care", 70.31, 10, true],
+  ["CANISHOT RV-F 1 DOSE", "INTAS", "Veterinary Vaccine", 205.04, 10, true],
+  ["NOVIBAC TRICAT TRIO", "INTAS", "Veterinary Vaccine", 1040, 5, true],
+  ["MELONEX PLUS 6 BOLUS", "INTAS", "Veterinary Medicine", 90, 10, true],
+  ["ADVAPLAT 200ML HERBAL FORMULA", "SAVA", "Veterinary Care", 266.96, 3, false],
+  ["KETOCHLOR SHAMPOO", "VIRBA", "Veterinary Shampoo", 385, 3, false],
+  ["CEPHAVET 600MG", "SAVA", "Veterinary Medicine", 281.25, 2, true],
+  ["KISKIN LOTION 100ML", "INTAS", "Veterinary Skin Care", 210, 3, false],
+] as const
+
 const CHUNK = 25
 
 type CatalogueItem = {
@@ -141,6 +158,11 @@ function CatalogImport() {
       name, manufacturer, category, shopCategory: 'Medicines (Branded)',
       description: name + '. Verify pack, strength and current MRP before sale.',
       price, mrpPrice, stock: 20, requiresPrescription: /Apollo Trusted Rx|Megamox|Amoxyclav|Floxip|Nicoflox|Safepodox|Cilogard|Cosart|Lipvas|Nicopenta|Roko|Rzole|Lunabet/.test(name),
+    })),
+    ...INVOICE_VET.map(([name, manufacturer, category, mrpPrice, stock, requiresPrescription]) => ({
+      name, manufacturer, category, shopCategory: 'Pet Care',
+      description: name + '. Invoice-transcribed listing; verify pack, species, label directions and current MRP before sale.',
+      price: mrpPrice, mrpPrice, stock, requiresPrescription,
     })),
     ...petSeed.map(([name, price]) => ({
       name, manufacturer: name.split(' ')[0],
