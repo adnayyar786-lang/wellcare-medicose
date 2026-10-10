@@ -36,7 +36,7 @@ const SHOP_CATEGORIES = [
   'Personal Care',
 ]
 
-function PhotoUpload({ medicineId, currentUrl }: { medicineId: Id<'medicines'>; currentUrl?: string }) {
+function PhotoUpload({ medicineId, currentUrls }: { medicineId: Id<'medicines'>; currentUrls: string[] }) {
   const { isAuthenticated } = useConvexAuth()
   const createUpload = useAction(api.appFiles.createUpload)
   const finalize = useAction(api.appFiles.finalizeMedicineImage)
@@ -59,7 +59,7 @@ function PhotoUpload({ medicineId, currentUrl }: { medicineId: Id<'medicines'>; 
       const res = await fetch(grant.uploadUrl, { method: grant.method, headers: grant.headers, body: file })
       if (!res.ok) throw new Error(`Upload failed (${res.status})`)
       await finalize({ fileId: grant.fileId, medicineId })
-      toast.success('Photo updated')
+      toast.success('Photo added')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Upload failed')
     } finally {
@@ -68,14 +68,18 @@ function PhotoUpload({ medicineId, currentUrl }: { medicineId: Id<'medicines'>; 
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {currentUrl && <img src={currentUrl} alt="" className="size-8 rounded-md object-cover" />}
+    <div className="flex min-w-[180px] flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-1.5">
+        {currentUrls.map((url, index) => <img key={url} src={url} alt={`Medicine photo ${index + 1}`} title={`Photo ${index + 1}`} className="size-9 rounded-md border border-white/10 object-cover" />)}
+        <span className="text-[10px] text-white/45">{currentUrls.length} photo{currentUrls.length === 1 ? '' : 's'}</span>
+      </div>
       <button
+        type="button"
         disabled={uploading}
         onClick={() => fileInputRef.current?.click()}
-        className="flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[11px] text-white/70 hover:bg-white/10"
+        className="flex w-fit items-center gap-1 rounded-md bg-teal-500/15 px-2 py-1.5 text-[11px] font-semibold text-teal-200 hover:bg-teal-500/25"
       >
-        <Upload className="size-3" /> {uploading ? '…' : currentUrl ? 'Replace' : 'Photo'}
+        <Upload className="size-3" /> {uploading ? 'Uploading…' : 'Add photo'}
       </button>
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.target.value = '' }} />
     </div>
@@ -92,6 +96,10 @@ export function MedicinesPanel({ data }: { data: ReturnType<typeof useAdminData>
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [showAdd, setShowAdd] = useState(false)
   const [form, setForm] = useState({ name: '', manufacturer: '', category: '', shopCategory: SHOP_CATEGORIES[0], description: '', price: '', mrpPrice: '', stock: '', requiresPrescription: false })
+  const [newPhotos, setNewPhotos] = useState<File[]>([])
+  const addPhotosRef = useRef<HTMLInputElement>(null)
+  const createUpload = useAction(api.appFiles.createUpload)
+  const finalizeImage = useAction(api.appFiles.finalizeMedicineImage)
   const [saving, setSaving] = useState(false)
 
   const filtered = useMemo(() => {
@@ -111,9 +119,16 @@ export function MedicinesPanel({ data }: { data: ReturnType<typeof useAdminData>
     if (Number.isNaN(price) || Number.isNaN(stock)) { toast.error('Price and stock must be numbers'); return }
     setSaving(true)
     try {
-      await create({ name: form.name, manufacturer: form.manufacturer.trim() || undefined, category: form.category || 'General', shopCategory: form.shopCategory, description: form.description, price, mrpPrice, stock, requiresPrescription: form.requiresPrescription })
-      toast.success('Product added')
+      const medicineId = await create({ name: form.name, manufacturer: form.manufacturer.trim() || undefined, category: form.category || 'General', shopCategory: form.shopCategory, description: form.description, price, mrpPrice, stock, requiresPrescription: form.requiresPrescription })
+      for (const file of newPhotos) {
+        const grant = await createUpload({ filename: file.name, contentType: file.type || 'application/octet-stream', fileSize: file.size, visibility: 'public' })
+        const response = await fetch(grant.uploadUrl, { method: grant.method, headers: grant.headers, body: file })
+        if (!response.ok) throw new Error(`Photo upload failed (${response.status}); product was created, please add the remaining photos from the list below.`)
+        await finalizeImage({ fileId: grant.fileId, medicineId })
+      }
+      toast.success(newPhotos.length ? `Product added with ${newPhotos.length} photo(s)` : 'Product added')
       setForm({ name: '', manufacturer: '', category: '', shopCategory: SHOP_CATEGORIES[0], description: '', price: '', mrpPrice: '', stock: '', requiresPrescription: false })
+      setNewPhotos([])
       setShowAdd(false)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not add product')
@@ -148,6 +163,14 @@ export function MedicinesPanel({ data }: { data: ReturnType<typeof useAdminData>
               {SHOP_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
             <Textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="border-white/10 bg-white/5 text-white placeholder:text-white/30 sm:col-span-2" />
+            <div className="rounded-lg border border-dashed border-teal-400/40 bg-teal-500/5 p-3 sm:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div><p className="text-sm font-semibold text-white">Medicine photos</p><p className="mt-0.5 text-xs text-white/45">Select multiple images. You can add more photos later, too.</p></div>
+                <button type="button" onClick={() => addPhotosRef.current?.click()} className="flex items-center gap-1.5 rounded-md bg-teal-500 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-400"><Upload className="size-3.5" /> Choose photos</button>
+                <input ref={addPhotosRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { const files = Array.from(e.target.files ?? []).filter((file) => file.type.startsWith('image/')); setNewPhotos((prev) => [...prev, ...files]); e.target.value = '' }} />
+              </div>
+              {newPhotos.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{newPhotos.map((file, index) => <div key={`${file.name}-${file.lastModified}-${index}`} className="relative"><img src={URL.createObjectURL(file)} alt={file.name} className="size-16 rounded-lg border border-white/10 object-cover" /><button type="button" aria-label={`Remove ${file.name}`} onClick={() => setNewPhotos((prev) => prev.filter((_, i) => i !== index))} className="absolute -right-1.5 -top-1.5 rounded-full bg-red-500 px-1.5 text-xs text-white">×</button><p className="mt-1 max-w-16 truncate text-[9px] text-white/50">{file.name}</p></div>)}</div>}
+            </div>
             <Input type="number" placeholder="Price (₹)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="border-white/10 bg-white/5 text-white placeholder:text-white/30" />
             <Input type="number" placeholder="MRP (₹, optional)" value={form.mrpPrice} onChange={(e) => setForm({ ...form, mrpPrice: e.target.value })} className="border-white/10 bg-white/5 text-white placeholder:text-white/30" />
             <Input type="number" placeholder="Stock" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="border-white/10 bg-white/5 text-white placeholder:text-white/30" />
@@ -185,7 +208,7 @@ export function MedicinesPanel({ data }: { data: ReturnType<typeof useAdminData>
                 {filtered.map((med) => (
                   <tr key={med._id}>
                     <td className="py-2.5 pr-3">
-                      <PhotoUpload medicineId={med._id} currentUrl={med.imageUrl} />
+                      <PhotoUpload medicineId={med._id} currentUrls={[med.imageUrl, ...(med.additionalImages ?? [])].filter((url): url is string => Boolean(url))} />
                     </td>
                     <td className="py-2.5 pr-3 text-white/80">
                       {med.name}
