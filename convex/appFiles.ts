@@ -80,10 +80,10 @@ export const finalizeMedicineImage = action({
   returns: v.null(),
   handler: async (ctx, args) => {
     const uploaded = await completeAppFile(ctx, args.fileId)
-    await ctx.runMutation(internal.medicines.setImageUrlAndRegister, {
+    if (!uploaded.url) throw new Error('Uploaded photo has no public URL')
+    await ctx.runMutation(internal.medicines.appendMedicineImage, {
       id: args.medicineId,
-      imageUrl: uploaded.url ?? undefined,
-      source: 'admin-upload',
+      imageUrl: uploaded.url,
     })
     return null
   },
