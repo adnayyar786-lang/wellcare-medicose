@@ -953,19 +953,48 @@ function Home() {
         </div>
       </section>}
 
-      {!browsing && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Why choose Wellcare Medicose">
-        <div className="mb-4 flex items-end justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-teal">Why Wellcare</p>
-            <h2 className="mt-1 text-xl font-extrabold tracking-tight sm:text-2xl">Simple, local & trustworthy</h2>
+      {!browsing && <section className="mx-auto max-w-[1600px] px-3 py-6 sm:px-4 sm:py-8" aria-label="Why choose Wellcare Medicose">
+        <div className="relative mb-5 overflow-hidden rounded-[28px] border border-sky-100 bg-gradient-to-br from-white via-sky-50/70 to-emerald-50/70 px-5 py-6 shadow-[0_12px_36px_-24px_rgba(15,63,100,0.35)] sm:px-8 sm:py-8">
+          <div className="pointer-events-none absolute -right-12 -top-16 size-56 rounded-full bg-sky-100/60 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-20 left-1/3 size-48 rounded-full bg-emerald-100/60 blur-2xl" />
+          <div className="relative z-10 grid items-center gap-5 md:grid-cols-[1fr_auto]">
+            <div className="max-w-2xl">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 sm:text-xs">WHY WELLCARE</p>
+              <h2 className="mt-2 text-3xl font-black leading-[1.05] tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">Simple, local &amp;<br className="hidden sm:block" /> <span className="bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">trustworthy.</span></h2>
+              <p className="mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">Quality medicines, trusted brands, right at your doorstep.</p>
+              <span className="mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-emerald-500 to-sky-500" />
+            </div>
+            <div className="relative mx-auto flex w-full max-w-[290px] items-center justify-center md:mr-3 md:size-56 md:w-56">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-sky-100 to-emerald-100 blur-xl" />
+              <div className="relative flex size-40 items-center justify-center rounded-[34px] border border-white bg-white/85 shadow-[0_18px_40px_-20px_rgba(15,63,100,0.3)] sm:size-48">
+                <div className="absolute inset-3 rounded-[27px] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-sky-50" />
+                <div className="relative flex size-24 items-center justify-center rounded-[28px] bg-gradient-to-br from-emerald-500 to-sky-600 text-white shadow-lg sm:size-28"><PillBottle className="size-14 sm:size-16" strokeWidth={1.6} /></div>
+                <span className="absolute -bottom-2 -right-2 flex size-11 items-center justify-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-md"><ShieldCheck className="size-5" /></span>
+              </div>
+            </div>
           </div>
-          <span className="hidden rounded-full border border-primary/10 bg-primary/[0.04] px-3 py-1 text-[10px] font-bold text-primary sm:inline-flex">Wellcare Medicose</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><ShieldCheck className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Trusted Pharmacy</h3><p className="mt-1 text-[11px] text-muted-foreground">Your local pharmacy for everyday healthcare needs.</p></div>
-          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><Truck className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Delivery & Pickup</h3><p className="mt-1 text-[11px] text-muted-foreground">Choose the available fulfilment option at checkout.</p></div>
-          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><PillBottle className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Clear Details</h3><p className="mt-1 text-[11px] text-muted-foreground">Product information and prescription status stay visible.</p></div>
-          <div className="rounded-2xl border border-primary/10 bg-card p-4 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.65)] ring-1 ring-primary/5 transition hover:-translate-y-0.5 hover:shadow-lg"><Lock className="size-5 text-primary" /><h3 className="mt-2.5 text-sm font-extrabold">Secure Checkout</h3><p className="mt-1 text-[11px] text-muted-foreground">Checkout keeps your order and payment preference in one flow.</p></div>
+          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-emerald-200/80 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(5,150,105,0.45)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 shadow-inner"><ShieldCheck className="size-10" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Trusted Pharmacy</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Your local pharmacy for everyday healthcare needs.</p></div>
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          </div>
+          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-sky-200/80 bg-gradient-to-r from-sky-50 via-blue-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(2,132,199,0.4)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 text-sky-700 shadow-inner"><Truck className="size-10" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Delivery &amp; Pickup</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Choose the available fulfilment option at checkout.</p></div>
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          </div>
+          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-violet-200/80 bg-gradient-to-r from-violet-50 via-purple-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(124,58,237,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700 shadow-inner"><PillBottle className="size-10" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Clear Details</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Product information and prescription status stay visible.</p></div>
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          </div>
+          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-orange-200/80 bg-gradient-to-r from-orange-50 via-amber-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(217,119,6,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 text-orange-700 shadow-inner"><Lock className="size-10" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Secure Checkout</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Your order and payment preference stay in one flow.</p></div>
+            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          </div>
         </div>
       </section>}
 
