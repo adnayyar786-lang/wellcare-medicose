@@ -18,7 +18,7 @@ import {
   Menu,
   Mic,
   PawPrint,
-  RotateCw,
+  RefreshCw,
   Pill,
   PillBottle,
   Search,
@@ -1002,7 +1002,7 @@ function Home() {
       {!browsing && lastOrder && lastOrder.length > 0 && <section className="mx-auto max-w-[1600px] px-3 py-5 sm:px-4 sm:py-6" aria-label="Based on your previous orders">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2.5">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"><RotateCw className="size-5" /></span>
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"><RefreshCw className="size-5" /></span>
             <div className="min-w-0"><h2 className="text-lg font-black tracking-tight text-slate-900 sm:text-xl">{t('reorder')}</h2><p className="text-[11px] text-slate-500">Your previous orders, ready to order again</p></div>
           </div>
           <Link to="/orders" className="shrink-0 text-xs font-semibold text-emerald-600 hover:text-emerald-700">View all <span aria-hidden="true">→</span></Link>
@@ -1014,7 +1014,7 @@ function Home() {
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Order #{order._id.slice(-6).toUpperCase()}</p>
                 <p className="mt-1 line-clamp-2 text-xs font-bold leading-snug text-slate-800 sm:text-sm">{order.items.map((it) => it.name).join(', ')}</p>
-                <Button size="sm" className={cn("mt-2 h-9 w-full rounded-full text-xs font-bold shadow-sm", index % 2 === 0 ? "bg-sky-600 hover:bg-sky-700" : "bg-emerald-600 hover:bg-emerald-700")} onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}><RotateCw className="mr-1.5 size-3.5" />{t('reorder')}</Button>
+                <Button size="sm" className={cn("mt-2 h-9 w-full rounded-full text-xs font-bold shadow-sm", index % 2 === 0 ? "bg-sky-600 hover:bg-sky-700" : "bg-emerald-600 hover:bg-emerald-700")} onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}><RefreshCw className="mr-1.5 size-3.5" />{t('reorder')}</Button>
               </div>
             </CardContent>
           </Card>)}
