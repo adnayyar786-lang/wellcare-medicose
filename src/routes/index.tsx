@@ -969,36 +969,56 @@ function Home() {
               <div className="relative flex size-40 items-center justify-center rounded-[34px] border border-white bg-white/85 shadow-[0_18px_40px_-20px_rgba(15,63,100,0.3)] sm:size-48">
                 <div className="absolute inset-3 rounded-[27px] border border-emerald-100 bg-gradient-to-br from-emerald-50 to-sky-50" />
                 <div className="relative flex size-24 items-center justify-center rounded-[28px] bg-gradient-to-br from-emerald-500 to-sky-600 text-white shadow-lg sm:size-28"><PillBottle className="size-14 sm:size-16" strokeWidth={1.6} /></div>
-                <span className="absolute -bottom-2 -right-2 flex size-11 items-center justify-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-md"><ShieldCheck className="size-5" /></span>
+                <span className="absolute -bottom-2 -right-2 flex size-11 items-center justify-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-md"><ShieldCheck className="size-4" /></span>
               </div>
             </div>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-emerald-200/80 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(5,150,105,0.45)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
-            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 shadow-inner"><ShieldCheck className="size-10" strokeWidth={1.8} /></div>
-            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Trusted Pharmacy</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Your local pharmacy for everyday healthcare needs.</p></div>
-            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          <div className="group flex min-h-[96px] items-center gap-3 overflow-hidden rounded-[20px] border border-emerald-200/80 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-3 shadow-[0_8px_24px_-18px_rgba(5,150,105,0.45)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-3.5">
+            <div className="flex size-[52px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 shadow-inner"><ShieldCheck className="size-8" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-[13px] font-extrabold text-slate-900 sm:text-sm">Trusted Pharmacy</h3><p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Your local pharmacy for everyday healthcare needs.</p></div>
+            <span className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-4" /></span>
           </div>
-          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-sky-200/80 bg-gradient-to-r from-sky-50 via-blue-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(2,132,199,0.4)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
-            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 text-sky-700 shadow-inner"><Truck className="size-10" strokeWidth={1.8} /></div>
-            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Delivery &amp; Pickup</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Choose the available fulfilment option at checkout.</p></div>
-            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          <div className="group flex min-h-[96px] items-center gap-3 overflow-hidden rounded-[20px] border border-sky-200/80 bg-gradient-to-r from-sky-50 via-blue-50 to-white p-3 shadow-[0_8px_24px_-18px_rgba(2,132,199,0.4)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-3.5">
+            <div className="flex size-[52px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 to-blue-100 text-sky-700 shadow-inner"><Truck className="size-8" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-[13px] font-extrabold text-slate-900 sm:text-sm">Delivery &amp; Pickup</h3><p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Choose the available fulfilment option at checkout.</p></div>
+            <span className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-4" /></span>
           </div>
-          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-violet-200/80 bg-gradient-to-r from-violet-50 via-purple-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(124,58,237,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
-            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700 shadow-inner"><PillBottle className="size-10" strokeWidth={1.8} /></div>
-            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Clear Details</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Product information and prescription status stay visible.</p></div>
-            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          <div className="group flex min-h-[96px] items-center gap-3 overflow-hidden rounded-[20px] border border-violet-200/80 bg-gradient-to-r from-violet-50 via-purple-50 to-white p-3 shadow-[0_8px_24px_-18px_rgba(124,58,237,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-3.5">
+            <div className="flex size-[52px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700 shadow-inner"><PillBottle className="size-8" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-[13px] font-extrabold text-slate-900 sm:text-sm">Clear Details</h3><p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Product information and prescription status stay visible.</p></div>
+            <span className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-4" /></span>
           </div>
-          <div className="group flex min-h-[126px] items-center gap-4 overflow-hidden rounded-[24px] border border-orange-200/80 bg-gradient-to-r from-orange-50 via-amber-50 to-white p-4 shadow-[0_8px_24px_-18px_rgba(217,119,6,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
-            <div className="flex size-[66px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 text-orange-700 shadow-inner"><Lock className="size-10" strokeWidth={1.8} /></div>
-            <div className="min-w-0 flex-1"><h3 className="text-sm font-extrabold text-slate-900 sm:text-base">Secure Checkout</h3><p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">Your order and payment preference stay in one flow.</p></div>
-            <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-5" /></span>
+          <div className="group flex min-h-[96px] items-center gap-3 overflow-hidden rounded-[20px] border border-orange-200/80 bg-gradient-to-r from-orange-50 via-amber-50 to-white p-3 shadow-[0_8px_24px_-18px_rgba(217,119,6,0.35)] transition hover:-translate-y-0.5 hover:shadow-lg sm:p-3.5">
+            <div className="flex size-[52px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 text-orange-700 shadow-inner"><Lock className="size-8" strokeWidth={1.8} /></div>
+            <div className="min-w-0 flex-1"><h3 className="text-[13px] font-extrabold text-slate-900 sm:text-sm">Secure Checkout</h3><p className="mt-1 text-[11px] leading-snug text-slate-600 sm:text-xs">Your order and payment preference stay in one flow.</p></div>
+            <span className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700 transition group-hover:translate-x-0.5 sm:flex"><ChevronRight className="size-4" /></span>
           </div>
         </div>
       </section>}
 
-      {!browsing && lastOrder && lastOrder.length > 0 && <section className="mx-auto max-w-[1600px] px-4 py-6" aria-label="Based on your previous orders"><SectionHeading title={t('reorder')} /><div className="flex gap-3 overflow-x-auto pb-1">{lastOrder.slice(0, 3).map((order) => <Card key={order._id} className="w-64 shrink-0 rounded-2xl"><CardContent className="p-3"><p className="text-xs text-muted-foreground">Order #{order._id.slice(-6).toUpperCase()}</p><p className="mt-1 line-clamp-2 text-sm">{order.items.map((it) => it.name).join(', ')}</p><Button size="sm" className="mt-2 w-full" onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}>{t('reorder')}</Button></CardContent></Card>)}</div></section>}
+      {!browsing && lastOrder && lastOrder.length > 0 && <section className="mx-auto max-w-[1600px] px-3 py-5 sm:px-4 sm:py-6" aria-label="Based on your previous orders">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100"><RotateCw className="size-5" /></span>
+            <div className="min-w-0"><h2 className="text-lg font-black tracking-tight text-slate-900 sm:text-xl">{t('reorder')}</h2><p className="text-[11px] text-slate-500">Your previous orders, ready to order again</p></div>
+          </div>
+          <Link to="/orders" className="shrink-0 text-xs font-semibold text-emerald-600 hover:text-emerald-700">View all <span aria-hidden="true">→</span></Link>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {lastOrder.slice(0, 3).map((order, index) => <Card key={order._id} className={cn("w-[min(82vw,350px)] shrink-0 overflow-hidden rounded-[22px] border bg-white shadow-[0_8px_24px_-18px_rgba(15,63,100,0.35)]", index % 2 === 0 ? "border-sky-100" : "border-emerald-100")}>
+            <CardContent className="flex items-center gap-3 p-3">
+              <div className={cn("flex size-[74px] shrink-0 items-center justify-center overflow-hidden rounded-2xl", index % 2 === 0 ? "bg-gradient-to-br from-sky-50 to-blue-100 text-sky-600" : "bg-gradient-to-br from-emerald-50 to-teal-100 text-emerald-600")}><PackageSearch className="size-9" strokeWidth={1.6} /></div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Order #{order._id.slice(-6).toUpperCase()}</p>
+                <p className="mt-1 line-clamp-2 text-xs font-bold leading-snug text-slate-800 sm:text-sm">{order.items.map((it) => it.name).join(', ')}</p>
+                <Button size="sm" className={cn("mt-2 h-9 w-full rounded-full text-xs font-bold shadow-sm", index % 2 === 0 ? "bg-sky-600 hover:bg-sky-700" : "bg-emerald-600 hover:bg-emerald-700")} onClick={() => { order.items.forEach((it) => addToCart({ _id: it.medicineId, name: it.name, price: it.price, stock: 9999 }, () => {})); fireCartToast('✓ Items added to cart') }}><RotateCw className="mr-1.5 size-3.5" />{t('reorder')}</Button>
+              </div>
+            </CardContent>
+          </Card>)}
+        </div>
+      </section>}
 
       <main ref={gridRef} className="mx-auto max-w-[1600px] scroll-mt-40 px-4 py-6"><SectionHeading title={activeShopCategory ?? (submittedSearchQuery.trim() ? `Results for “${submittedSearchQuery.trim()}”` : t('all_products'))} subtitle={status === 'LoadingFirstPage' ? undefined : `${filteredSearchMedicines.length} product${filteredSearchMedicines.length === 1 ? '' : 's'}`} action={browsing ? <button onClick={clearFilters} className="text-xs font-medium text-primary underline-offset-2 hover:underline">Clear filters</button> : undefined} />
         {submittedSearchQuery.trim() && filteredMedicines.length > 0 && (
