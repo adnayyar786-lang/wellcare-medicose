@@ -119,7 +119,16 @@ function CheckoutPage() {
       <section className="rounded-[1.75rem] border border-white/90 bg-white/65 p-4 shadow-[0_18px_55px_-40px_rgba(15,118,110,.5)] backdrop-blur-2xl sm:p-5"><div className="mb-4 flex items-center gap-3"><span className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-black text-white">7</span><div><p className="text-[10px] font-black uppercase tracking-wider text-primary">Final review</p><h2 className="text-lg font-black text-slate-900">Order summary</h2></div></div><div className="space-y-3 text-sm"><div className="flex justify-between text-slate-500"><span>MRP total</span><span>{formatINR(mrpTotal)}</span></div>{mrpDiscount > 0 && <div className="flex justify-between font-medium text-emerald-700"><span>Discount</span><span>−{formatINR(mrpDiscount)}</span></div>}<div className="flex justify-between text-slate-500"><span>Delivery charges</span><span className={deliveryCharge === 0 ? 'font-semibold text-emerald-700' : ''}>{deliveryCharge === 0 ? 'FREE' : formatINR(deliveryCharge)}</span></div><div className="flex justify-between text-slate-500"><span>Taxes and charges</span><span>Included</span></div><div className="flex justify-between border-t border-dashed border-slate-200 pt-4 text-base font-extrabold text-slate-900"><span>Total amount</span><span>{formatINR(total + deliveryCharge)}</span></div></div></section>
     </main>
     <div className="fixed inset-x-0 bottom-16 z-30 lg:bottom-0 border-t border-white/80 bg-white/80 px-4 py-3 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-xl"><div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><div><p className="text-[11px] font-medium text-slate-500">Total amount</p><p className="text-xl font-extrabold tracking-tight text-slate-900">{formatINR(total + deliveryCharge)}</p></div><Button size="lg" className="min-w-40 rounded-xl px-6 font-bold shadow-md" disabled={placing} onClick={handlePlaceOrder}>{placing ? 'Placing order…' : <>Place Order <ChevronRight className="ml-2 size-4" /></>}</Button></div></div>
-    <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => { setAddress(location.address); setDeliveryPoint(location) }} />
+    <MapAddressPicker open={mapOpen} onOpenChange={setMapOpen} onConfirm={(location) => {
+      const nextAddress = location.address.trim()
+      setAddress(nextAddress)
+      setSavedAddress(nextAddress)
+      setDeliveryPoint(location)
+      if (nextAddress) {
+        try { window.localStorage.setItem('wellcare-saved-delivery-address', nextAddress) } catch { /* ignore */ }
+        toast.success('Delivery address saved for next time')
+      }
+    }} />
     <ConfirmationPortal>
       {confirmed && (
       <div id="wellcare-order-confirmation" className="fixed inset-0 z-[100] h-[100dvh] overflow-hidden bg-[#f5fbfa] text-slate-900">
