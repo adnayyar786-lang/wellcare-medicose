@@ -35,6 +35,9 @@ function OrdersPage() {
   const [selectedId, setSelectedId] = useState<Id<'orders'> | null>(null)
   const [orderScope, setOrderScope] = useState<'all' | 'active' | 'past'>('all')
   const { addToCart } = useCart()
+  const cancelOrderItems = useMutation(api.orders.cancelItems)
+  const [cancelTarget, setCancelTarget] = useState<Order | null>(null)
+  const [cancellingOrder, setCancellingOrder] = useState(false)
   const orders = useQuery(api.orders.findByPhone, searchedPhone ? { phone: searchedPhone } : 'skip')
 
   useEffect(() => { const saved = getLastPhone(); if (saved) { setPhone(saved); setSearchedPhone(saved) } }, [])
@@ -87,11 +90,30 @@ function OrdersPage() {
             {([['All', all.length, 'all'], ['Active', active.length, 'active'], ['Past', past.length, 'past'] ] as const).map(([label, count, scope]) => <button key={label} type="button" onClick={() => setOrderScope(scope)} className={cn('shrink-0 rounded-full px-3 py-1.5 text-xs font-bold transition-colors', orderScope === scope ? 'bg-primary text-white shadow-sm' : 'bg-slate-100 text-slate-500 hover:bg-slate-200')}>{label} <span className="ml-1 opacity-80">{count}</span></button>)}
           </div>
           <div className="max-h-[720px] space-y-2.5 overflow-y-auto p-3 sm:p-4">
-            {visibleOrders.map((order) => <OrderListCard key={order._id} order={order} selected={selected?._id === order._id} onSelect={() => setSelectedId(order._id)} onReorder={() => handleReorder(order)} />)}
+            {visibleOrders.map((order) => <OrderListCard key={order._id} order={order} selected={selected?._id === order._id} onSelect={() => setSelectedId(order._id)} onReorder={() => handleReorder(order)} onCancel={() => setCancelTarget(order)} />)}
           </div>
         </section>
         <OrderDetail order={selected} onReorder={selected ? () => handleReorder(selected) : undefined} />
       </div>}
+      <Dialog open={!!cancelTarget} onOpenChange={(open) => { if (!open && !cancellingOrder) setCancelTarget(null) }}>
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-2xl">
+          <DialogHeader><DialogTitle>Cancel this order?</DialogTitle></DialogHeader>
+          <p className="text-sm leading-6 text-muted-foreground">This will cancel all items in order #{cancelTarget?._id.slice(-8).toUpperCase()}. Items will be returned to stock. You can only cancel before dispatch or completion.</p>
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button type="button" variant="outline" className="w-full sm:w-auto" disabled={cancellingOrder} onClick={() => setCancelTarget(null)}>Keep order</Button>
+            <Button type="button" variant="destructive" className="w-full sm:w-auto" disabled={cancellingOrder || !cancelTarget} onClick={async () => {
+              if (!cancelTarget) return
+              setCancellingOrder(true)
+              try {
+                await cancelOrderItems({ id: cancelTarget._id, medicineIds: cancelTarget.items.map((item) => item.medicineId) })
+                toast.success('Order cancelled successfully')
+                setCancelTarget(null)
+              } catch (err) { toast.error(err instanceof Error ? err.message : 'Could not cancel order') }
+              finally { setCancellingOrder(false) }
+            }}>{cancellingOrder ? 'Cancelling…' : 'Yes, cancel order'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   </div>
 }
@@ -103,13 +125,13 @@ function NoOrders() {
   return <div className="flex min-h-[420px] items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white/70 text-center shadow-sm"><div><ClipboardList className="mx-auto size-10 text-slate-300" /><p className="mt-3 font-black text-slate-800">No orders found</p><p className="mt-1 text-xs text-slate-500">Check the phone number used while ordering.</p></div></div>
 }
 
-function OrderListCard({ order, selected, onSelect, onReorder }: { order: Order; selected: boolean; onSelect: () => void; onReorder: () => void }) {
+function OrderListCard({ order, selected, onSelect, onReorder, onCancel }: { order: Order; selected: boolean; onSelect: () => void; onReorder: () => void; onCancel: () => void }) {
   const canCancel = order.status === 'placed' || order.status === 'preparing'
   return <article className={cn('w-full rounded-2xl border bg-white/80 p-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-4', selected ? 'border-primary/50 bg-emerald-50/70 ring-2 ring-primary/10' : 'border-slate-100')}>
     <button type="button" onClick={onSelect} className="w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-xl">
       <div className="flex items-start gap-3"><div className={cn('flex size-11 shrink-0 items-center justify-center rounded-xl', selected ? 'bg-gradient-to-br from-primary to-brand-blue text-white' : 'bg-slate-100 text-primary')}>{order.fulfillment === 'delivery' ? <Truck className="size-5" /> : <Store className="size-5" />}</div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-sm font-black text-slate-900">#{order._id.slice(-8).toUpperCase()}</span><span className={cn('rounded-full px-2.5 py-1 text-[10px] font-bold', ORDER_STATUS_BADGE[order.status] ?? 'bg-slate-100 text-slate-600')}>{orderStatusLabel(order.status, order.fulfillment)}</span></div><p className="mt-1 text-[11px] text-slate-400">{order._creationTime ? new Date(order._creationTime).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'Recent order'}</p><div className="mt-2 flex items-center gap-2 text-xs font-semibold text-slate-500"><span>{order.items.length} items</span><span>•</span><span className="font-black text-slate-800">{formatINR(order.total)}</span></div><div className="mt-3 flex gap-1.5 overflow-hidden">{order.items.slice(0,3).map((it,i)=><span key={i} className="truncate rounded-lg bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-500">{it.name}</span>)}{order.items.length>3&&<span className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500">+{order.items.length-3}</span>}</div></div><ChevronRight className={cn('mt-1 size-4 shrink-0', selected ? 'text-primary' : 'text-slate-300')} /></div>
     </button>
-    <div className="mt-3 flex gap-2 border-t border-slate-100 pt-3"><Link to="/track/$orderId" params={{orderId:order._id}} className="inline-flex min-h-9 flex-1 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-brand-blue text-[11px] font-bold text-white">Track Order</Link>{order.status === 'completed' && <Button type="button" size="sm" variant="outline" className="h-9 rounded-lg text-[11px]" onClick={onReorder}>Reorder</Button>}{canCancel && <span className="inline-flex items-center rounded-lg bg-rose-50 px-2.5 text-[10px] font-bold text-rose-600">Cancel available</span>}</div>
+    <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-100 pt-3"><Link to="/track/$orderId" params={{orderId:order._id}} className="inline-flex min-h-10 flex-1 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-brand-blue px-3 text-[11px] font-bold text-white">Track Order</Link>{order.status === 'completed' && <Button type="button" size="sm" variant="outline" className="h-10 rounded-lg text-[11px]" onClick={onReorder}>Reorder</Button>}{canCancel && <button id={`cancel-order-${order._id}`} type="button" onClick={(e) => { e.stopPropagation(); onCancel() }} className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 text-[11px] font-bold text-rose-700 hover:bg-rose-100"><X className="size-3.5" /> Cancel Order</button>}</div>
   </article>
 }
 function OrderDetail({ order, onReorder }: { order: Order | null; onReorder?: () => void }) {
