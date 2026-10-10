@@ -18,6 +18,7 @@ import {
   Menu,
   Mic,
   PawPrint,
+  RotateCw,
   Pill,
   PillBottle,
   Search,
