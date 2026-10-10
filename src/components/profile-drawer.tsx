@@ -17,15 +17,15 @@ export function ProfileDrawer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button aria-label="Profile menu" className="flex size-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition hover:border-primary/40 hover:bg-primary/5">
-          <User className="size-4" />
+        <button aria-label="Profile menu" className="flex size-12 items-center justify-center rounded-full border border-sky-100 bg-white text-sky-700 shadow-[0_8px_24px_-12px_rgba(15,63,100,0.45)] transition hover:border-sky-300 hover:bg-sky-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2">
+          <User className="size-6" strokeWidth={2.2} />
         </button>
       </SheetTrigger>
-      <SheetContent side="left" className="z-[300] flex h-full min-h-0 w-[min(90vw,380px)] flex-col gap-0 overflow-y-auto overscroll-contain border-r-0 bg-background p-0 [touch-action:pan-y] [-webkit-overflow-scrolling:touch] sm:max-w-sm">
-        <SheetHeader className="shrink-0 border-b bg-gradient-to-br from-primary/10 via-background to-emerald-500/10 px-5 pb-5 pt-7 text-left">
+      <SheetContent side="left" className="z-[9999] flex h-full min-h-0 w-[min(90vw,380px)] flex-col gap-0 overflow-y-auto overscroll-contain border-r border-sky-100 bg-white p-0 text-slate-900 shadow-2xl [touch-action:pan-y] [-webkit-overflow-scrolling:touch] sm:max-w-sm">
+        <SheetHeader className="shrink-0 border-b bg-gradient-to-br from-sky-50 via-white to-emerald-50 px-5 pb-5 pt-7 text-left">
           <div className="flex items-center gap-3">
             <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md"><ShieldCheck className="size-6" /></span>
-            <div className="min-w-0"><SheetTitle className="text-lg font-bold tracking-tight">My Wellcare Account</SheetTitle><p className="mt-1 text-xs text-muted-foreground">Your health • Our priority</p></div>
+            <div className="min-w-0"><SheetTitle className="text-lg font-bold tracking-tight">My Wellcare Account</SheetTitle><p className="mt-1 text-xs text-slate-500">Your health • Our priority</p></div>
           </div>
           <Link to="/profile" onClick={() => setOpen(false)} className="mt-4 flex items-center gap-3 rounded-2xl border border-primary/20 bg-card/90 px-3 py-3 text-left shadow-sm transition hover:border-primary/50 hover:bg-primary/5">
             <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-xl">😊</span>
